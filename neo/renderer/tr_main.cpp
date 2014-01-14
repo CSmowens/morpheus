@@ -47,7 +47,8 @@ idScreenRect::Clear
 void idScreenRect::Clear() {
 	x1 = y1 = 32000;
 	x2 = y2 = -32000;
-	zmin = 0.0f; zmax = 1.0f;
+	zmin = 0.0f;
+	zmax = 1.0f;
 }
 
 /*
@@ -151,6 +152,7 @@ R_ScreenRectFromViewFrustumBounds
 idScreenRect R_ScreenRectFromViewFrustumBounds( const idBounds &bounds ) {
 	idScreenRect screenRect;
 
+	screenRect.Clear();
 	screenRect.x1 = idMath::FtoiFast( 0.5f * ( 1.0f - bounds[1].y ) * ( tr.viewDef->viewport.x2 - tr.viewDef->viewport.x1 ) );
 	screenRect.x2 = idMath::FtoiFast( 0.5f * ( 1.0f - bounds[0].y ) * ( tr.viewDef->viewport.x2 - tr.viewDef->viewport.x1 ) );
 	screenRect.y1 = idMath::FtoiFast( 0.5f * ( 1.0f + bounds[0].z ) * ( tr.viewDef->viewport.y2 - tr.viewDef->viewport.y1 ) );
