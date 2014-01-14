@@ -56,10 +56,7 @@ class idVertexCache {
 public:
 	void			Init();
 	void			Shutdown();
-
-	// just for gfxinfo printing
-	bool			IsFast();
-
+	
 	// called when vertex programs are enabled or disabled, because
 	// the cached data is no longer valid
 	void			PurgeAll();

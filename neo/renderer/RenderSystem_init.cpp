@@ -1808,12 +1808,6 @@ extern	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 	} else if ( glConfig.twoSidedStencilAvailable ) {
 		common->Printf( "Using two sided stencil\n" );
 	}
-
-	if ( vertexCache.IsFast() ) {
-		common->Printf( "Vertex cache is fast\n" );
-	} else {
-		common->Printf( "Vertex cache is SLOW\n" );
-	}
 }
 
 /*

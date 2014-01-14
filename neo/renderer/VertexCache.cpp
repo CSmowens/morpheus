@@ -518,14 +518,3 @@ void idVertexCache::List( void ) {
 	common->Printf( "%5i free static headers\n", numFreeStaticHeaders );
 	common->Printf( "%5i free dynamic headers\n", numFreeDynamicHeaders );
 }
-
-/*
-=============
-idVertexCache::IsFast
-
-just for gfxinfo printing
-=============
-*/
-bool idVertexCache::IsFast() {
-	return true;
-}
