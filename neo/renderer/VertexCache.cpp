@@ -157,17 +157,6 @@ void idVertexCache::Init() {
 		r_vertexBufferMegs.SetInteger( 8 );
 	}
 
-	virtualMemory = false;
-
-	// use ARB_vertex_buffer_object unless explicitly disabled
-	if( r_useVertexBuffers.GetInteger() && glConfig.ARBVertexBufferObjectAvailable ) {
-		common->Printf( "using ARB_vertex_buffer_object memory\n" );
-	} else {
-		virtualMemory = true;
-		r_useIndexBuffers.SetBool( false );
-		common->Printf( "WARNING: vertex array range in virtual memory (SLOW)\n" );
-	}
-
 	// initialize the cache memory blocks
 	freeStaticHeaders.next = freeStaticHeaders.prev = &freeStaticHeaders;
 	staticHeaders.next = staticHeaders.prev = &staticHeaders;
@@ -244,9 +233,7 @@ void idVertexCache::Alloc( void *data, int size, vertCache_t **buffer, bool inde
 			block->next->prev = block;
 			block->prev->next = block;
 
-			if( !virtualMemory ) {
-				qglGenBuffersARB( 1, & block->vbo );
-			}
+			qglGenBuffersARB( 1, & block->vbo );
 		}
 	}
 
@@ -464,13 +451,9 @@ void idVertexCache::EndFrame() {
 	}
 #endif
 
-	if( !virtualMemory ) {
-		// unbind vertex buffers so normal virtual memory will be used in case
-		// r_useVertexBuffers / r_useIndexBuffers
-		qglBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		qglBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
-	}
-
+	// unbind vertex buffers
+	qglBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+	qglBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 
 	currentFrame = tr.frameCount;
 	listNum = currentFrame % NUM_VERTEX_FRAMES;
@@ -534,18 +517,6 @@ void idVertexCache::List( void ) {
 	common->Printf( "%5i active static headers\n", numActive );
 	common->Printf( "%5i free static headers\n", numFreeStaticHeaders );
 	common->Printf( "%5i free dynamic headers\n", numFreeDynamicHeaders );
-
-	if ( !virtualMemory  ) {
-		common->Printf( "Vertex cache is in ARB_vertex_buffer_object memory (FAST).\n");
-	} else {
-		common->Printf( "Vertex cache is in virtual memory (SLOW)\n" );
-	}
-
-	if ( r_useIndexBuffers.GetBool() ) {
-		common->Printf( "Index buffers are accelerated.\n" );
-	} else {
-		common->Printf( "Index buffers are not used.\n" );
-	}
 }
 
 /*
@@ -556,8 +527,5 @@ just for gfxinfo printing
 =============
 */
 bool idVertexCache::IsFast() {
-	if ( virtualMemory ) {
-		return false;
-	}
 	return true;
 }

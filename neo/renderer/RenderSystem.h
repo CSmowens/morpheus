@@ -65,7 +65,6 @@ typedef struct glconfig_s {
 	bool				textureLODBiasAvailable;
 	bool				textureEnvAddAvailable;
 	bool				textureEnvCombineAvailable;
-	bool				registerCombinersAvailable;
 	bool				cubeMapAvailable;
 	bool				envDot3Available;
 	bool				texture3DAvailable;
@@ -84,9 +83,6 @@ typedef struct glconfig_s {
 
 	bool				isFullscreen;
 
-	bool				allowNV30Path;
-	bool				allowNV20Path;
-	bool				allowNV10Path;
 	bool				allowARB2Path;
 	bool				allowGLSLPath;
 
