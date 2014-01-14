@@ -1,10 +1,22 @@
-Doom 3 GPL source release
-=========================
+
+ ___ __ __      ______       ______        ______     ___   ___      ______       __  __       ______     
+/__//_//_/\    /_____/\     /_____/\      /_____/\   /__/\ /__/\    /_____/\     /_/\/_/\     /_____/\    
+\::\| \| \ \   \:::_ \ \    \:::_ \ \     \:::_ \ \  \::\ \\  \ \   \::::_\/_    \:\ \:\ \    \::::_\/_   
+ \:.      \ \   \:\ \ \ \    \:(_) ) )_    \:(_) \ \  \::\/_\ .\ \   \:\/___/\    \:\ \:\ \    \:\/___/\  
+  \:.\-/\  \ \   \:\ \ \ \    \: __ `\ \    \: ___\/   \:: ___::\ \   \::___\/_    \:\ \:\ \    \_::._\:\ 
+   \. \  \  \ \   \:\_\ \ \    \ \ `\ \ \    \ \ \      \: \ \\::\ \   \:\____/\    \:\_\:\ \     /____\:\
+    \__\/ \__\/    \_____\/     \_\/ \_\/     \_\/       \__\/ \::\/    \_____\/     \_____\/     \_____\/
+                                                                                                          
+																										  
+Morpheus
+idTech 4 Engine Modification
+by Pat 'raynorpat' Raynor
+============================
 
 This file contains the following sections:
 
 GENERAL NOTES
-LICENSE
+LICENSES
 
 GENERAL NOTES
 =============
@@ -21,20 +33,10 @@ Note that Doom 3 and Doom 3: Resurrection of Evil are available from the Steam s
 http://store.steampowered.com/app/9050/
 http://store.steampowered.com/app/9070/
 
-Other platforms, updated source code, security issues:
-------------------------------------------------------
-
-If you have obtained this source code several weeks after the time of release,
-it is likely that you can find modified and improved
-versions of the engine in various open source projects across the internet.
-Depending what is your interest with the source code, those may be a better
-starting point.
-
 Compiling on win32:
 -------------------
 
 A project file for Microsoft Visual Studio 2010 is provided in neo\doom.sln
-We expect the solution file is compatible with the Express releases
 
 You will need the Microsoft DirectX SDK installed as well.
 If it does not reside in "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)"
@@ -51,13 +53,6 @@ Compiling on MacOS X:
 
 XCode 3.2 project is under neo/sys/osx/
 
-Back End Rendering of Stencil Shadows:
---------------------------------------
-
-The Doom 3 GPL source code release does not include functionality enabling rendering
-of stencil shadows via the “depth fail” method, a functionality commonly known as 
-"Carmack's Reverse".
-
 MayaImport:
 ---------------------------
 
@@ -65,14 +60,18 @@ The code for our Maya export plugin is included, if you are a Maya licensee
 you can obtain the SDK from Autodesk.
 
 
-LICENSE
-=======
-
+LICENSES
+========
 See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
-ADDITIONAL TERMS:  The Doom 3 GPL Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ADDITIONAL TERMS:
+ The Doom 3 GPL Source Code is also subject to certain additional terms.
+ You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.
+ If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
-EXCLUDED CODE:  The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.  You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.
+EXCLUDED CODE:
+  The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.
+  You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.
 
 Curl library
 ---------------------------------------------------------------------------
