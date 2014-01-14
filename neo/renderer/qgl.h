@@ -204,6 +204,9 @@ extern void ( APIENTRY * qglBindAttribLocationARB )( GLhandleARB programObj, GLu
 extern void ( APIENTRY * qglGetActiveAttribARB )( GLhandleARB programObj, GLuint index, GLsizei maxLength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name );
 extern GLint ( APIENTRY * qglGetAttribLocationARB )( GLhandleARB programObj, const GLcharARB *name );
 
+// separate stencil
+extern PFNGLSTENCILOPSEPARATEPROC				qglStencilOpSeparate;
+
 //===========================================================================
 
 // non-windows systems will just redefine qgl* to gl*

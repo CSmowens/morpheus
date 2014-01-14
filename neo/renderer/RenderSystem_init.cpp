@@ -270,9 +270,6 @@ PFNGLALPHAFRAGMENTOP2ATIPROC			qglAlphaFragmentOp2ATI;
 PFNGLALPHAFRAGMENTOP3ATIPROC			qglAlphaFragmentOp3ATI;
 PFNGLSETFRAGMENTSHADERCONSTANTATIPROC	qglSetFragmentShaderConstantATI;
 
-// separate stencil
-PFNGLSTENCILOPSEPARATEPROC				qglStencilOpSeparate;
-
 // ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE2DARBPROC		qglCompressedTexImage2DARB;
 PFNGLGETCOMPRESSEDTEXIMAGEARBPROC		qglGetCompressedTexImageARB;
@@ -343,6 +340,9 @@ void ( APIENTRY * qglGetShaderSourceARB )( GLhandleARB obj, GLsizei maxLength, G
 void ( APIENTRY * qglBindAttribLocationARB )( GLhandleARB programObj, GLuint index, const GLcharARB *name );
 void ( APIENTRY * qglGetActiveAttribARB )( GLhandleARB programObj, GLuint index, GLsizei maxLength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name );
 GLint ( APIENTRY * qglGetAttribLocationARB )( GLhandleARB programObj, const GLcharARB *name );
+
+// separate stencil
+PFNGLSTENCILOPSEPARATEPROC				qglStencilOpSeparate;
 
 /*
 =================
