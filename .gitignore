@@ -1,3 +1,17 @@
 build
 *.opensdf
 *.sdf
+base/doomkey
+base/game00.pk4
+base/game01.pk4
+base/game02.pk4
+base/game03.pk4
+base/pak000.pk4
+base/pak001.pk4
+base/pak002.pk4
+base/pak003.pk4
+base/pak004.pk4
+base/pak005.pk4
+base/pak006.pk4
+base/pak007.pk4
+base/pak008.pk4
