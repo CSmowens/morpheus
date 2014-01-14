@@ -673,7 +673,6 @@ typedef enum {
 	BE_ARB,
 	BE_NV10,
 	BE_NV20,
-	BE_R200,
 	BE_ARB2,
 	BE_GLSL,
 	BE_BAD
@@ -1295,9 +1294,6 @@ DRAW_*
 
 void	RB_ARB_DrawInteractions( void );
 
-void	R_R200_Init( void );
-void	RB_R200_DrawInteractions( void );
-
 void	R_NV10_Init( void );
 void	RB_NV10_DrawInteractions( void );
 
@@ -1317,7 +1313,6 @@ typedef enum {
 	VPROG_INTERACTION,
 	VPROG_ENVIRONMENT,
 	VPROG_BUMPY_ENVIRONMENT,
-	VPROG_R200_INTERACTION,
 	VPROG_STENCIL_SHADOW,
 	VPROG_NV20_BUMP_AND_LIGHT,
 	VPROG_NV20_DIFFUSE_COLOR,
