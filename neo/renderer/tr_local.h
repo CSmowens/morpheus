@@ -806,8 +806,7 @@ extern glconfig_t			glConfig;		// outside of TR since it shouldn't be cleared du
 //
 // cvars
 //
-extern idCVar r_ext_vertex_array_range;
-
+extern idCVar r_debugContext;			// enable various levels of context debug
 extern idCVar r_glDriver;				// "opengl32", etc
 extern idCVar r_mode;					// video mode number
 extern idCVar r_displayRefresh;			// optional display refresh rate option for vid mode
