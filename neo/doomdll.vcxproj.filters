@@ -624,6 +624,9 @@
     <ClInclude Include="renderer\RenderLog.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\RenderProgs.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel_contacts.cpp">
@@ -1815,6 +1818,12 @@
       <Filter>Ui</Filter>
     </ClCompile>
     <ClCompile Include="renderer\RenderLog.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderProgs.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderProgs_GLSL.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>

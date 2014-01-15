@@ -665,6 +665,8 @@ void R_InitOpenGL( void ) {
 	// recheck all the extensions (FIXME: this might be dangerous)
 	R_CheckPortableExtensions();
 
+	renderProgManager.Init();
+
 	// parse our vertex and fragment programs
 	R_ARB2_Init();
 
