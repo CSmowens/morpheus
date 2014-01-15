@@ -39,6 +39,14 @@ If you have questions concerning this license or the applicable additional terms
 //#define ID_DEBUG_MEMORY
 //#define ID_DEBUG_UNINITIALIZED_MEMORY
 
+#ifndef ID_RETAIL
+	#ifdef _DEBUG
+		#define ID_RETAIL 0
+	#else
+		#define ID_RETAIL 1
+	#endif
+#endif
+
 // if enabled, the console won't toggle upon ~, unless you start the binary with +set com_allowConsole 1
 // Ctrl+Alt+~ will always toggle the console no matter what
 #ifndef ID_CONSOLE_LOCK
