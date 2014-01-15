@@ -39,6 +39,12 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 
+enum graphicsVendor_t {
+	VENDOR_NVIDIA,
+	VENDOR_AMD,
+	VENDOR_INTEL
+};
+
 // Contains variables specific to the OpenGL configuration being run right now.
 // These are constant once the OpenGL subsystem is initialized.
 typedef struct glconfig_s {
@@ -47,27 +53,25 @@ typedef struct glconfig_s {
 	const char			*version_string;
 	const char			*extensions_string;
 	const char			*wgl_extensions_string;
+	const char 			*shading_language_string;
 
 	float				glVersion;				// atof( version_string )
-
+	graphicsVendor_t	vendor;
 
 	int					maxTextureSize;			// queried from GL
 	int					maxTextureUnits;
 	int					maxTextureCoords;
 	int					maxTextureImageUnits;
+	int					uniformBufferOffsetAlignment;
 	float				maxTextureAnisotropy;
 
 	int					colorBits, depthBits, stencilBits;
 
 	bool				multitextureAvailable;
+	bool				directStateAccess;
 	bool				textureCompressionAvailable;
 	bool				anisotropicAvailable;
 	bool				textureLODBiasAvailable;
-	bool				textureEnvAddAvailable;
-	bool				textureEnvCombineAvailable;
-	bool				cubeMapAvailable;
-	bool				envDot3Available;
-	bool				texture3DAvailable;
 	bool				sharedTexturePaletteAvailable;
 	bool				ARBVertexBufferObjectAvailable;
 	bool				ARBVertexProgramAvailable;
@@ -75,7 +79,12 @@ typedef struct glconfig_s {
 	bool				twoSidedStencilAvailable;
 	bool				textureNonPowerOfTwoAvailable;
 	bool				depthBoundsTestAvailable;
-	bool				GLSLAvailable;
+	bool				glslAvailable;
+	bool				uniformBufferAvailable;
+	bool				syncAvailable;
+	bool				timerQueryAvailable;
+	bool				occlusionQueryAvailable;
+	bool				debugOutputAvailable;
 
 	int					vidWidth, vidHeight;	// passed to R_BeginFrame
 
