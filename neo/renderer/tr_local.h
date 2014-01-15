@@ -39,6 +39,9 @@ class idRenderWorldLocal;
 // parallel on a dual cpu machine
 const int SMP_FRAMES = 1;
 
+// maximum texture units
+const int MAX_PROG_TEXTURE_PARMS = 16;
+
 const int FALLOFF_TEXTURE_SIZE =	64;
 
 const float	DEFAULT_FOG_DISTANCE = 500.0f;

@@ -753,7 +753,7 @@ void R_InitOpenGL( void ) {
 	float glslVersion = atof( glConfig.shading_language_string );
 	common->Printf( "OpenGL Version: %3.1f\n", glVersion );
 	common->Printf( "OpenGL Vendor : %s\n", glConfig.vendor_string );
-	common->Printf("OpenGL GLSL   : %3.1f\n", glslVersion );
+	common->Printf( "OpenGL GLSL   : %3.1f\n", glslVersion );
 
 	// OpenGL driver constants
 	qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
