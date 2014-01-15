@@ -1029,11 +1029,10 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 			qglGetShaderInfoLog( shader, infologLength, &charsWritten, infoLog.Ptr() );
 
 			// catch the strings the ATI and Intel drivers output on success
-			if ( strstr( infoLog.Ptr(), "successfully compiled to run on hardware" ) != NULL || 
-					strstr( infoLog.Ptr(), "No errors." ) != NULL ) {
-				//idLib::Printf( "%s program %s from %s compiled to run on hardware\n", typeName, GetName(), GetFileName() );
+			if ( strstr( infoLog.Ptr(), "successfully compiled to run on hardware" ) != NULL || strstr( infoLog.Ptr(), "No errors." ) != NULL ) {
+				//common->Printf( "%s program %s from %s compiled to run on hardware\n", typeName, GetName(), GetFileName() );
 			} else {
-				idLib::Printf( "While compiling %s program %s\n", ( target == GL_FRAGMENT_SHADER ) ? "fragment" : "vertex" , inFile.c_str() );
+				common->Printf("While compiling %s program %s\n", (target == GL_FRAGMENT_SHADER) ? "fragment" : "vertex", inFile.c_str());
 
 				const char separator = '\n';
 				idList<idStr> lines;
@@ -1045,13 +1044,13 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 					lines[index].CapLength( ofs );
 				}
 
-				idLib::Printf( "-----------------\n" );
+				common->Printf("-----------------\n");
 				for ( int i = 0; i < lines.Num(); i++ ) {
-					idLib::Printf( "%3d: %s\n", i+1, lines[i].c_str() );
+					common->Printf("%3d: %s\n", i + 1, lines[i].c_str());
 				}
-				idLib::Printf( "-----------------\n" );
+				common->Printf("-----------------\n");
 
-				idLib::Printf( "%s\n", infoLog.Ptr() );
+				common->Printf("%s\n", infoLog.Ptr());
 			}
 		}
 
@@ -1125,7 +1124,7 @@ void idRenderProgManager::CommitUniforms() {
 	const glslProgram_t & prog = glslPrograms[progID];
 
 	if ( r_useUniformArrays.GetBool() ) {
-		ALIGNTYPE16 idVec4 localVectors[RENDERPARM_USER + MAX_GLSL_USER_PARMS];
+		idVec4 localVectors[RENDERPARM_USER + MAX_GLSL_USER_PARMS];
 
 		if ( prog.vertexShaderIndex >= 0 ) {
 			const idList<int> & vertexUniforms = vertexShaders[prog.vertexShaderIndex].uniforms;
@@ -1207,13 +1206,13 @@ void idRenderProgManager::LoadGLSLProgram( const int programIndex, const int ver
 
 			// catch the strings the ATI and Intel drivers output on success
 			if ( strstr( infoLog, "Vertex shader(s) linked, fragment shader(s) linked." ) != NULL || strstr( infoLog, "No errors." ) != NULL ) {
-				//idLib::Printf( "render prog %s from %s linked\n", GetName(), GetFileName() );
+				//common->Printf( "render prog %s from %s linked\n", GetName(), GetFileName() );
 			} else {
-				idLib::Printf( "While linking GLSL program %d with vertexShader %s and fragmentShader %s\n", 
+				common->Printf("While linking GLSL program %d with vertexShader %s and fragmentShader %s\n",
 					programIndex, 
 					( vertexShaderIndex >= 0 ) ? vertexShaders[vertexShaderIndex].name.c_str() : "<Invalid>", 
 					( fragmentShaderIndex >= 0 ) ? fragmentShaders[ fragmentShaderIndex ].name.c_str() : "<Invalid>" );
-				idLib::Printf( "%s\n", infoLog );
+				common->Printf("%s\n", infoLog);
 			}
 
 			free( infoLog );
@@ -1224,7 +1223,7 @@ void idRenderProgManager::LoadGLSLProgram( const int programIndex, const int ver
 	qglGetProgramiv( program, GL_LINK_STATUS, &linked );
 	if ( linked == GL_FALSE ) {
 		qglDeleteProgram( program );
-		idLib::Error( "While linking GLSL program %d with vertexShader %s and fragmentShader %s\n", 
+		common->Error("While linking GLSL program %d with vertexShader %s and fragmentShader %s\n",
 			programIndex, 
 			( vertexShaderIndex >= 0 ) ? vertexShaders[vertexShaderIndex].name.c_str() : "<Invalid>", 
 			( fragmentShaderIndex >= 0 ) ? fragmentShaders[ fragmentShaderIndex ].name.c_str() : "<Invalid>" );
