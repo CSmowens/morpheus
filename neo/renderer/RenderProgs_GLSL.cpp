@@ -1012,7 +1012,6 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 		}
 	}
 
-#if 0
 	// create and compile the shader
 	const GLuint shader = qglCreateShader( target );
 	if ( shader ) {
@@ -1063,9 +1062,6 @@ GLuint idRenderProgManager::LoadGLSLShader( GLenum target, const char * name, id
 	}
 
 	return shader;
-#else
-	return INVALID_PROGID;
-#endif
 }
 /*
 ================================================================================================
@@ -1119,7 +1115,6 @@ idRenderProgManager::CommitUnforms
 ================================================================================================
 */
 void idRenderProgManager::CommitUniforms() {
-#if 0
 	const int progID = GetGLSLCurrentProgram();
 	const glslProgram_t & prog = glslPrograms[progID];
 
@@ -1151,15 +1146,12 @@ void idRenderProgManager::CommitUniforms() {
 			qglUniform4fv( uniformLocation.uniformIndex, 1, glslUniforms[uniformLocation.parmIndex].ToFloatPtr() );
 		}
 	}
-#endif
 }
 
-#if 0
 class idSort_QuickUniforms : public idSort_Quick< glslUniformLocation_t, idSort_QuickUniforms > {
 public:
 	int Compare( const glslUniformLocation_t & a, const glslUniformLocation_t & b ) const { return a.uniformIndex - b.uniformIndex; }
 };
-#endif
 
 /*
 ================================================================================================
@@ -1167,7 +1159,6 @@ idRenderProgManager::LoadGLSLProgram
 ================================================================================================
 */
 void idRenderProgManager::LoadGLSLProgram( const int programIndex, const int vertexShaderIndex, const int fragmentShaderIndex ) {
-#if 0
 	glslProgram_t & prog = glslPrograms[programIndex];
 
 	if ( prog.progId != INVALID_PROGID ) {
@@ -1287,9 +1278,6 @@ void idRenderProgManager::LoadGLSLProgram( const int programIndex, const int ver
 	prog.progId = program;
 	prog.fragmentShaderIndex = fragmentShaderIndex;
 	prog.vertexShaderIndex = vertexShaderIndex;
-#else
-	return;
-#endif
 }
 
 /*

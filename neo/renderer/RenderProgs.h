@@ -150,28 +150,19 @@ public:
 	void	BindShader_Color( ) { BindShader_Builtin( BUILTIN_COLOR ); }
 	void	BindShader_Texture( ) { BindShader_Builtin( BUILTIN_TEXTURED ); }
 	void	BindShader_TextureVertexColor() { BindShader_Builtin( BUILTIN_TEXTURE_VERTEXCOLOR ); };
-	void	BindShader_TextureVertexColorSkinned() { BindShader_Builtin( BUILTIN_TEXTURE_VERTEXCOLOR_SKINNED ); };
 	void	BindShader_TextureTexGenVertexColor() { BindShader_Builtin( BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR ); };
 	void	BindShader_Interaction()  { BindShader_Builtin( BUILTIN_INTERACTION ); }
-	void	BindShader_InteractionSkinned()  { BindShader_Builtin( BUILTIN_INTERACTION_SKINNED ); }
 	void	BindShader_InteractionAmbient()  { BindShader_Builtin( BUILTIN_INTERACTION_AMBIENT ); }
-	void	BindShader_InteractionAmbientSkinned()  { BindShader_Builtin( BUILTIN_INTERACTION_AMBIENT_SKINNED ); }
 	void	BindShader_SimpleShade() { BindShader_Builtin( BUILTIN_SIMPLESHADE ); }
 	void	BindShader_Environment() { BindShader_Builtin( BUILTIN_ENVIRONMENT ); }
-	void	BindShader_EnvironmentSkinned() { BindShader_Builtin( BUILTIN_ENVIRONMENT_SKINNED ); }
 	void	BindShader_BumpyEnvironment() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT ); }
-	void	BindShader_BumpyEnvironmentSkinned() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT_SKINNED ); }
 
 	void	BindShader_Depth() { BindShader_Builtin( BUILTIN_DEPTH ); }
-	void	BindShader_DepthSkinned() { BindShader_Builtin( BUILTIN_DEPTH_SKINNED ); }
 	void	BindShader_Shadow() { BindShader( builtinShaders[BUILTIN_SHADOW], -1 ); }
-	void	BindShader_ShadowSkinned() { BindShader( builtinShaders[BUILTIN_SHADOW_SKINNED], -1 ); }
 	void	BindShader_ShadowDebug() { BindShader_Builtin( BUILTIN_SHADOW_DEBUG ); }
-	void	BindShader_ShadowDebugSkinned() { BindShader_Builtin( BUILTIN_SHADOW_DEBUG_SKINNED ); }
 
 	void	BindShader_BlendLight() { BindShader_Builtin( BUILTIN_BLENDLIGHT ); }
 	void	BindShader_Fog() { BindShader_Builtin( BUILTIN_FOG ); }
-	void	BindShader_FogSkinned() { BindShader_Builtin( BUILTIN_FOG_SKINNED ); }
 	void	BindShader_SkyBox() { BindShader_Builtin( BUILTIN_SKYBOX ); }
 	void	BindShader_WobbleSky() { BindShader_Builtin( BUILTIN_WOBBLESKY ); }
 	void	BindShader_StereoDeGhost() { BindShader_Builtin( BUILTIN_STEREO_DEGHOST ); }
@@ -179,14 +170,7 @@ public:
 	void	BindShader_StereoInterlace() { BindShader_Builtin( BUILTIN_STEREO_INTERLACE ); }
 	void	BindShader_PostProcess() { BindShader_Builtin( BUILTIN_POSTPROCESS ); }
 	void	BindShader_ZCullReconstruct() { BindShader_Builtin( BUILTIN_ZCULL_RECONSTRUCT ); }
-	void	BindShader_Bink() { BindShader_Builtin( BUILTIN_BINK ); }
-	void	BindShader_BinkGUI() { BindShader_Builtin( BUILTIN_BINK_GUI ); }
 	void	BindShader_MotionBlur() { BindShader_Builtin( BUILTIN_MOTION_BLUR); }
-
-	// the joints buffer should only be bound for vertex programs that use joints
-	bool	ShaderUsesJoints() const { return vertexShaders[currentVertexShader].usesJoints; }
-	// the rpEnableSkinning render parm should only be set for vertex programs that use it
-	bool	ShaderHasOptionalSkinning() const { return vertexShaders[currentVertexShader].optionalSkinning; }
 
 	// unbind the currently bound render program
 	void	Unbind();
@@ -213,35 +197,24 @@ protected:
 		BUILTIN_SIMPLESHADE,
 		BUILTIN_TEXTURED,
 		BUILTIN_TEXTURE_VERTEXCOLOR,
-		BUILTIN_TEXTURE_VERTEXCOLOR_SKINNED,
 		BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR,
 		BUILTIN_INTERACTION,
-		BUILTIN_INTERACTION_SKINNED,
 		BUILTIN_INTERACTION_AMBIENT,
-		BUILTIN_INTERACTION_AMBIENT_SKINNED,
 		BUILTIN_ENVIRONMENT,
-		BUILTIN_ENVIRONMENT_SKINNED,
 		BUILTIN_BUMPY_ENVIRONMENT,
-		BUILTIN_BUMPY_ENVIRONMENT_SKINNED,
 
 		BUILTIN_DEPTH,
-		BUILTIN_DEPTH_SKINNED,
 		BUILTIN_SHADOW,
-		BUILTIN_SHADOW_SKINNED,
 		BUILTIN_SHADOW_DEBUG,
-		BUILTIN_SHADOW_DEBUG_SKINNED,
 
 		BUILTIN_BLENDLIGHT,
 		BUILTIN_FOG,
-		BUILTIN_FOG_SKINNED,
 		BUILTIN_SKYBOX,
 		BUILTIN_WOBBLESKY,
 		BUILTIN_POSTPROCESS,
 		BUILTIN_STEREO_DEGHOST,
 		BUILTIN_STEREO_WARP,
 		BUILTIN_ZCULL_RECONSTRUCT,
-		BUILTIN_BINK,
-		BUILTIN_BINK_GUI,
 		BUILTIN_STEREO_INTERLACE,
 		BUILTIN_MOTION_BLUR,
 
@@ -250,7 +223,6 @@ protected:
 	int builtinShaders[MAX_BUILTINS];
 	void BindShader_Builtin( int i ) { BindShader( builtinShaders[i], builtinShaders[i] ); }
 
-	GLuint	LoadShader( GLenum target, const char * name, const char * startToken );
 	bool	CompileGLSL( GLenum target, const char * name );
 	GLuint	LoadGLSLShader( GLenum target, const char * name, idList<int> & uniforms );
 	void	LoadGLSLProgram( const int programIndex, const int vertexShaderIndex, const int fragmentShaderIndex );
@@ -258,11 +230,9 @@ protected:
 	static const GLuint INVALID_PROGID = 0xFFFFFFFF;
 
 	struct vertexShader_t {
-					vertexShader_t() : progId( INVALID_PROGID ), usesJoints( false ), optionalSkinning( false ) {}
+					vertexShader_t() : progId( INVALID_PROGID ) {}
 		idStr		name;
 		GLuint		progId;
-		bool		usesJoints;
-		bool		optionalSkinning;
 		idList<int>	uniforms;
 	};
 	struct fragmentShader_t {
