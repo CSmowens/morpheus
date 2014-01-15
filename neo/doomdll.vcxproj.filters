@@ -1811,9 +1811,6 @@
     <ClCompile Include="ui\Winvar.cpp">
       <Filter>Ui</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\draw_glsl.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="openal\idal.py">

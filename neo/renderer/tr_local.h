@@ -671,7 +671,6 @@ const int MAX_GUI_SURFACES	= 1024;		// default size of the drawSurfs list for gu
 
 typedef enum {
 	BE_ARB2,
-	BE_GLSL,
 	BE_BAD
 } backEndName_t;
 
@@ -1286,9 +1285,6 @@ void	RB_ARB2_DrawInteractions( void );
 void	R_ReloadARBPrograms_f( const idCmdArgs &args );
 int		R_FindARBProgram( GLenum target, const char *program );
 
-void	R_GLSL_Init( void );
-void	RB_GLSL_DrawInteractions( void );
-
 typedef enum {
 	PROG_INVALID,
 	VPROG_INTERACTION,
@@ -1304,48 +1300,6 @@ typedef enum {
 	FPROG_GLASSWARP,
 	PROG_USER
 } program_t;
-
-typedef struct shaderProgram_s
-{
-	GLhandleARB     program;					// program = vertex + fragment shader
-
-	GLhandleARB		vertexShader;
-	GLhandleARB		fragmentShader;
-
-	// uniform parameters
-	GLint			u_normalTexture;
-	GLint			u_lightFalloffTexture;
-	GLint			u_lightProjectionTexture;
-	GLint			u_diffuseTexture;
-	GLint			u_specularTexture;
-
-	GLint			modelMatrix;
-
-	GLint			localLightOrigin;
-	GLint			localViewOrigin;
-
-	GLint			lightProjectionS;
-	GLint			lightProjectionT;
-	GLint			lightProjectionQ;
-	GLint			lightFalloff;
-
-	GLint			bumpMatrixS;
-	GLint			bumpMatrixT;
-	GLint			diffuseMatrixS;
-	GLint			diffuseMatrixT;
-	GLint			specularMatrixS;
-	GLint			specularMatrixT;
-
-	GLint			colorModulate;
-	GLint			colorAdd;
-
-	GLint			diffuseColor;
-	GLint			specularColor;
-} shaderProgram_t;
-
-extern shaderProgram_t  interactionShader;
-extern shaderProgram_t  ambientInteractionShader;
-extern shaderProgram_t	stencilShadowShader;
 
 /*
 

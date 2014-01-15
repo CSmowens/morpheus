@@ -1013,7 +1013,7 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 	const srfTriangles_t	*tri;
 
 	// set the light position to project the rear surfaces
-	if ( r_useShadowVertexProgram.GetBool() && surf->space != backEnd.currentSpace ) {
+	if ( surf->space != backEnd.currentSpace ) {
 		idVec4 localLight;
 
 		R_GlobalPointToLocal( surf->space->modelMatrix, backEnd.vLight->globalLightOrigin, localLight.ToVec3() );
@@ -1021,8 +1021,6 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 
 		if ( tr.backEndRenderer == BE_ARB2 ) {
 			qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr() );
-		} else if ( tr.backEndRenderer == BE_GLSL ) {
-			qglUniform4fvARB( stencilShadowShader.localLightOrigin, 1, localLight.ToFloatPtr() );
 		}
 	}
 
@@ -1667,9 +1665,6 @@ void	RB_STD_DrawView( void ) {
 	switch( tr.backEndRenderer ) {
 		case BE_ARB2:
 			RB_ARB2_DrawInteractions();
-			break;
-		case BE_GLSL:
-			RB_GLSL_DrawInteractions();
 			break;
 	}
 
