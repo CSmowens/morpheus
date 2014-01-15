@@ -48,7 +48,7 @@ GL_SelectTextureNoClient
 static void GL_SelectTextureNoClient( int unit ) {
 	backEnd.glState.currenttmu = unit;
 	qglActiveTextureARB( GL_TEXTURE0_ARB + unit );
-	RB_LogComment( "glActiveTextureARB( %i )\n", unit );
+	RENDERLOG_PRINTF("glActiveTextureARB( %i )\n", unit);
 }
 
 /*

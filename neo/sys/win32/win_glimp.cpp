@@ -850,9 +850,6 @@ bool GLimp_Init( glimpParms_t parms ) {
 	// wglSwapinterval, etc
 	GLW_CheckWGLExtensions( win32.hDC );
 
-	// check logging
-	GLimp_EnableLogging( ( r_logFile.GetInteger() != 0 ) );
-
 	return true;
 }
 

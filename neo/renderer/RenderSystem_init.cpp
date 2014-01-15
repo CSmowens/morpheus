@@ -1750,6 +1750,8 @@ GfxInfo_f
 ================
 */
 void GfxInfo_f( const idCmdArgs &args ) {
+	common->Printf( "CPU: %s\n", Sys_GetProcessorString() );
+
 	const char *fsstrings[] =
 	{
 		"windowed",
@@ -1775,9 +1777,6 @@ void GfxInfo_f( const idCmdArgs &args ) {
 	} else {
 		common->Printf( "N/A\n" );
 	}
-	common->Printf( "CPU: %s\n", Sys_GetProcessorString() );
-	
-	//=============================
 
 	common->Printf( "-------\n" );
 
@@ -2043,7 +2042,6 @@ void idRenderSystemLocal::Clear( void ) {
 	memset( &pc, 0, sizeof( pc ) );
 	memset( &lockSurfacesCmd, 0, sizeof( lockSurfacesCmd ) );
 	memset( &identitySpace, 0, sizeof( identitySpace ) );
-	logFile = NULL;
 	stencilIncr = 0;
 	stencilDecr = 0;
 	memset( renderCrops, 0, sizeof( renderCrops ) );
@@ -2128,13 +2126,6 @@ void idRenderSystemLocal::Shutdown( void ) {
 
 	globalImages->Shutdown();
 
-	// close the r_logFile
-	if ( logFile ) {
-		fprintf( logFile, "*** CLOSING LOG ***\n" );
-		fclose( logFile );
-		logFile = 0;
-	}
-
 	// free frame memory
 	R_ShutdownFrameData();
 
@@ -2149,6 +2140,8 @@ void idRenderSystemLocal::Shutdown( void ) {
 	delete demoGuiModel;
 
 	Clear();
+
+	renderLog.Close();
 
 	ShutdownOpenGL();
 }

@@ -1920,7 +1920,6 @@ void idImageManager::BindNull() {
 
 	tmu = &backEnd.glState.tmu[backEnd.glState.currenttmu];
 
-	RB_LogComment( "BindNull()\n" );
 	if ( tmu->textureType == TT_CUBIC ) {
 		qglDisable( GL_TEXTURE_CUBE_MAP_EXT );
 	} else if ( tmu->textureType == TT_3D ) {

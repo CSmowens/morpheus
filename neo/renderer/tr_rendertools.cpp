@@ -2332,7 +2332,7 @@ void RB_RenderDebugTools( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 		return;
 	}
 
-	RB_LogComment( "---------- RB_RenderDebugTools ----------\n" );
+	RENDERLOG_PRINTF("---------- RB_RenderDebugTools ----------\n");
 
 	GL_State( GLS_DEFAULT );
 	backEnd.currentScissor = backEnd.viewDef->scissor;

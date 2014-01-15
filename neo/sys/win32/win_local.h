@@ -91,6 +91,7 @@ int		IN_DIMapKey( int key );
 
 void	DisableTaskKeys( BOOL bDisable, BOOL bBeep, BOOL bTaskMgr );
 
+uint64	Sys_Microseconds();
 
 // window procedure
 LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
