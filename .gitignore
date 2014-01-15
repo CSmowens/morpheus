@@ -19,3 +19,6 @@ base/DoomConfig.cfg
 base/config.spec
 base/warnings.txt
 base/xpkey
+*.glsl
+*.hlsl
+*.uniforms
