@@ -32,7 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 static const int PC_ATTRIB_INDEX_VERTEX		= 0;
 static const int PC_ATTRIB_INDEX_NORMAL		= 2;
 static const int PC_ATTRIB_INDEX_COLOR		= 3;
-static const int PC_ATTRIB_INDEX_COLOR2		= 4;
 static const int PC_ATTRIB_INDEX_ST			= 8;
 static const int PC_ATTRIB_INDEX_TANGENT	= 9;
 
