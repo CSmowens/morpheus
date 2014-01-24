@@ -1826,6 +1826,7 @@
     <ClCompile Include="renderer\RenderProgs_GLSL.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="idlib\precompiled.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="openal\idal.py">

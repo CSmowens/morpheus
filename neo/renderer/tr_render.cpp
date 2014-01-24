@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "tr_local.h"
@@ -90,6 +90,8 @@ void RB_DrawElementsWithCounters( const srfTriangles_t *tri ) {
 		}
 	}
 
+	renderProgManager.CommitUniforms();
+
 	if ( tri->indexCache ) {
 		qglDrawElements( GL_TRIANGLES, 
 						r_singleTriangle.GetBool() ? 3 : tri->numIndexes,
@@ -145,7 +147,6 @@ void RB_RenderTriangleSurface( const srfTriangles_t *tri ) {
 		RB_DrawElementsImmediate( tri );
 		return;
 	}
-
 
 	idDrawVert *ac = (idDrawVert *)vertexCache.Position( tri->ambientCache );
 	qglVertexPointer( 3, GL_FLOAT, sizeof( idDrawVert ), ac->xyz.ToFloatPtr() );

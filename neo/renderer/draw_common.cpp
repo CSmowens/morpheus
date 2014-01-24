@@ -25,10 +25,65 @@ If you have questions concerning this license or the applicable additional terms
 
 ===========================================================================
 */
-#include "../idlib/precompiled.h"
+#include "precompiled.h"
 #pragma hdrstop
 
 #include "tr_local.h"
+
+/*
+================
+SetVertexParm
+================
+*/
+static ID_INLINE void SetVertexParm(renderParm_t rp, const float * value) {
+	renderProgManager.SetUniformValue(rp, value);
+}
+
+/*
+================
+SetVertexParms
+================
+*/
+static ID_INLINE void SetVertexParms(renderParm_t rp, const float * value, int num) {
+	for (int i = 0; i < num; i++) {
+		renderProgManager.SetUniformValue((renderParm_t)(rp + i), value + (i * 4));
+	}
+}
+
+/*
+================
+SetFragmentParm
+================
+*/
+static ID_INLINE void SetFragmentParm(renderParm_t rp, const float * value) {
+	renderProgManager.SetUniformValue(rp, value);
+}
+
+static const float zero[4] = { 0, 0, 0, 0 };
+static const float one[4] = { 1, 1, 1, 1 };
+static const float negOne[4] = { -1, -1, -1, -1 };
+
+/*
+================
+RB_SetVertexColorParms
+================
+*/
+static void RB_SetVertexColorParms(stageVertexColor_t svc) {
+	switch (svc) {
+	case SVC_IGNORE:
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, zero);
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, one);
+		break;
+	case SVC_MODULATE:
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, one);
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, zero);
+		break;
+	case SVC_INVERSE_MODULATE:
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, negOne);
+		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, one);
+		break;
+	}
+}
 
 /*
 =====================
@@ -1599,7 +1654,7 @@ void RB_STD_LightScale( void ) {
 	qglMatrixMode( GL_PROJECTION );
 	qglPushMatrix();
 	qglLoadIdentity(); 
-    qglOrtho( 0, 1, 0, 1, -1, 1 );
+	qglOrtho( 0, 1, 0, 1, -1, 1 );
 
 	GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_SRC_COLOR );
 	GL_Cull( CT_TWO_SIDED );	// so mirror views also get it
@@ -1632,15 +1687,250 @@ void RB_STD_LightScale( void ) {
 	GL_Cull( CT_FRONT_SIDED );
 }
 
+
+/*
+=========================================================================================
+
+GENERAL INTERACTION RENDERING
+
+=========================================================================================
+*/
+
+
+/*
+====================
+GL_SelectTextureNoClient
+====================
+*/
+static void GL_SelectTextureNoClient(int unit) {
+	backEnd.glState.currenttmu = unit;
+	qglActiveTextureARB(GL_TEXTURE0_ARB + unit);
+	RENDERLOG_PRINTF("glActiveTextureARB( %i )\n", unit);
+}
+
+/*
+==================
+RB_STD_DrawInteraction
+==================
+*/
+void RB_STD_DrawInteraction(const drawInteraction_t *din) {
+	// load all the vertex program parameters
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, din->localLightOrigin.ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_VIEW_ORIGIN, din->localViewOrigin.ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_S, din->lightProjection[0].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_T, din->lightProjection[1].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_Q, din->lightProjection[2].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_FALLOFF_S, din->lightProjection[3].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_BUMP_MATRIX_S, din->bumpMatrix[0].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_BUMP_MATRIX_T, din->bumpMatrix[1].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_DIFFUSE_MATRIX_S, din->diffuseMatrix[0].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_DIFFUSE_MATRIX_T, din->diffuseMatrix[1].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_SPECULAR_MATRIX_S, din->specularMatrix[0].ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_SPECULAR_MATRIX_T, din->specularMatrix[1].ToFloatPtr());
+
+	static const float zero[4] = { 0, 0, 0, 0 };
+	static const float one[4] = { 1, 1, 1, 1 };
+	static const float negOne[4] = { -1, -1, -1, -1 };
+
+	switch (din->vertexColor) {
+	case SVC_IGNORE:
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, zero);
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, one);
+		break;
+	case SVC_MODULATE:
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, one);
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, zero);
+		break;
+	case SVC_INVERSE_MODULATE:
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, negOne);
+		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, one);
+		break;
+	}
+
+	// set the constant colors
+	qglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, din->diffuseColor.ToFloatPtr());
+	qglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 1, din->specularColor.ToFloatPtr());
+
+	// set the textures
+
+	// texture 0 will be the per-surface bump map
+	GL_SelectTextureNoClient(0);
+	din->bumpImage->Bind();
+
+	// texture 1 will be the light falloff texture
+	GL_SelectTextureNoClient(1);
+	din->lightFalloffImage->Bind();
+
+	// texture 2 will be the light projection texture
+	GL_SelectTextureNoClient(2);
+	din->lightImage->Bind();
+
+	// texture 3 is the per-surface diffuse map
+	GL_SelectTextureNoClient(3);
+	din->diffuseImage->Bind();
+
+	// texture 4 is the per-surface specular map
+	GL_SelectTextureNoClient(4);
+	din->specularImage->Bind();
+
+	// draw it
+	RB_DrawElementsWithCounters(din->surf->geo);
+}
+
+
+/*
+=============
+RB_STD_CreateDrawInteractions
+=============
+*/
+void RB_STD_CreateDrawInteractions(const drawSurf_t *surf) {
+	if (!surf) {
+		return;
+	}
+
+	// perform setup here that will be constant for all interactions
+	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHMASK | backEnd.depthFunc);
+
+	// bind the vertex program
+	renderProgManager.BindShader_Interaction();
+
+	// enable the vertex arrays
+	qglEnableVertexAttribArrayARB(8);
+	qglEnableVertexAttribArrayARB(9);
+	qglEnableVertexAttribArrayARB(10);
+	qglEnableVertexAttribArrayARB(11);
+	qglEnableClientState(GL_COLOR_ARRAY);
+
+	for (; surf; surf = surf->nextOnLight) {
+		// perform setup here that will not change over multiple interaction passes
+
+		// set the vertex pointers
+		idDrawVert	*ac = (idDrawVert *)vertexCache.Position(surf->geo->ambientCache);
+		qglColorPointer(4, GL_UNSIGNED_BYTE, sizeof(idDrawVert), ac->color);
+		qglVertexAttribPointerARB(11, 3, GL_FLOAT, false, sizeof(idDrawVert), ac->normal.ToFloatPtr());
+		qglVertexAttribPointerARB(10, 3, GL_FLOAT, false, sizeof(idDrawVert), ac->tangents[1].ToFloatPtr());
+		qglVertexAttribPointerARB(9, 3, GL_FLOAT, false, sizeof(idDrawVert), ac->tangents[0].ToFloatPtr());
+		qglVertexAttribPointerARB(8, 2, GL_FLOAT, false, sizeof(idDrawVert), ac->st.ToFloatPtr());
+		qglVertexPointer(3, GL_FLOAT, sizeof(idDrawVert), ac->xyz.ToFloatPtr());
+
+		// this may cause RB_STD_DrawInteraction to be exacuted multiple
+		// times with different colors and images if the surface or light have multiple layers
+		RB_CreateSingleDrawInteractions(surf, RB_STD_DrawInteraction);
+	}
+
+	qglDisableVertexAttribArrayARB(8);
+	qglDisableVertexAttribArrayARB(9);
+	qglDisableVertexAttribArrayARB(10);
+	qglDisableVertexAttribArrayARB(11);
+	qglDisableClientState(GL_COLOR_ARRAY);
+
+	// disable features
+	GL_SelectTextureNoClient(4);
+	globalImages->BindNull();
+
+	GL_SelectTextureNoClient(3);
+	globalImages->BindNull();
+
+	GL_SelectTextureNoClient(2);
+	globalImages->BindNull();
+
+	GL_SelectTextureNoClient(1);
+	globalImages->BindNull();
+
+	backEnd.glState.currenttmu = -1;
+	GL_SelectTexture(0);
+
+	renderProgManager.Unbind();
+}
+
+
+/*
+==================
+RB_STD_DrawInteractions
+==================
+*/
+void RB_STD_DrawInteractions(void) {
+	viewLight_t		*vLight;
+	const idMaterial	*lightShader;
+
+	GL_SelectTexture(0);
+	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	//
+	// for each light, perform adding and shadowing
+	//
+	for (vLight = backEnd.viewDef->viewLights; vLight; vLight = vLight->next) {
+		backEnd.vLight = vLight;
+
+		// do fogging later
+		if (vLight->lightShader->IsFogLight()) {
+			continue;
+		}
+		if (vLight->lightShader->IsBlendLight()) {
+			continue;
+		}
+
+		if (!vLight->localInteractions && !vLight->globalInteractions && !vLight->translucentInteractions) {
+			continue;
+		}
+
+		lightShader = vLight->lightShader;
+
+		// clear the stencil buffer if needed
+		if (vLight->globalShadows || vLight->localShadows) {
+			backEnd.currentScissor = vLight->scissorRect;
+			if (r_useScissor.GetBool()) {
+				qglScissor(backEnd.viewDef->viewport.x1 + backEnd.currentScissor.x1,
+					backEnd.viewDef->viewport.y1 + backEnd.currentScissor.y1,
+					backEnd.currentScissor.x2 + 1 - backEnd.currentScissor.x1,
+					backEnd.currentScissor.y2 + 1 - backEnd.currentScissor.y1);
+			}
+			qglClear(GL_STENCIL_BUFFER_BIT);
+		} else {
+			// no shadows, so no need to read or write the stencil buffer
+			// we might in theory want to use GL_ALWAYS instead of disabling
+			// completely, to satisfy the invarience rules
+			qglStencilFunc(GL_ALWAYS, 128, 255);
+		}
+
+//		qglEnable(GL_VERTEX_PROGRAM_ARB);
+//		qglBindProgramARB(GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW);
+//		RB_StencilShadowPass(vLight->globalShadows);
+		RB_STD_CreateDrawInteractions(vLight->localInteractions);
+//		qglEnable(GL_VERTEX_PROGRAM_ARB);
+//		qglBindProgramARB(GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW);
+//		RB_StencilShadowPass(vLight->localShadows);
+		RB_STD_CreateDrawInteractions(vLight->globalInteractions);
+//		qglDisable(GL_VERTEX_PROGRAM_ARB);	// if there weren't any globalInteractions, it would have stayed on
+
+		// translucent surfaces never get stencil shadowed
+		if (r_skipTranslucent.GetBool()) {
+			continue;
+		}
+
+		qglStencilFunc(GL_ALWAYS, 128, 255);
+
+		backEnd.depthFunc = GLS_DEPTHFUNC_LESS;
+		RB_STD_CreateDrawInteractions(vLight->translucentInteractions);
+
+		backEnd.depthFunc = GLS_DEPTHFUNC_EQUAL;
+	}
+
+	// disable stencil shadow test
+	qglStencilFunc(GL_ALWAYS, 128, 255);
+
+	GL_SelectTexture(0);
+	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
 //=========================================================================================
 
 /*
 =============
 RB_STD_DrawView
-
 =============
 */
-void	RB_STD_DrawView( void ) {
+void RB_STD_DrawView( void ) {
 	drawSurf_t	 **drawSurfs;
 	int			numDrawSurfs;
 
@@ -1662,6 +1952,7 @@ void	RB_STD_DrawView( void ) {
 	RB_STD_FillDepthBuffer( drawSurfs, numDrawSurfs );
 
 	// main light renderer
+//	RB_STD_DrawInteractions();
 	switch( tr.backEndRenderer ) {
 		case BE_ARB2:
 			RB_ARB2_DrawInteractions();
