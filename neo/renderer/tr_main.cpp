@@ -307,7 +307,7 @@ void *R_StaticAlloc( int bytes ) {
 
 	tr.staticAllocCount += bytes;
 
-    buf = Mem_Alloc( bytes );
+	buf = Mem_Alloc( bytes );
 
 	// don't exit on failure on zero length allocations since the old code didn't
 	if ( !buf && ( bytes != 0 ) ) {
@@ -336,7 +336,7 @@ R_StaticFree
 */
 void R_StaticFree( void *data ) {
 	tr.pc.c_free++;
-    Mem_Free( data );
+	Mem_Free( data );
 }
 
 /*
@@ -368,7 +368,7 @@ void *R_FrameAlloc( int bytes ) {
 	frameData_t		*frame;
 	frameMemoryBlock_t	*block;
 	void			*buf;
-    
+	
 	bytes = (bytes+16)&~15;
 	// see if it can be satisfied in the current block
 	frame = frameData;
