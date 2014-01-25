@@ -76,20 +76,21 @@ void idRenderProgManager::Init() {
 		int index;
 		const char * name;
 	} builtins[] = {
-		{ BUILTIN_GUI, "gui.vfp" },
-		{ BUILTIN_COLOR, "color.vfp" },
-		{ BUILTIN_SIMPLESHADE, "simpleshade.vfp" },
-		{ BUILTIN_TEXTURED, "texture.vfp" },
-		{ BUILTIN_TEXTURE_VERTEXCOLOR, "texture_color.vfp" },
-		{ BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR, "texture_color_texgen.vfp" },
+//		{ BUILTIN_GUI, "gui.vfp" },
+//		{ BUILTIN_COLOR, "color.vfp" },
+//		{ BUILTIN_SIMPLESHADE, "simpleshade.vfp" },
+//		{ BUILTIN_TEXTURED, "texture.vfp" },
+//		{ BUILTIN_TEXTURE_VERTEXCOLOR, "texture_color.vfp" },
+//		{ BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR, "texture_color_texgen.vfp" },
 		{ BUILTIN_INTERACTION, "interaction.vfp" },
-		{ BUILTIN_INTERACTION_AMBIENT, "interactionAmbient.vfp" },
-		{ BUILTIN_ENVIRONMENT, "environment.vfp" },
-		{ BUILTIN_BUMPY_ENVIRONMENT, "bumpyEnvironment.vfp" },
+//		{ BUILTIN_INTERACTION_AMBIENT, "interactionAmbient.vfp" },
+//		{ BUILTIN_ENVIRONMENT, "environment.vfp" },
+//		{ BUILTIN_BUMPY_ENVIRONMENT, "bumpyEnvironment.vfp" },
 
-		{ BUILTIN_DEPTH, "depth.vfp" },
-		{ BUILTIN_SHADOW_DEBUG, "shadowDebug.vfp" },
+//		{ BUILTIN_DEPTH, "depth.vfp" },
+//		{ BUILTIN_SHADOW_DEBUG, "shadowDebug.vfp" },
 
+/*
 		{ BUILTIN_BLENDLIGHT, "blendlight.vfp" },
 		{ BUILTIN_FOG, "fog.vfp" },
 		{ BUILTIN_SKYBOX, "skybox.vfp" },
@@ -100,6 +101,7 @@ void idRenderProgManager::Init() {
 		{ BUILTIN_ZCULL_RECONSTRUCT, "zcullReconstruct.vfp" },
 		{ BUILTIN_STEREO_INTERLACE, "stereoInterlace.vfp" },
 		{ BUILTIN_MOTION_BLUR, "motionBlur.vfp" },
+*/
 	};
 	int numBuiltins = sizeof( builtins ) / sizeof( builtins[0] );
 	vertexShaders.SetNum( numBuiltins );
@@ -116,9 +118,8 @@ void idRenderProgManager::Init() {
 	}
 
 	// Special case handling for fastZ shaders
-	builtinShaders[BUILTIN_SHADOW] = FindVertexShader( "shadow.vp" );
-
-	FindGLSLProgram( "shadow.vp", builtinShaders[BUILTIN_SHADOW], -1 );
+//	builtinShaders[BUILTIN_SHADOW] = FindVertexShader( "shadow.vp" );
+//	FindGLSLProgram( "shadow.vp", builtinShaders[BUILTIN_SHADOW], -1 );
 
 	glslUniforms.SetNum( RENDERPARM_USER + MAX_GLSL_USER_PARMS );
 

@@ -35,8 +35,8 @@ If you have questions concerning this license or the applicable additional terms
 SetVertexParm
 ================
 */
-static ID_INLINE void SetVertexParm(renderParm_t rp, const float * value) {
-	renderProgManager.SetUniformValue(rp, value);
+static ID_INLINE void SetVertexParm( renderParm_t rp, const float * value ) {
+	renderProgManager.SetUniformValue( rp, value );
 }
 
 /*
@@ -44,9 +44,9 @@ static ID_INLINE void SetVertexParm(renderParm_t rp, const float * value) {
 SetVertexParms
 ================
 */
-static ID_INLINE void SetVertexParms(renderParm_t rp, const float * value, int num) {
-	for (int i = 0; i < num; i++) {
-		renderProgManager.SetUniformValue((renderParm_t)(rp + i), value + (i * 4));
+static ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num ) {
+	for ( int i = 0; i < num; i++ ) {
+		renderProgManager.SetUniformValue( (renderParm_t)( rp + i ), value + ( i * 4 ) );
 	}
 }
 
@@ -55,8 +55,8 @@ static ID_INLINE void SetVertexParms(renderParm_t rp, const float * value, int n
 SetFragmentParm
 ================
 */
-static ID_INLINE void SetFragmentParm(renderParm_t rp, const float * value) {
-	renderProgManager.SetUniformValue(rp, value);
+static ID_INLINE void SetFragmentParm( renderParm_t rp, const float * value ) {
+	renderProgManager.SetUniformValue( rp, value );
 }
 
 static const float zero[4] = { 0, 0, 0, 0 };
@@ -68,19 +68,19 @@ static const float negOne[4] = { -1, -1, -1, -1 };
 RB_SetVertexColorParms
 ================
 */
-static void RB_SetVertexColorParms(stageVertexColor_t svc) {
+static void RB_SetVertexColorParms( stageVertexColor_t svc ) {
 	switch (svc) {
 	case SVC_IGNORE:
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, zero);
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, one);
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, zero );
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, one );
 		break;
 	case SVC_MODULATE:
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, one);
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, zero);
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, one );
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, zero );
 		break;
 	case SVC_INVERSE_MODULATE:
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_MODULATE, negOne);
-		SetVertexParm(RENDERPARM_VERTEXCOLOR_ADD, one);
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, negOne );
+		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, one );
 		break;
 	}
 }
@@ -1715,41 +1715,27 @@ RB_STD_DrawInteraction
 */
 void RB_STD_DrawInteraction(const drawInteraction_t *din) {
 	// load all the vertex program parameters
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, din->localLightOrigin.ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_VIEW_ORIGIN, din->localViewOrigin.ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_S, din->lightProjection[0].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_T, din->lightProjection[1].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_PROJECT_Q, din->lightProjection[2].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_FALLOFF_S, din->lightProjection[3].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_BUMP_MATRIX_S, din->bumpMatrix[0].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_BUMP_MATRIX_T, din->bumpMatrix[1].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_DIFFUSE_MATRIX_S, din->diffuseMatrix[0].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_DIFFUSE_MATRIX_T, din->diffuseMatrix[1].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_SPECULAR_MATRIX_S, din->specularMatrix[0].ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_SPECULAR_MATRIX_T, din->specularMatrix[1].ToFloatPtr());
+	SetVertexParm( RENDERPARM_LOCALLIGHTORIGIN, din->localLightOrigin.ToFloatPtr() );
+	SetVertexParm( RENDERPARM_LOCALVIEWORIGIN, din->localViewOrigin.ToFloatPtr() );
 
-	static const float zero[4] = { 0, 0, 0, 0 };
-	static const float one[4] = { 1, 1, 1, 1 };
-	static const float negOne[4] = { -1, -1, -1, -1 };
+	SetVertexParm( RENDERPARM_LIGHTPROJECTION_S, din->lightProjection[0].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_LIGHTPROJECTION_T, din->lightProjection[1].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_LIGHTPROJECTION_Q, din->lightProjection[2].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_LIGHTFALLOFF_S, din->lightProjection[3].ToFloatPtr() );
 
-	switch (din->vertexColor) {
-	case SVC_IGNORE:
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, zero);
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, one);
-		break;
-	case SVC_MODULATE:
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, one);
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, zero);
-		break;
-	case SVC_INVERSE_MODULATE:
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_MODULATE, negOne);
-		qglProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_COLOR_ADD, one);
-		break;
-	}
+	SetVertexParm( RENDERPARM_BUMPMATRIX_S, din->bumpMatrix[0].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_BUMPMATRIX_T, din->bumpMatrix[1].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_DIFFUSEMATRIX_S, din->diffuseMatrix[0].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_DIFFUSEMATRIX_T, din->diffuseMatrix[1].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_SPECULARMATRIX_S, din->specularMatrix[0].ToFloatPtr() );
+	SetVertexParm( RENDERPARM_SPECULARMATRIX_T, din->specularMatrix[1].ToFloatPtr() );
+
+	// set the vertex colors
+	RB_SetVertexColorParms( din->vertexColor );
 
 	// set the constant colors
-	qglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, din->diffuseColor.ToFloatPtr());
-	qglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 1, din->specularColor.ToFloatPtr());
+	SetFragmentParm( RENDERPARM_DIFFUSEMODIFIER, din->diffuseColor.ToFloatPtr() );
+	SetFragmentParm( RENDERPARM_SPECULARMODIFIER, din->specularColor.ToFloatPtr() );
 
 	// set the textures
 
@@ -1803,6 +1789,11 @@ void RB_STD_CreateDrawInteractions(const drawSurf_t *surf) {
 
 	for (; surf; surf = surf->nextOnLight) {
 		// perform setup here that will not change over multiple interaction passes
+
+		// set the modelview matrix for the viewer
+		float mat[16];
+		myGlMultMatrix( surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat );
+		SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 
 		// set the vertex pointers
 		idDrawVert	*ac = (idDrawVert *)vertexCache.Position(surf->geo->ambientCache);
