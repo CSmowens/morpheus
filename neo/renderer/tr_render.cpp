@@ -165,12 +165,14 @@ void RB_T_RenderTriangleSurface( const drawSurf_t *surf ) {
 	RB_RenderTriangleSurface( surf->geo );
 }
 
+extern ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num );
+
 /*
 ===============
 RB_EnterWeaponDepthHack
 ===============
 */
-void RB_EnterWeaponDepthHack() {
+void RB_EnterWeaponDepthHack( const drawSurf_t *surf ) {
 	qglDepthRange( 0, 0.5 );
 
 	float	matrix[16];
@@ -182,6 +184,10 @@ void RB_EnterWeaponDepthHack() {
 	qglMatrixMode(GL_PROJECTION);
 	qglLoadMatrixf( matrix );
 	qglMatrixMode(GL_MODELVIEW);
+
+	float  mat[16];
+	myGlMultMatrix(surf->space->modelViewMatrix, matrix, mat);
+	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -189,18 +195,22 @@ void RB_EnterWeaponDepthHack() {
 RB_EnterModelDepthHack
 ===============
 */
-void RB_EnterModelDepthHack( float depth ) {
+void RB_EnterModelDepthHack( const drawSurf_t *surf ) {
 	qglDepthRange( 0.0f, 1.0f );
 
 	float	matrix[16];
 
 	memcpy( matrix, backEnd.viewDef->projectionMatrix, sizeof( matrix ) );
 
-	matrix[14] -= depth;
+	matrix[14] -= surf->space->modelDepthHack;
 
 	qglMatrixMode(GL_PROJECTION);
 	qglLoadMatrixf( matrix );
 	qglMatrixMode(GL_MODELVIEW);
+
+	float  mat[16];
+	myGlMultMatrix(surf->space->modelViewMatrix, matrix, mat);
+	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -208,12 +218,16 @@ void RB_EnterModelDepthHack( float depth ) {
 RB_LeaveDepthHack
 ===============
 */
-void RB_LeaveDepthHack() {
+void RB_LeaveDepthHack( const drawSurf_t *surf ) {
 	qglDepthRange( 0, 1 );
 
 	qglMatrixMode(GL_PROJECTION);
 	qglLoadMatrixf( backEnd.viewDef->projectionMatrix );
 	qglMatrixMode(GL_MODELVIEW);
+
+	float  mat[16];
+	myGlMultMatrix(surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat);
+	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -239,14 +253,22 @@ void RB_RenderDrawSurfListWithFunction( drawSurf_t **drawSurfs, int numDrawSurfs
 		// change the matrix if needed
 		if ( drawSurf->space != backEnd.currentSpace ) {
 			qglLoadMatrixf( drawSurf->space->modelViewMatrix );
+
+			float  mat[16];
+			myGlMultMatrix(drawSurf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat);
+			SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+ 
+			// we need the model matrix without it being combined with the view matrix
+			// so we can transform local vectors to global coordinates
+			SetVertexParms( RENDERPARM_MODELMATRIX_X, drawSurf->space->modelMatrix, 4 );
 		}
 
 		if ( drawSurf->space->weaponDepthHack ) {
-			RB_EnterWeaponDepthHack();
+			RB_EnterWeaponDepthHack( drawSurf );
 		}
 
 		if ( drawSurf->space->modelDepthHack != 0.0f ) {
-			RB_EnterModelDepthHack( drawSurf->space->modelDepthHack );
+			RB_EnterModelDepthHack( drawSurf );
 		}
 
 		// change the scissor if needed
@@ -262,7 +284,7 @@ void RB_RenderDrawSurfListWithFunction( drawSurf_t **drawSurfs, int numDrawSurfs
 		triFunc_( drawSurf );
 
 		if ( drawSurf->space->weaponDepthHack || drawSurf->space->modelDepthHack != 0.0f ) {
-			RB_LeaveDepthHack();
+			RB_LeaveDepthHack( drawSurf );
 		}
 
 		backEnd.currentSpace = drawSurf->space;
@@ -287,11 +309,11 @@ void RB_RenderDrawSurfChainWithFunction( const drawSurf_t *drawSurfs,
 		}
 
 		if ( drawSurf->space->weaponDepthHack ) {
-			RB_EnterWeaponDepthHack();
+			RB_EnterWeaponDepthHack( drawSurf );
 		}
 
 		if ( drawSurf->space->modelDepthHack ) {
-			RB_EnterModelDepthHack( drawSurf->space->modelDepthHack );
+			RB_EnterModelDepthHack( drawSurf );
 		}
 
 		// change the scissor if needed
@@ -307,7 +329,7 @@ void RB_RenderDrawSurfChainWithFunction( const drawSurf_t *drawSurfs,
 		triFunc_( drawSurf );
 
 		if ( drawSurf->space->weaponDepthHack || drawSurf->space->modelDepthHack != 0.0f ) {
-			RB_LeaveDepthHack();
+			RB_LeaveDepthHack( drawSurf );
 		}
 
 		backEnd.currentSpace = drawSurf->space;
@@ -639,11 +661,11 @@ void RB_CreateSingleDrawInteractions( const drawSurf_t *surf, void (*DrawInterac
 
 	// hack depth range if needed
 	if ( surf->space->weaponDepthHack ) {
-		RB_EnterWeaponDepthHack();
+		RB_EnterWeaponDepthHack( surf );
 	}
 
 	if ( surf->space->modelDepthHack ) {
-		RB_EnterModelDepthHack( surf->space->modelDepthHack );
+		RB_EnterModelDepthHack( surf );
 	}
 
 	inter.surf = surf;
@@ -757,7 +779,7 @@ void RB_CreateSingleDrawInteractions( const drawSurf_t *surf, void (*DrawInterac
 
 	// unhack depth range if needed
 	if ( surf->space->weaponDepthHack || surf->space->modelDepthHack != 0.0f ) {
-		RB_LeaveDepthHack();
+		RB_LeaveDepthHack( surf );
 	}
 }
 

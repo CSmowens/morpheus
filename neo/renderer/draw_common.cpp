@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 SetVertexParm
 ================
 */
-static ID_INLINE void SetVertexParm( renderParm_t rp, const float * value ) {
+ID_INLINE void SetVertexParm( renderParm_t rp, const float * value ) {
 	renderProgManager.SetUniformValue( rp, value );
 }
 
@@ -44,7 +44,7 @@ static ID_INLINE void SetVertexParm( renderParm_t rp, const float * value ) {
 SetVertexParms
 ================
 */
-static ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num ) {
+ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num ) {
 	for ( int i = 0; i < num; i++ ) {
 		renderProgManager.SetUniformValue( (renderParm_t)( rp + i ), value + ( i * 4 ) );
 	}
@@ -55,7 +55,7 @@ static ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int 
 SetFragmentParm
 ================
 */
-static ID_INLINE void SetFragmentParm( renderParm_t rp, const float * value ) {
+ID_INLINE void SetFragmentParm( renderParm_t rp, const float * value ) {
 	renderProgManager.SetUniformValue( rp, value );
 }
 
@@ -763,11 +763,11 @@ void RB_STD_T_RenderShaderPasses( const drawSurf_t *surf ) {
 	}
 	
 	if ( surf->space->weaponDepthHack ) {
-		RB_EnterWeaponDepthHack();
+		RB_EnterWeaponDepthHack( surf );
 	}
 
 	if ( surf->space->modelDepthHack != 0.0f ) {
-		RB_EnterModelDepthHack( surf->space->modelDepthHack );
+		RB_EnterModelDepthHack( surf );
 	}
 
 	idDrawVert *ac = (idDrawVert *)vertexCache.Position( tri->ambientCache );
@@ -972,7 +972,7 @@ void RB_STD_T_RenderShaderPasses( const drawSurf_t *surf ) {
 		qglDisable( GL_POLYGON_OFFSET_FILL );
 	}
 	if ( surf->space->weaponDepthHack || surf->space->modelDepthHack != 0.0f ) {
-		RB_LeaveDepthHack();
+		RB_LeaveDepthHack( surf );
 	}
 }
 

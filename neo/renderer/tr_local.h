@@ -1227,9 +1227,9 @@ RENDER
 ============================================================
 */
 
-void RB_EnterWeaponDepthHack();
-void RB_EnterModelDepthHack( float depth );
-void RB_LeaveDepthHack();
+void RB_EnterWeaponDepthHack( const drawSurf_t *surf );
+void RB_EnterModelDepthHack( const drawSurf_t *surf );
+void RB_LeaveDepthHack( const drawSurf_t *surf );
 void RB_DrawElementsImmediate( const srfTriangles_t *tri );
 void RB_RenderTriangleSurface( const srfTriangles_t *tri );
 void RB_T_RenderTriangleSurface( const drawSurf_t *surf );
