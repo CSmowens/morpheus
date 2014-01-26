@@ -1863,6 +1863,9 @@ void RB_STD_DrawInteractions(void) {
 	viewLight_t		*vLight;
 	const idMaterial	*lightShader;
 
+	renderLog.OpenMainBlock( MRB_DRAW_INTERACTIONS );
+	renderLog.OpenBlock( "RB_DrawInteractions" );
+
 	GL_SelectTexture(0);
 	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -1903,27 +1906,53 @@ void RB_STD_DrawInteractions(void) {
 			qglStencilFunc(GL_ALWAYS, 128, 255);
 		}
 
-//		qglEnable(GL_VERTEX_PROGRAM_ARB);
-//		qglBindProgramARB(GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW);
-//		RB_StencilShadowPass(vLight->globalShadows);
-		RB_STD_CreateDrawInteractions(vLight->localInteractions);
-//		qglEnable(GL_VERTEX_PROGRAM_ARB);
-//		qglBindProgramARB(GL_VERTEX_PROGRAM_ARB, VPROG_STENCIL_SHADOW);
-//		RB_StencilShadowPass(vLight->localShadows);
-		RB_STD_CreateDrawInteractions(vLight->globalInteractions);
-//		qglDisable(GL_VERTEX_PROGRAM_ARB);	// if there weren't any globalInteractions, it would have stayed on
-
-		// translucent surfaces never get stencil shadowed
-		if (r_skipTranslucent.GetBool()) {
-			continue;
+		if ( vLight->globalShadows != NULL ) {
+			renderLog.OpenBlock( "Global Light Shadows" );
+			RB_StencilShadowPass( vLight->globalShadows );
+			renderLog.CloseBlock();
 		}
 
-		qglStencilFunc(GL_ALWAYS, 128, 255);
+		if ( vLight->localInteractions != NULL ) {
+			renderLog.OpenBlock( "Local Light Interactions" );
+			RB_STD_CreateDrawInteractions( vLight->localInteractions );
+			renderLog.CloseBlock();
+		}
 
-		backEnd.depthFunc = GLS_DEPTHFUNC_LESS;
-		RB_STD_CreateDrawInteractions(vLight->translucentInteractions);
+		if ( vLight->localShadows != NULL ) {
+			renderLog.OpenBlock( "Local Light Shadows" );
+			RB_StencilShadowPass( vLight->localShadows );
+			renderLog.CloseBlock();
+		}
 
-		backEnd.depthFunc = GLS_DEPTHFUNC_EQUAL;
+		if ( vLight->globalInteractions != NULL ) {
+			renderLog.OpenBlock( "Global Light Interactions" );
+			RB_STD_CreateDrawInteractions( vLight->globalInteractions );
+			renderLog.CloseBlock();
+		}
+		
+		if ( vLight->translucentInteractions != NULL && !r_skipTranslucent.GetBool() ) {
+			renderLog.OpenBlock( "Translucent Interactions" );
+
+			// disable stencil shadow test
+			qglStencilFunc( GL_ALWAYS, 128, 255 );
+
+			// Disable the depth bounds test because translucent surfaces don't work with
+			// the depth bounds tests since they did not write depth during the depth pass.
+			backEnd.depthFunc = GLS_DEPTHFUNC_LESS;
+
+			// The depth buffer wasn't filled in for translucent surfaces, so they
+			// can never be constrained to perforated surfaces with the depthfunc equal.
+
+			// Translucent surfaces do not receive shadows. This is a case where a
+			// shadow buffer solution would work but stencil shadows do not because
+			// stencil shadows only affect surfaces that contribute to the view depth
+			// buffer and translucent surfaces do not contribute to the view depth buffer.
+			RB_STD_CreateDrawInteractions( vLight->translucentInteractions );
+
+			backEnd.depthFunc = GLS_DEPTHFUNC_EQUAL;
+
+			renderLog.CloseBlock();
+		}
 	}
 
 	// disable stencil shadow test
@@ -1931,6 +1960,9 @@ void RB_STD_DrawInteractions(void) {
 
 	GL_SelectTexture(0);
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	renderLog.CloseBlock();
+	renderLog.CloseMainBlock();
 }
 
 //=========================================================================================
@@ -1963,12 +1995,6 @@ void RB_STD_DrawView( void ) {
 
 	// main light renderer
 	RB_STD_DrawInteractions();
-	/*
-	switch( tr.backEndRenderer ) {
-		case BE_ARB2:
-			RB_ARB2_DrawInteractions();
-			break;
-	}*/
 
 	// disable stencil shadow test
 	qglStencilFunc( GL_ALWAYS, 128, 255 );
