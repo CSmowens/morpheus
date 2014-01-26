@@ -339,36 +339,35 @@ void RB_RenderDrawSurfChainWithFunction( const drawSurf_t *drawSurfs,
 RB_GetShaderTextureMatrix
 ======================
 */
-void RB_GetShaderTextureMatrix( const float *shaderRegisters,
-							   const textureStage_t *texture, float matrix[16] ) {
-	matrix[0] = shaderRegisters[ texture->matrix[0][0] ];
-	matrix[4] = shaderRegisters[ texture->matrix[0][1] ];
-	matrix[8] = 0;
-	matrix[12] = shaderRegisters[ texture->matrix[0][2] ];
+void RB_GetShaderTextureMatrix( const float *shaderRegisters, const textureStage_t *texture, float matrix[16] ) {
+	matrix[0*4+0] = shaderRegisters[ texture->matrix[0][0] ];
+	matrix[1*4+0] = shaderRegisters[ texture->matrix[0][1] ];
+	matrix[2*4+0] = 0.0f;
+	matrix[3*4+0] = shaderRegisters[ texture->matrix[0][2] ];
+
+	matrix[0*4+1] = shaderRegisters[ texture->matrix[1][0] ];
+	matrix[1*4+1] = shaderRegisters[ texture->matrix[1][1] ];
+	matrix[2*4+1] = 0.0f;
+	matrix[3*4+1] = shaderRegisters[ texture->matrix[1][2] ];
 
 	// we attempt to keep scrolls from generating incredibly large texture values, but
 	// center rotations and center scales can still generate offsets that need to be > 1
-	if ( matrix[12] < -40 || matrix[12] > 40 ) {
-		matrix[12] -= (int)matrix[12];
+	if ( matrix[3*4+0] < -40.0f || matrix[12] > 40.0f ) {
+		matrix[3*4+0] -= (int)matrix[3*4+0];
 	}
-
-	matrix[1] = shaderRegisters[ texture->matrix[1][0] ];
-	matrix[5] = shaderRegisters[ texture->matrix[1][1] ];
-	matrix[9] = 0;
-	matrix[13] = shaderRegisters[ texture->matrix[1][2] ];
-	if ( matrix[13] < -40 || matrix[13] > 40 ) {
+	if ( matrix[13] < -40.0f || matrix[13] > 40.0f ) {
 		matrix[13] -= (int)matrix[13];
 	}
 
-	matrix[2] = 0;
-	matrix[6] = 0;
-	matrix[10] = 1;
-	matrix[14] = 0;
+	matrix[0*4+2] = 0.0f;
+	matrix[1*4+2] = 0.0f;
+	matrix[2*4+2] = 1.0f;
+	matrix[3*4+2] = 0.0f;
 
-	matrix[3] = 0;
-	matrix[7] = 0;
-	matrix[11] = 0;
-	matrix[15] = 1;
+	matrix[0*4+3] = 0.0f;
+	matrix[1*4+3] = 0.0f;
+	matrix[2*4+3] = 0.0f;
+	matrix[3*4+3] = 1.0f;
 }
 
 /*

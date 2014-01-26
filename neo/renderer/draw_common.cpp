@@ -511,7 +511,8 @@ void RB_STD_FillDepthBuffer( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 		return;
 	}
 
-	RENDERLOG_PRINTF("---------- RB_STD_FillDepthBuffer ----------\n");
+	renderLog.OpenMainBlock( MRB_FILL_DEPTH_BUFFER );
+	renderLog.OpenBlock( "RB_FillDepthBuffer" );
 
 	// enable the second texture for mirror plane clipping if needed
 	if ( backEnd.viewDef->numClipPlanes ) {
@@ -546,6 +547,8 @@ void RB_STD_FillDepthBuffer( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 		GL_SelectTexture( 0 );
 	}
 
+	renderLog.CloseBlock();
+	renderLog.CloseMainBlock();
 }
 
 /*
