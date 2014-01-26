@@ -1074,9 +1074,11 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 		R_GlobalPointToLocal( surf->space->modelMatrix, backEnd.vLight->globalLightOrigin, localLight.ToVec3() );
 		localLight.w = 0.0f;
 
-		if ( tr.backEndRenderer == BE_ARB2 ) {
-			qglProgramEnvParameter4fvARB( GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr() );
-		}
+		SetVertexParm( RENDERPARM_LOCALLIGHTORIGIN, localLight.ToFloatPtr() );
+
+		float mat[16];
+		myGlMultMatrix( surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat );
+		SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 	}
 
 	tri = surf->geo;
@@ -1123,41 +1125,52 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 
 	// debug visualization
 	if ( r_showShadows.GetInteger() ) {
+		idVec4 debugColor = idVec4( 0.0f, 0.0f, 0.0f, 0.0f );
 		if ( r_showShadows.GetInteger() == 3 ) {
 			if ( external ) {
-				qglColor3f( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright );
+				debugColor = idVec4( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 			} else {
 				// these are the surfaces that require the reverse
-				qglColor3f( 1/backEnd.overBright, 0.1/backEnd.overBright, 0.1/backEnd.overBright );
+				debugColor = idVec4( 1/backEnd.overBright, 0.1/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 			}
 		} else {
 			// draw different color for turboshadows
 			if ( surf->geo->shadowCapPlaneBits & SHADOW_CAP_INFINITE ) {
 				if ( numIndexes == tri->numIndexes ) {
-					qglColor3f( 1/backEnd.overBright, 0.1/backEnd.overBright, 0.1/backEnd.overBright );
+					debugColor = idVec4( 1/backEnd.overBright, 0.1/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 				} else {
-					qglColor3f( 1/backEnd.overBright, 0.4/backEnd.overBright, 0.1/backEnd.overBright );
+					debugColor = idVec4( 1/backEnd.overBright, 0.4/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 				}
 			} else {
 				if ( numIndexes == tri->numIndexes ) {
-					qglColor3f( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright );
+					debugColor = idVec4( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 				} else if ( numIndexes == tri->numShadowIndexesNoFrontCaps ) {
-					qglColor3f( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.6/backEnd.overBright );
+					debugColor = idVec4( 0.1/backEnd.overBright, 1/backEnd.overBright, 0.6/backEnd.overBright, 1.0f );
 				} else {
-					qglColor3f( 0.6/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright );
+					debugColor = idVec4( 0.6/backEnd.overBright, 1/backEnd.overBright, 0.1/backEnd.overBright, 1.0f );
 				}
 			}
 		}
 
+		SetFragmentParm( RENDERPARM_COLOR, debugColor.ToFloatPtr() );
+
+		renderProgManager.CommitUniforms();
+
 		qglStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
 		qglDisable( GL_STENCIL_TEST );
+
 		GL_Cull( CT_TWO_SIDED );
+
 		RB_DrawShadowElementsWithCounters( tri, numIndexes );
+
 		GL_Cull( CT_FRONT_SIDED );
+
 		qglEnable( GL_STENCIL_TEST );
 
 		return;
 	}
+
+	renderProgManager.CommitUniforms();
 
 	// patent-free work around
 	if ( !external ) {
@@ -1221,6 +1234,8 @@ void RB_StencilShadowPass( const drawSurf_t *drawSurfs ) {
 
 	// for visualizing the shadows
 	if ( r_showShadows.GetInteger() ) {
+		renderProgManager.BindShader_ShadowDebug();
+
 		if ( r_showShadows.GetInteger() == 2 ) {
 			// draw filled in
 			GL_State( GLS_DEPTHMASK | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_LESS  );
@@ -1229,6 +1244,8 @@ void RB_StencilShadowPass( const drawSurf_t *drawSurfs ) {
 			GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO | GLS_POLYMODE_LINE | GLS_DEPTHFUNC_ALWAYS  );
 		}
 	} else {
+		renderProgManager.BindShader_Shadow();
+
 		// don't write to the color buffer, just the stencil buffer
 		GL_State( GLS_DEPTHMASK | GLS_COLORMASK | GLS_ALPHAMASK | GLS_DEPTHFUNC_LESS );
 	}
@@ -1260,6 +1277,8 @@ void RB_StencilShadowPass( const drawSurf_t *drawSurfs ) {
 
 	qglStencilFunc( GL_GEQUAL, 128, 255 );
 	qglStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+
+	renderProgManager.Unbind();
 }
 
 
@@ -1804,7 +1823,7 @@ void RB_STD_CreateDrawInteractions(const drawSurf_t *surf) {
 		qglVertexAttribPointerARB(8, 2, GL_FLOAT, false, sizeof(idDrawVert), ac->st.ToFloatPtr());
 		qglVertexPointer(3, GL_FLOAT, sizeof(idDrawVert), ac->xyz.ToFloatPtr());
 
-		// this may cause RB_STD_DrawInteraction to be exacuted multiple
+		// this may cause RB_STD_DrawInteraction to be executed multiple
 		// times with different colors and images if the surface or light have multiple layers
 		RB_CreateSingleDrawInteractions(surf, RB_STD_DrawInteraction);
 	}
@@ -1943,12 +1962,13 @@ void RB_STD_DrawView( void ) {
 	RB_STD_FillDepthBuffer( drawSurfs, numDrawSurfs );
 
 	// main light renderer
-//	RB_STD_DrawInteractions();
+	RB_STD_DrawInteractions();
+	/*
 	switch( tr.backEndRenderer ) {
 		case BE_ARB2:
 			RB_ARB2_DrawInteractions();
 			break;
-	}
+	}*/
 
 	// disable stencil shadow test
 	qglStencilFunc( GL_ALWAYS, 128, 255 );

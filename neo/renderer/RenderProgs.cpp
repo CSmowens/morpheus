@@ -88,7 +88,7 @@ void idRenderProgManager::Init() {
 //		{ BUILTIN_BUMPY_ENVIRONMENT, "bumpyEnvironment.vfp" },
 
 //		{ BUILTIN_DEPTH, "depth.vfp" },
-//		{ BUILTIN_SHADOW_DEBUG, "shadowDebug.vfp" },
+		{ BUILTIN_SHADOW_DEBUG, "shadowDebug.vfp" },
 
 /*
 		{ BUILTIN_BLENDLIGHT, "blendlight.vfp" },
@@ -118,8 +118,8 @@ void idRenderProgManager::Init() {
 	}
 
 	// Special case handling for fastZ shaders
-//	builtinShaders[BUILTIN_SHADOW] = FindVertexShader( "shadow.vp" );
-//	FindGLSLProgram( "shadow.vp", builtinShaders[BUILTIN_SHADOW], -1 );
+	builtinShaders[BUILTIN_SHADOW] = FindVertexShader( "shadow.vp" );
+	FindGLSLProgram( "shadow.vp", builtinShaders[BUILTIN_SHADOW], -1 );
 
 	glslUniforms.SetNum( RENDERPARM_USER + MAX_GLSL_USER_PARMS );
 
