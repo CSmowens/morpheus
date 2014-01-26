@@ -56,7 +56,7 @@ const float FOG_ENTER = (FOG_ENTER_SIZE+1.0f)/(FOG_ENTER_SIZE*2);
 class idScreenRect {
 public:
 	short		x1, y1, x2, y2;							// inclusive pixel bounds inside viewport
-    float       zmin, zmax;								// for depth bounds test
+	float       zmin, zmax;								// for depth bounds test
 
 	void		Clear();								// clear to backwards values
 	void		AddPoint( float x, float y );			// adds a point
@@ -1079,7 +1079,7 @@ void		GLimp_SwapBuffers( void );
 // This will not be called if 'r_drawBuffer GL_FRONT'
 
 void		GLimp_SetGamma( unsigned short red[256], 
-						    unsigned short green[256],
+							unsigned short green[256],
 							unsigned short blue[256] );
 // Sets the hardware gamma ramps for gamma and brightness adjustment.
 // These are now taken as 16 bit values, so we can take full advantage
@@ -1275,10 +1275,7 @@ DRAW_*
 ============================================================
 */
 
-void	RB_ARB_DrawInteractions( void );
-
 void	R_ARB2_Init( void );
-void	RB_ARB2_DrawInteractions( void );
 
 void	R_ReloadARBPrograms_f( const idCmdArgs &args );
 int		R_FindARBProgram( GLenum target, const char *program );
@@ -1633,8 +1630,8 @@ TR_SHADOWBOUNDS
 =============================================================
 */
 idScreenRect R_CalcIntersectionScissor( const idRenderLightLocal * lightDef,
-									    const idRenderEntityLocal * entityDef,
-									    const viewDef_t * viewDef );
+										const idRenderEntityLocal * entityDef,
+										const viewDef_t * viewDef );
 
 //=============================================
 
