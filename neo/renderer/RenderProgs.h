@@ -169,7 +169,6 @@ public:
 	void	BindShader_StereoWarp() { BindShader_Builtin( BUILTIN_STEREO_WARP ); }
 	void	BindShader_StereoInterlace() { BindShader_Builtin( BUILTIN_STEREO_INTERLACE ); }
 	void	BindShader_PostProcess() { BindShader_Builtin( BUILTIN_POSTPROCESS ); }
-	void	BindShader_ZCullReconstruct() { BindShader_Builtin( BUILTIN_ZCULL_RECONSTRUCT ); }
 	void	BindShader_MotionBlur() { BindShader_Builtin( BUILTIN_MOTION_BLUR); }
 
 	// unbind the currently bound render program
@@ -214,7 +213,6 @@ protected:
 		BUILTIN_POSTPROCESS,
 		BUILTIN_STEREO_DEGHOST,
 		BUILTIN_STEREO_WARP,
-		BUILTIN_ZCULL_RECONSTRUCT,
 		BUILTIN_STEREO_INTERLACE,
 		BUILTIN_MOTION_BLUR,
 

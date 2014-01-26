@@ -98,7 +98,6 @@ void idRenderProgManager::Init() {
 		{ BUILTIN_POSTPROCESS, "postprocess.vfp" },
 		{ BUILTIN_STEREO_DEGHOST, "stereoDeGhost.vfp" },
 		{ BUILTIN_STEREO_WARP, "stereoWarp.vfp" },
-		{ BUILTIN_ZCULL_RECONSTRUCT, "zcullReconstruct.vfp" },
 		{ BUILTIN_STEREO_INTERLACE, "stereoInterlace.vfp" },
 		{ BUILTIN_MOTION_BLUR, "motionBlur.vfp" },
 */

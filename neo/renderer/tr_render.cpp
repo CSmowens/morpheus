@@ -165,8 +165,6 @@ void RB_T_RenderTriangleSurface( const drawSurf_t *surf ) {
 	RB_RenderTriangleSurface( surf->geo );
 }
 
-extern ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num );
-
 /*
 ===============
 RB_EnterWeaponDepthHack
@@ -187,7 +185,7 @@ void RB_EnterWeaponDepthHack( const drawSurf_t *surf ) {
 
 	float  mat[16];
 	myGlMultMatrix(surf->space->modelViewMatrix, matrix, mat);
-	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+	renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -210,7 +208,7 @@ void RB_EnterModelDepthHack( const drawSurf_t *surf ) {
 
 	float  mat[16];
 	myGlMultMatrix(surf->space->modelViewMatrix, matrix, mat);
-	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+	renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -227,7 +225,7 @@ void RB_LeaveDepthHack( const drawSurf_t *surf ) {
 
 	float  mat[16];
 	myGlMultMatrix(surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat);
-	SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+	renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 }
 
 /*
@@ -256,11 +254,11 @@ void RB_RenderDrawSurfListWithFunction( drawSurf_t **drawSurfs, int numDrawSurfs
 
 			float  mat[16];
 			myGlMultMatrix(drawSurf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat);
-			SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+			renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
  
 			// we need the model matrix without it being combined with the view matrix
 			// so we can transform local vectors to global coordinates
-			SetVertexParms( RENDERPARM_MODELMATRIX_X, drawSurf->space->modelMatrix, 4 );
+			renderProgManager.SetRenderParms( RENDERPARM_MODELMATRIX_X, drawSurf->space->modelMatrix, 4 );
 		}
 
 		if ( drawSurf->space->weaponDepthHack ) {

@@ -30,35 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
-/*
-================
-SetVertexParm
-================
-*/
-ID_INLINE void SetVertexParm( renderParm_t rp, const float * value ) {
-	renderProgManager.SetUniformValue( rp, value );
-}
-
-/*
-================
-SetVertexParms
-================
-*/
-ID_INLINE void SetVertexParms( renderParm_t rp, const float * value, int num ) {
-	for ( int i = 0; i < num; i++ ) {
-		renderProgManager.SetUniformValue( (renderParm_t)( rp + i ), value + ( i * 4 ) );
-	}
-}
-
-/*
-================
-SetFragmentParm
-================
-*/
-ID_INLINE void SetFragmentParm( renderParm_t rp, const float * value ) {
-	renderProgManager.SetUniformValue( rp, value );
-}
-
 static const float zero[4] = { 0, 0, 0, 0 };
 static const float one[4] = { 1, 1, 1, 1 };
 static const float negOne[4] = { -1, -1, -1, -1 };
@@ -71,16 +42,16 @@ RB_SetVertexColorParms
 static void RB_SetVertexColorParms( stageVertexColor_t svc ) {
 	switch (svc) {
 	case SVC_IGNORE:
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, zero );
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, one );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_MODULATE, zero );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_ADD, one );
 		break;
 	case SVC_MODULATE:
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, one );
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, zero );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_MODULATE, one );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_ADD, zero );
 		break;
 	case SVC_INVERSE_MODULATE:
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_MODULATE, negOne );
-		SetVertexParm( RENDERPARM_VERTEXCOLOR_ADD, one );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_MODULATE, negOne );
+		renderProgManager.SetRenderParm( RENDERPARM_VERTEXCOLOR_ADD, one );
 		break;
 	}
 }
@@ -800,11 +771,6 @@ void RB_STD_T_RenderShaderPasses( const drawSurf_t *surf ) {
 			// new style stages
 			//
 			//--------------------------
-
-			// completely skip the stage if we don't have the capability
-			if ( tr.backEndRenderer != BE_ARB2 ) {
-				continue;
-			}
 			if ( r_skipNewAmbient.GetBool() ) {
 				continue;
 			}
@@ -1074,11 +1040,11 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 		R_GlobalPointToLocal( surf->space->modelMatrix, backEnd.vLight->globalLightOrigin, localLight.ToVec3() );
 		localLight.w = 0.0f;
 
-		SetVertexParm( RENDERPARM_LOCALLIGHTORIGIN, localLight.ToFloatPtr() );
+		renderProgManager.SetRenderParm( RENDERPARM_LOCALLIGHTORIGIN, localLight.ToFloatPtr() );
 
 		float mat[16];
 		myGlMultMatrix( surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat );
-		SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+		renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 	}
 
 	tri = surf->geo;
@@ -1152,7 +1118,7 @@ static void RB_T_Shadow( const drawSurf_t *surf ) {
 			}
 		}
 
-		SetFragmentParm( RENDERPARM_COLOR, debugColor.ToFloatPtr() );
+		renderProgManager.SetRenderParm( RENDERPARM_COLOR, debugColor.ToFloatPtr() );
 
 		renderProgManager.CommitUniforms();
 
@@ -1734,27 +1700,27 @@ RB_STD_DrawInteraction
 */
 void RB_STD_DrawInteraction(const drawInteraction_t *din) {
 	// load all the vertex program parameters
-	SetVertexParm( RENDERPARM_LOCALLIGHTORIGIN, din->localLightOrigin.ToFloatPtr() );
-	SetVertexParm( RENDERPARM_LOCALVIEWORIGIN, din->localViewOrigin.ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LOCALLIGHTORIGIN, din->localLightOrigin.ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LOCALVIEWORIGIN, din->localViewOrigin.ToFloatPtr() );
 
-	SetVertexParm( RENDERPARM_LIGHTPROJECTION_S, din->lightProjection[0].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_LIGHTPROJECTION_T, din->lightProjection[1].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_LIGHTPROJECTION_Q, din->lightProjection[2].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_LIGHTFALLOFF_S, din->lightProjection[3].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LIGHTPROJECTION_S, din->lightProjection[0].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LIGHTPROJECTION_T, din->lightProjection[1].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LIGHTPROJECTION_Q, din->lightProjection[2].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_LIGHTFALLOFF_S, din->lightProjection[3].ToFloatPtr() );
 
-	SetVertexParm( RENDERPARM_BUMPMATRIX_S, din->bumpMatrix[0].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_BUMPMATRIX_T, din->bumpMatrix[1].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_DIFFUSEMATRIX_S, din->diffuseMatrix[0].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_DIFFUSEMATRIX_T, din->diffuseMatrix[1].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_SPECULARMATRIX_S, din->specularMatrix[0].ToFloatPtr() );
-	SetVertexParm( RENDERPARM_SPECULARMATRIX_T, din->specularMatrix[1].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_BUMPMATRIX_S, din->bumpMatrix[0].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_BUMPMATRIX_T, din->bumpMatrix[1].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_DIFFUSEMATRIX_S, din->diffuseMatrix[0].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_DIFFUSEMATRIX_T, din->diffuseMatrix[1].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_SPECULARMATRIX_S, din->specularMatrix[0].ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_SPECULARMATRIX_T, din->specularMatrix[1].ToFloatPtr() );
 
 	// set the vertex colors
 	RB_SetVertexColorParms( din->vertexColor );
 
 	// set the constant colors
-	SetFragmentParm( RENDERPARM_DIFFUSEMODIFIER, din->diffuseColor.ToFloatPtr() );
-	SetFragmentParm( RENDERPARM_SPECULARMODIFIER, din->specularColor.ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_DIFFUSEMODIFIER, din->diffuseColor.ToFloatPtr() );
+	renderProgManager.SetRenderParm( RENDERPARM_SPECULARMODIFIER, din->specularColor.ToFloatPtr() );
 
 	// set the textures
 
@@ -1816,7 +1782,7 @@ void RB_STD_CreateDrawInteractions(const drawSurf_t *surf) {
 		// set the modelview matrix for the viewer
 		float mat[16];
 		myGlMultMatrix( surf->space->modelViewMatrix, backEnd.viewDef->projectionMatrix, mat );
-		SetVertexParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
+		renderProgManager.SetRenderParms( RENDERPARM_MVPMATRIX_X, mat, 4 );
 
 		// set the vertex pointers
 		idDrawVert	*ac = (idDrawVert *)vertexCache.Position(surf->geo->ambientCache);
