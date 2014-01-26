@@ -1796,8 +1796,12 @@ void RB_STD_CreateDrawInteractions(const drawSurf_t *surf) {
 	// perform setup here that will be constant for all interactions
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHMASK | backEnd.depthFunc);
 
-	// bind the vertex program
-	renderProgManager.BindShader_Interaction();
+	// select the render prog
+	if ( surf->material->IsAmbientLight() ) {
+		renderProgManager.BindShader_InteractionAmbient();
+	} else {
+		renderProgManager.BindShader_Interaction();
+	}
 
 	// enable the vertex arrays
 	qglEnableVertexAttribArrayARB(8);

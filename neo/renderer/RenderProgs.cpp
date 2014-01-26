@@ -83,7 +83,7 @@ void idRenderProgManager::Init() {
 //		{ BUILTIN_TEXTURE_VERTEXCOLOR, "texture_color.vfp" },
 //		{ BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR, "texture_color_texgen.vfp" },
 		{ BUILTIN_INTERACTION, "interaction.vfp" },
-//		{ BUILTIN_INTERACTION_AMBIENT, "interactionAmbient.vfp" },
+		{ BUILTIN_INTERACTION_AMBIENT, "interactionAmbient.vfp" },
 //		{ BUILTIN_ENVIRONMENT, "environment.vfp" },
 //		{ BUILTIN_BUMPY_ENVIRONMENT, "bumpyEnvironment.vfp" },
 

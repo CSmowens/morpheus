@@ -95,7 +95,7 @@ static void R_PerformanceCounters( void ) {
 	if ( r_showInteractions.GetBool() ) {
 		common->Printf( "createInteractions:%i createLightTris:%i createShadowVolumes:%i\n",
 			tr.pc.c_createInteractions, tr.pc.c_createLightTris, tr.pc.c_createShadowVolumes );
- 	}
+	}
 	if ( r_showDefs.GetBool() ) {
 		common->Printf( "viewEntities:%i  shadowEntities:%i  viewLights:%i\n", tr.pc.c_visibleViewEntities,
 			tr.pc.c_shadowViewEntities, tr.pc.c_viewLights );
@@ -668,7 +668,7 @@ void idRenderSystemLocal::EndFrame( int *frontEndMsec, int *backEndMsec ) {
 	// check for dynamic changes that require some initialization
 	R_CheckCvars();
 
-    // check for errors
+	// check for errors
 	GL_CheckErrors();
 
 	// add the swapbuffers command
