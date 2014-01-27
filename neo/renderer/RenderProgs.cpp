@@ -77,17 +77,17 @@ void idRenderProgManager::Init() {
 		const char * name;
 	} builtins[] = {
 //		{ BUILTIN_GUI, "gui.vfp" },
-//		{ BUILTIN_COLOR, "color.vfp" },
+		{ BUILTIN_COLOR, "color.vfp" },
 //		{ BUILTIN_SIMPLESHADE, "simpleshade.vfp" },
-//		{ BUILTIN_TEXTURED, "texture.vfp" },
-//		{ BUILTIN_TEXTURE_VERTEXCOLOR, "texture_color.vfp" },
-//		{ BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR, "texture_color_texgen.vfp" },
+		{ BUILTIN_TEXTURED, "texture.vfp" },
+		{ BUILTIN_TEXTURE_VERTEXCOLOR, "texture_color.vfp" },
+		{ BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR, "texture_color_texgen.vfp" },
 		{ BUILTIN_INTERACTION, "interaction.vfp" },
 		{ BUILTIN_INTERACTION_AMBIENT, "interactionAmbient.vfp" },
 //		{ BUILTIN_ENVIRONMENT, "environment.vfp" },
 //		{ BUILTIN_BUMPY_ENVIRONMENT, "bumpyEnvironment.vfp" },
 
-//		{ BUILTIN_DEPTH, "depth.vfp" },
+		{ BUILTIN_DEPTH, "depth.vfp" },
 		{ BUILTIN_SHADOW_DEBUG, "shadowDebug.vfp" },
 
 /*
