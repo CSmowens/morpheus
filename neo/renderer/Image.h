@@ -91,30 +91,30 @@ const unsigned long DDSF_MIPMAP          = 0x00400000l;
 #define DDS_MAKEFOURCC(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 typedef struct {
-    unsigned long dwSize;
-    unsigned long dwFlags;
-    unsigned long dwFourCC;
-    unsigned long dwRGBBitCount;
-    unsigned long dwRBitMask;
-    unsigned long dwGBitMask;
-    unsigned long dwBBitMask;
-    unsigned long dwABitMask;
+	unsigned long dwSize;
+	unsigned long dwFlags;
+	unsigned long dwFourCC;
+	unsigned long dwRGBBitCount;
+	unsigned long dwRBitMask;
+	unsigned long dwGBitMask;
+	unsigned long dwBBitMask;
+	unsigned long dwABitMask;
 } ddsFilePixelFormat_t;
 
 typedef struct
 {
-    unsigned long dwSize;
-    unsigned long dwFlags;
-    unsigned long dwHeight;
-    unsigned long dwWidth;
-    unsigned long dwPitchOrLinearSize;
-    unsigned long dwDepth;
-    unsigned long dwMipMapCount;
-    unsigned long dwReserved1[11];
-    ddsFilePixelFormat_t ddspf;
-    unsigned long dwCaps1;
-    unsigned long dwCaps2;
-    unsigned long dwReserved2[3];
+	unsigned long dwSize;
+	unsigned long dwFlags;
+	unsigned long dwHeight;
+	unsigned long dwWidth;
+	unsigned long dwPitchOrLinearSize;
+	unsigned long dwDepth;
+	unsigned long dwMipMapCount;
+	unsigned long dwReserved1[11];
+	ddsFilePixelFormat_t ddspf;
+	unsigned long dwCaps1;
+	unsigned long dwCaps2;
+	unsigned long dwReserved2[3];
 } ddsFileHeader_t;
 
 
@@ -205,7 +205,6 @@ public:
 	void		ActuallyLoadImage( bool checkForPrecompressed, bool fromBackEnd );
 	void		StartBackgroundImageLoad();
 	int			BitsForInternalFormat( int internalFormat ) const;
-	void		UploadCompressedNormalMap( int width, int height, const byte *rgba, int mipLevel );
 	GLenum		SelectInternalFormat( const byte **dataPtrs, int numDataPtrs, int width, int height,
 									 textureDepth_t minimumDepth ) const;
 	void		ImageProgramStringToCompressedFileName( const char *imageProg, char *fileName ) const;
@@ -289,8 +288,6 @@ ID_INLINE idImage::idImage() {
 
 // data is RGBA
 void	R_WriteTGA( const char *filename, const byte *data, int width, int height, bool flipVertical = false );
-// data is an 8 bit index into palette, which is RGB (no A)
-void	R_WritePalTGA( const char *filename, const byte *data, const byte *palette, int width, int height, bool flipVertical = false );
 // data is in top-to-bottom raster order unless flipVertical is set
 
 
@@ -412,7 +409,6 @@ public:
 	//--------------------------------------------------------
 	
 	idImage *			AllocImage( const char *name );
-	void				SetNormalPalette();
 	void				ChangeTextureFilter();
 
 	idList<idImage*>	images;

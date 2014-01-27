@@ -212,12 +212,11 @@ idCVar r_debugRenderToTexture( "r_debugRenderToTexture", "0", CVAR_RENDERER | CV
 
 idStr extensions_string;
 
+// multitexture
 void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
 void ( APIENTRY * qglMultiTexCoord2fvARB )( GLenum texture, GLfloat *st );
 void ( APIENTRY * qglActiveTextureARB )( GLenum texture );
 void ( APIENTRY * qglClientActiveTextureARB )( GLenum texture );
-
-void (APIENTRY * qglColorTableEXT)( int, int, int, int, int, const void * );
 
 // GL_EXT_direct_state_access
 PFNGLBINDMULTITEXTUREEXTPROC			qglBindMultiTextureEXT;
@@ -428,13 +427,7 @@ static void R_CheckPortableExtensions( void ) {
 		common->Printf( "X..%s not found\n", "GL_1.4_texture_lod_bias" );
 		glConfig.textureLODBiasAvailable = false;
 	}
-
-	// GL_EXT_shared_texture_palette
-	glConfig.sharedTexturePaletteAvailable = R_CheckExtension( "GL_EXT_shared_texture_palette" );
-	if ( glConfig.sharedTexturePaletteAvailable ) {
-		qglColorTableEXT = ( void ( APIENTRY * ) ( int, int, int, int, int, const void * ) ) GLimp_ExtensionPointer( "glColorTableEXT" );
-	}
-
+	
 	// EXT_stencil_wrap
 	// This isn't very important, but some pathological case might cause a clamp error and give a shadow bug.
 	// Nvidia also believes that future hardware may be able to run faster with this enabled to avoid the
@@ -498,11 +491,11 @@ static void R_CheckPortableExtensions( void ) {
 		}
 	}
 
- 	// GL_EXT_depth_bounds_test
- 	glConfig.depthBoundsTestAvailable = R_CheckExtension( "EXT_depth_bounds_test" );
- 	if ( glConfig.depthBoundsTestAvailable ) {
- 		qglDepthBoundsEXT = (PFNGLDEPTHBOUNDSEXTPROC)GLimp_ExtensionPointer( "glDepthBoundsEXT" );
- 	}
+	// GL_EXT_depth_bounds_test
+	glConfig.depthBoundsTestAvailable = R_CheckExtension( "EXT_depth_bounds_test" );
+	if ( glConfig.depthBoundsTestAvailable ) {
+		qglDepthBoundsEXT = (PFNGLDEPTHBOUNDSEXTPROC)GLimp_ExtensionPointer( "glDepthBoundsEXT" );
+	}
 
 	// GLSL, core in OpenGL > 2.0
 	glConfig.glslAvailable = ( glConfig.glVersion >= 2.0f );
@@ -608,20 +601,20 @@ will be used instead.
 ====================
 */
 typedef struct vidmode_s {
-    const char *description;
-    int         width, height;
+	const char *description;
+	int         width, height;
 } vidmode_t;
 
 vidmode_t r_vidModes[] = {
-    { "Mode  0: 320x240",		320,	240 },
-    { "Mode  1: 400x300",		400,	300 },
-    { "Mode  2: 512x384",		512,	384 },
-    { "Mode  3: 640x480",		640,	480 },
-    { "Mode  4: 800x600",		800,	600 },
-    { "Mode  5: 1024x768",		1024,	768 },
-    { "Mode  6: 1152x864",		1152,	864 },
-    { "Mode  7: 1280x1024",		1280,	1024 },
-    { "Mode  8: 1600x1200",		1600,	1200 },
+	{ "Mode  0: 320x240",		320,	240 },
+	{ "Mode  1: 400x300",		400,	300 },
+	{ "Mode  2: 512x384",		512,	384 },
+	{ "Mode  3: 640x480",		640,	480 },
+	{ "Mode  4: 800x600",		800,	600 },
+	{ "Mode  5: 1024x768",		1024,	768 },
+	{ "Mode  6: 1152x864",		1152,	864 },
+	{ "Mode  7: 1280x1024",		1280,	1024 },
+	{ "Mode  8: 1600x1200",		1600,	1200 },
 };
 static int	s_numVidModes = ( sizeof( r_vidModes ) / sizeof( r_vidModes[0] ) );
 
@@ -632,8 +625,8 @@ static bool R_GetModeInfo( int *width, int *height, int mode ) {
 #endif
 	vidmode_t	*vm;
 
-    if ( mode < -1 ) {
-        return false;
+	if ( mode < -1 ) {
+		return false;
 	}
 	if ( mode >= s_numVidModes ) {
 		return false;
@@ -654,7 +647,7 @@ static bool R_GetModeInfo( int *width, int *height, int mode ) {
 		*height = vm->height;
 	}
 
-    return true;
+	return true;
 }
 
 
@@ -819,8 +812,8 @@ GL_CheckErrors
 ==================
 */
 void GL_CheckErrors( void ) {
-    int		err;
-    char	s[64];
+	int		err;
+	char	s[64];
 	int		i;
 
 	// check for up to 10 errors pending

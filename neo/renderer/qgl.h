@@ -106,9 +106,6 @@ extern PFNGLUNMAPBUFFERARBPROC				qglUnmapBufferARB;
 extern PFNGLGETBUFFERPARAMETERIVARBPROC		qglGetBufferParameterivARB;
 extern PFNGLGETBUFFERPOINTERVARBPROC		qglGetBufferPointervARB;
 
-// shared texture palette
-extern	void ( APIENTRY *qglColorTableEXT)( int, int, int, int, int, const void * );
-
 // ARB_texture_compression
 extern	PFNGLCOMPRESSEDTEXIMAGE2DARBPROC	qglCompressedTexImage2DARB;
 extern	PFNGLGETCOMPRESSEDTEXIMAGEARBPROC	qglGetCompressedTexImageARB;
@@ -547,14 +544,14 @@ extern BOOL  ( WINAPI * qwglShareLists)(HGLRC, HGLRC);
 extern BOOL  ( WINAPI * qwglUseFontBitmaps)(HDC, DWORD, DWORD, DWORD);
 
 extern BOOL  ( WINAPI * qwglUseFontOutlines)(HDC, DWORD, DWORD, DWORD, FLOAT,
-                                           FLOAT, int, LPGLYPHMETRICSFLOAT);
+										   FLOAT, int, LPGLYPHMETRICSFLOAT);
 
 extern BOOL ( WINAPI * qwglDescribeLayerPlane)(HDC, int, int, UINT,
-                                            LPLAYERPLANEDESCRIPTOR);
+											LPLAYERPLANEDESCRIPTOR);
 extern int  ( WINAPI * qwglSetLayerPaletteEntries)(HDC, int, int, int,
-                                                CONST COLORREF *);
+												CONST COLORREF *);
 extern int  ( WINAPI * qwglGetLayerPaletteEntries)(HDC, int, int, int,
-                                                COLORREF *);
+												COLORREF *);
 extern BOOL ( WINAPI * qwglRealizeLayerPalette)(HDC, int, BOOL);
 extern BOOL ( WINAPI * qwglSwapLayerBuffers)(HDC, UINT);
 
