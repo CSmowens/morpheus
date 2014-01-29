@@ -424,69 +424,6 @@ void RB_BindVariableStageImage( const textureStage_t *texture, const float *shad
 
 /*
 =================
-RB_DetermineLightScale
-
-Sets:
-backEnd.lightScale
-backEnd.overBright
-
-Find out how much we are going to need to overscale the lighting, so we
-can down modulate the pre-lighting passes.
-
-We only look at light calculations, but an argument could be made that
-we should also look at surface evaluations, which would let surfaces
-overbright past 1.0
-=================
-*/
-void RB_DetermineLightScale( void ) {
-	viewLight_t			*vLight;
-	const idMaterial	*shader;
-	float				max;
-	int					i, j, numStages;
-	const shaderStage_t	*stage;
-
-	// the light scale will be based on the largest color component of any surface
-	// that will be drawn.
-	// should we consider separating rgb scales?
-
-	// if there are no lights, this will remain at 1.0, so GUI-only
-	// rendering will not lose any bits of precision
-	max = 1.0;
-
-	for ( vLight = backEnd.viewDef->viewLights ; vLight ; vLight = vLight->next ) {
-		// lights with no surfaces or shaderparms may still be present
-		// for debug display
-		if ( !vLight->localInteractions && !vLight->globalInteractions
-			&& !vLight->translucentInteractions ) {
-			continue;
-		}
-
-		shader = vLight->lightShader;
-		numStages = shader->GetNumStages();
-		for ( i = 0 ; i < numStages ; i++ ) {
-			stage = shader->GetStage( i );
-			for ( j = 0 ; j < 3 ; j++ ) {
-				float	v = r_lightScale.GetFloat() * vLight->shaderRegisters[ stage->color.registers[j] ];
-				if ( v > max ) {
-					max = v;
-				}
-			}
-		}
-	}
-
-	backEnd.pc.maxLightValue = max;
-	if ( max <= tr.backEndRendererMaxLight ) {
-		backEnd.lightScale = r_lightScale.GetFloat();
-		backEnd.overBright = 1.0;
-	} else {
-		backEnd.lightScale = r_lightScale.GetFloat() * tr.backEndRendererMaxLight / max;
-		backEnd.overBright = max / tr.backEndRendererMaxLight;
-	}
-}
-
-
-/*
-=================
 RB_BeginDrawingView
 
 Any mirrored or portaled views have already been drawn, so prepare
@@ -703,15 +640,20 @@ void RB_CreateSingleDrawInteractions( const drawSurf_t *surf, void (*DrawInterac
 		inter.diffuseColor[0] = inter.diffuseColor[1] = inter.diffuseColor[2] = inter.diffuseColor[3] = 0;
 		inter.specularColor[0] = inter.specularColor[1] = inter.specularColor[2] = inter.specularColor[3] = 0;
 
-		float lightColor[4];
+		const float lightScale = r_lightScale.GetFloat();
+		const idVec4 lightColor(
+			lightScale * lightRegs[ lightStage->color.registers[0] ],
+			lightScale * lightRegs[ lightStage->color.registers[1] ],
+			lightScale * lightRegs[ lightStage->color.registers[2] ],
+			lightRegs[ lightStage->color.registers[3] ] );
+		// apply the world-global overbright and the 2x factor for specular
+		const idVec4 diffuseColor = lightColor;
+		const idVec4 specularColor = lightColor * 2.0f;
 
-		// backEnd.lightScale is calculated so that lightColor[] will never exceed
-		// tr.backEndRendererMaxLight
-		lightColor[0] = backEnd.lightScale * lightRegs[ lightStage->color.registers[0] ];
-		lightColor[1] = backEnd.lightScale * lightRegs[ lightStage->color.registers[1] ];
-		lightColor[2] = backEnd.lightScale * lightRegs[ lightStage->color.registers[2] ];
-		lightColor[3] = lightRegs[ lightStage->color.registers[3] ];
-
+		// set the color modifiers
+		renderProgManager.SetRenderParm( RENDERPARM_DIFFUSEMODIFIER, diffuseColor.ToFloatPtr() );
+		renderProgManager.SetRenderParm( RENDERPARM_SPECULARMODIFIER, specularColor.ToFloatPtr() );
+		
 		// go through the individual stages
 		for ( int surfaceStageNum = 0 ; surfaceStageNum < surfaceShader->GetNumStages() ; surfaceStageNum++ ) {
 			const shaderStage_t	*surfaceStage = surfaceShader->GetStage( surfaceStageNum );
@@ -743,10 +685,6 @@ void RB_CreateSingleDrawInteractions( const drawSurf_t *surf, void (*DrawInterac
 					}
 					R_SetDrawInteraction( surfaceStage, surfaceRegs, &inter.diffuseImage,
 											inter.diffuseMatrix, inter.diffuseColor.ToFloatPtr() );
-					inter.diffuseColor[0] *= lightColor[0];
-					inter.diffuseColor[1] *= lightColor[1];
-					inter.diffuseColor[2] *= lightColor[2];
-					inter.diffuseColor[3] *= lightColor[3];
 					inter.vertexColor = surfaceStage->vertexColor;
 					break;
 				}
@@ -760,10 +698,6 @@ void RB_CreateSingleDrawInteractions( const drawSurf_t *surf, void (*DrawInterac
 					}
 					R_SetDrawInteraction( surfaceStage, surfaceRegs, &inter.specularImage,
 											inter.specularMatrix, inter.specularColor.ToFloatPtr() );
-					inter.specularColor[0] *= lightColor[0];
-					inter.specularColor[1] *= lightColor[1];
-					inter.specularColor[2] *= lightColor[2];
-					inter.specularColor[3] *= lightColor[3];
 					inter.vertexColor = surfaceStage->vertexColor;
 					break;
 				}

@@ -445,8 +445,8 @@ typedef struct {
 	idImage *			diffuseImage;
 	idImage *			specularImage;
 
-	idVec4				diffuseColor;	// may have a light color baked into it, will be < tr.backEndRendererMaxLight
-	idVec4				specularColor;	// may have a light color baked into it, will be < tr.backEndRendererMaxLight
+	idVec4				diffuseColor;	// may have a light color baked into it
+	idVec4				specularColor;	// may have a light color baked into it
 	stageVertexColor_t	vertexColor;	// applies to both diffuse and specular
 
 	int					ambientLight;	// use tr.ambientNormalMap instead of normalization cube map 
@@ -633,7 +633,6 @@ typedef struct {
 	int		c_vboIndexes;
 	float	c_overDraw;	
 
-	float	maxLightValue;	// for light scale
 	int		msec;			// total msec for backend run
 } backEndCounters_t;
 
@@ -652,13 +651,6 @@ typedef struct {
 	int					depthFunc;			// GLS_DEPTHFUNC_EQUAL, or GLS_DEPTHFUNC_LESS for translucent
 	float				lightTextureMatrix[16];	// only if lightStage->texture.hasMatrix
 	float				lightColor[4];		// evaluation of current light's color stage
-
-	float				lightScale;			// Every light color calaculation will be multiplied by this,
-											// which will guarantee that the result is < tr.backEndRendererMaxLight
-											// A card with high dynamic range will have this set to 1.0
-	float				overBright;			// The amount that all light interactions must be multiplied by
-											// with post processing to get the desired total light level.
-											// A high dynamic range card will have this set to 1.0.
 
 	bool				currentRenderCopied;	// true if any material has already referenced _currentRender
 
@@ -758,9 +750,6 @@ public:
 
 	// determines which back end to use
 	backEndName_t			backEndRenderer;
-	float					backEndRendererMaxLight;	// 1.0 for standard, unlimited for floats
-														// determines how much overbrighting needs
-														// to be done post-process
 
 	idVec4					ambientLightVector;	// used for "ambient bump mapping"
 
@@ -892,7 +881,6 @@ extern idCVar r_skipParticles;			// 1 = don't render any particles
 extern idCVar r_skipUpdates;			// 1 = don't accept any entity or light updates, making everything static
 extern idCVar r_skipDeforms;			// leave all deform materials in their original state
 extern idCVar r_skipDynamicTextures;	// don't dynamically create textures
-extern idCVar r_skipLightScale;			// don't do any post-interaction light scaling, makes things dim on low-dynamic range cards
 extern idCVar r_skipBump;				// uses a flat surface instead of the bump map
 extern idCVar r_skipSpecular;			// use black for specular
 extern idCVar r_skipDiffuse;			// use black for diffuse
@@ -911,7 +899,6 @@ extern idCVar r_showVertexColor;		// draws all triangles with the solid vertex c
 extern idCVar r_showUpdates;			// report entity and light updates and ref counts
 extern idCVar r_showDemo;				// report reads and writes to the demo file
 extern idCVar r_showDynamic;			// report stats on dynamic surface generation
-extern idCVar r_showLightScale;			// report the scale factor applied to drawing for overbrights
 extern idCVar r_showIntensity;			// draw the screen colors based on intensity, red = 0, green = 128, blue = 255
 extern idCVar r_showDefs;				// report the number of modeDefs and lightDefs in view
 extern idCVar r_showTrace;				// show the intersection of an eye trace with the world
@@ -1241,8 +1228,6 @@ const shaderStage_t *RB_SetLightTexture( const idRenderLightLocal *light );
 
 void RB_DrawView( const void *data );
 
-void RB_DetermineLightScale( void );
-void RB_STD_LightScale( void );
 void RB_BeginDrawingView (void);
 
 /*
