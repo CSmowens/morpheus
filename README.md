@@ -1,32 +1,17 @@
- ___ __ __      ______       ______        ______     ___   ___      ______       __  __       ______     
-/__//_//_/\    /_____/\     /_____/\      /_____/\   /__/\ /__/\    /_____/\     /_/\/_/\     /_____/\    
-\::\| \| \ \   \:::_ \ \    \:::_ \ \     \:::_ \ \  \::\ \\  \ \   \::::_\/_    \:\ \:\ \    \::::_\/_   
- \:.      \ \   \:\ \ \ \    \:(_) ) )_    \:(_) \ \  \::\/_\ .\ \   \:\/___/\    \:\ \:\ \    \:\/___/\  
-  \:.\-/\  \ \   \:\ \ \ \    \: __ `\ \    \: ___\/   \:: ___::\ \   \::___\/_    \:\ \:\ \    \_::._\:\ 
-   \. \  \  \ \   \:\_\ \ \    \ \ `\ \ \    \ \ \      \: \ \\::\ \   \:\____/\    \:\_\:\ \     /____\:\
-    \__\/ \__\/    \_____\/     \_\/ \_\/     \_\/       \__\/ \::\/    \_____\/     \_____\/     \_____\/
-                                                                                                          
-																										  
 Morpheus
 idTech 4 Engine Modification
-by Pat 'raynorpat' Raynor
-============================
 
-This file contains the following sections:
-
-GENERAL NOTES
-LICENSES
 
 # GENERAL NOTES
 
 ## Game data and patching:
 
-This source release does not contain any game data, the game data is still
+Morpheus does not contain any Doom 3 game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
 
-You must patch the game to the latest version.
+You must patch the game to the latest version. ( 1.3.1 )
 
-Note that Doom 3 and Doom 3: Resurrection of Evil are available from the Steam store at
+NOTE: Doom 3 and Doom 3: Resurrection of Evil are available from the Steam store at
 http://store.steampowered.com/app/9050/
 http://store.steampowered.com/app/9070/
 
@@ -51,6 +36,7 @@ XCode 3.2 project is under neo/sys/osx/
 
 The code for our Maya export plugin is included, if you are a Maya licensee
 you can obtain the SDK from Autodesk.
+
 
 
 # LICENSES
@@ -408,3 +394,17 @@ lines	file(s)
 neo/sys/linux/setup/makeself/*, neo/sys/linux/setup/makeself/README
 Copyright (c) Stéphane Peter
 Licensing: GPL v2
+
+
+
+# Credits
+
+Maintainers
+
+  * Pat 'raynorpat' Raynor <raynorpat@gmail.com>
+
+Significant contributions from
+
+  * Doom 3 BFG Edition GPL Source <https://github.com/id-Software/DOOM-3-BFG>
+  
+  
