@@ -345,18 +345,6 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 	tri = surf->geo;
 	shader = surf->material;
 
-	// update the clip plane if needed
-	if ( backEnd.viewDef->numClipPlanes && surf->space != backEnd.currentSpace ) {
-		GL_SelectTexture( 1 );
-		
-		idPlane	plane;
-
-		R_GlobalPlaneToLocal( surf->space->modelMatrix, backEnd.viewDef->clipPlanes[0], plane );
-		plane[3] += 0.5;	// the notch is in the middle
-		qglTexGenfv( GL_S, GL_OBJECT_PLANE, plane.ToFloatPtr() );
-		GL_SelectTexture( 0 );
-	}
-
 	if ( !shader->IsDrawn() ) {
 		return;
 	}
@@ -401,16 +389,16 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 	// subviews will just down-modulate the color buffer by overbright
 	if ( shader->GetSort() == SS_SUBVIEW ) {
 		GL_State( GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO | GLS_DEPTHFUNC_LESS );
-		color[0] =
-		color[1] = 
-		color[2] = ( 1.0 / backEnd.overBright );
-		color[3] = 1;
+		color[0] = 1.0f;
+		color[1] = 1.0f;
+		color[2] = ( 1.0f / backEnd.overBright );
+		color[3] = 1.0f;
 	} else {
 		// others just draw black
-		color[0] = 0;
-		color[1] = 0;
-		color[2] = 0;
-		color[3] = 1;
+		color[0] = 0.0f;
+		color[1] = 0.0f;
+		color[2] = 0.0f;
+		color[3] = 1.0f;
 	}
 
 	idDrawVert *ac = (idDrawVert *)vertexCache.Position( tri->ambientCache );
@@ -421,15 +409,12 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 
 	if ( shader->Coverage() == MC_OPAQUE ) {
 		drawSolid = true;
-	}
-
-	// we may have multiple alpha tested stages
-	if ( shader->Coverage() == MC_PERFORATED ) {
+	} else if ( shader->Coverage() == MC_PERFORATED ) {
+		// we may have multiple alpha tested stages
 		// if the only alpha tested stages are condition register omitted,
 		// draw a normal opaque surface
 		bool	didDraw = false;
 
-		qglEnable( GL_ALPHA_TEST );
 		// perforated surfaces may have multiple alpha tested stages
 		for ( stage = 0; stage < shader->GetNumStages() ; stage++ ) {		
 			pStage = shader->GetStage(stage);
@@ -454,9 +439,10 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 			if ( color[3] <= 0 ) {
 				continue;
 			}
-			qglColor4fv( color );
 
-			qglAlphaFunc( GL_GREATER, regs[ pStage->alphaTestRegister ] );
+			renderProgManager.SetRenderParm( RENDERPARM_COLOR, color );
+			renderProgManager.SetRenderParm( RENDERPARM_ALPHA_TEST, &regs[ pStage->alphaTestRegister ] );
+			RB_SetVertexColorParms( SVC_IGNORE );
 
 			// bind the texture
 			pStage->texture.image->Bind();
@@ -467,9 +453,10 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 			// draw it
 			RB_DrawElementsWithCounters( tri );
 
+			// clean up
 			RB_FinishStageTexturing( pStage, surf, ac );
 		}
-		qglDisable( GL_ALPHA_TEST );
+
 		if ( !didDraw ) {
 			drawSolid = true;
 		}
@@ -477,13 +464,14 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 
 	// draw the entire surface solid
 	if ( drawSolid ) {
-		qglColor4fv( color );
+		renderProgManager.SetRenderParm( RENDERPARM_COLOR, color );
+		renderProgManager.SetRenderParm( RENDERPARM_ALPHA_TEST, vec4_zero.ToFloatPtr() );
+
 		globalImages->whiteImage->Bind();
 
 		// draw it
 		RB_DrawElementsWithCounters( tri );
 	}
-
 
 	// reset polygon offset
 	if ( shader->TestMaterialFlag(MF_POLYGONOFFSET) ) {
@@ -494,7 +482,6 @@ void RB_T_FillDepthBuffer( const drawSurf_t *surf ) {
 	if ( shader->GetSort() == SS_SUBVIEW ) {
 		GL_State( GLS_DEPTHFUNC_LESS );
 	}
-
 }
 
 /*
@@ -514,14 +501,7 @@ void RB_STD_FillDepthBuffer( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 	renderLog.OpenMainBlock( MRB_FILL_DEPTH_BUFFER );
 	renderLog.OpenBlock( "RB_FillDepthBuffer" );
 
-	// enable the second texture for mirror plane clipping if needed
-	if ( backEnd.viewDef->numClipPlanes ) {
-		GL_SelectTexture( 1 );
-		globalImages->alphaNotchImage->Bind();
-		qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
-		qglEnable( GL_TEXTURE_GEN_S );
-		qglTexCoord2f( 1, 0.5 );
-	}
+	renderProgManager.BindShader_Depth();
 
 	// the first texture will be used for alpha tested surfaces
 	GL_SelectTexture( 0 );
@@ -540,12 +520,7 @@ void RB_STD_FillDepthBuffer( drawSurf_t **drawSurfs, int numDrawSurfs ) {
 
 	RB_RenderDrawSurfListWithFunction( drawSurfs, numDrawSurfs, RB_T_FillDepthBuffer );
 
-	if ( backEnd.viewDef->numClipPlanes ) {
-		GL_SelectTexture( 1 );
-		globalImages->BindNull();
-		qglDisable( GL_TEXTURE_GEN_S );
-		GL_SelectTexture( 0 );
-	}
+	renderProgManager.Unbind();
 
 	renderLog.CloseBlock();
 	renderLog.CloseMainBlock();

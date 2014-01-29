@@ -30,10 +30,14 @@ If you have questions concerning this license or the applicable additional terms
 
 struct VS_IN {
 	float3 position : POSITION;
+	float2 texcoord	: TEXCOORD0;
+	float4 color 	: COLOR;
 };
 
 struct VS_OUT {
 	float4 position : POSITION;
+	float2 texcoord0 : TEXCOORD0;
+	float4 color : COLOR0;
 };
 
 void main( VS_IN vertex, out VS_OUT result ) {
@@ -41,4 +45,9 @@ void main( VS_IN vertex, out VS_OUT result ) {
 
 	float4 vertexPos = float4( vertex.position, 1.0f );
 	result.position = mvpMatrix * vertexPos;
+	
+	result.texcoord0 = vertex.texcoord;
+	
+	float4 vertexColor = ( swizzleColor( vertex.color ) * rpVertexColorModulate ) + rpVertexColorAdd;
+	result.color =  vertexColor * rpColor;	
 }
