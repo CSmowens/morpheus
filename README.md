@@ -1,4 +1,3 @@
-
  ___ __ __      ______       ______        ______     ___   ___      ______       __  __       ______     
 /__//_//_/\    /_____/\     /_____/\      /_____/\   /__/\ /__/\    /_____/\     /_/\/_/\     /_____/\    
 \::\| \| \ \   \:::_ \ \    \:::_ \ \     \:::_ \ \  \::\ \\  \ \   \::::_\/_    \:\ \:\ \    \::::_\/_   
@@ -18,11 +17,9 @@ This file contains the following sections:
 GENERAL NOTES
 LICENSES
 
-GENERAL NOTES
-=============
+# GENERAL NOTES
 
-Game data and patching:
------------------------
+## Game data and patching:
 
 This source release does not contain any game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
@@ -33,8 +30,7 @@ Note that Doom 3 and Doom 3: Resurrection of Evil are available from the Steam s
 http://store.steampowered.com/app/9050/
 http://store.steampowered.com/app/9070/
 
-Compiling on win32:
--------------------
+## Compiling on win32:
 
 A project file for Microsoft Visual Studio 2010 is provided in neo\doom.sln
 
@@ -42,26 +38,23 @@ You will need the Microsoft DirectX SDK installed as well.
 If it does not reside in "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)"
 you will need to update the project files accordingly.
 
-Compiling on GNU/Linux x86:
----------------------------
+## Compiling on GNU/Linux x86:
 
 The build system on GNU/Linux is based on SCons: http://www.scons.org/
 Issue the scons command in the neo/ folder.
 
-Compiling on MacOS X:
----------------------------
+## Compiling on MacOS X:
 
 XCode 3.2 project is under neo/sys/osx/
 
-MayaImport:
----------------------------
+## MayaImport:
 
 The code for our Maya export plugin is included, if you are a Maya licensee
 you can obtain the SDK from Autodesk.
 
 
-LICENSES
-========
+# LICENSES
+
 See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
 ADDITIONAL TERMS:
@@ -73,8 +66,7 @@ EXCLUDED CODE:
   The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.
   You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.
 
-Curl library
----------------------------------------------------------------------------
+## Curl library
 lines	file(s)
 		neo/curl/*, neo/curl/README
 		
@@ -100,8 +92,7 @@ Except as contained in this notice, the name of a copyright holder shall not
 be used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization of the copyright holder.
 
-JPEG library
------------------------------------------------------------------------------
+## JPEG library
 neo/renderer/jpeg-6/*
 
 Copyright (C) 1991-1995, Thomas G. Lane
@@ -130,8 +121,7 @@ been lost, so the one from release 6b is included instead. There are a few
 the engine, but otherwise the dependency can be easily cleaned up to a
 better release of the library.
 
-OggVorbis 
----------------------------------------------------------------------------
+## OggVorbis 
 neo/sound/OggVorbis/*
 neo/sound/OggVorbis/ogg/README
 neo/sound/OggVorbis/vorbis/README
@@ -165,8 +155,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-PropTree 
----------------------------------------------------------------------------
+## PropTree
 neo/tools/common/PropTree/*
 
 Copyright (C) 1998-2001 Scott Ramsay
@@ -185,8 +174,7 @@ modified is included with the above copyright notice.
 If you use this code, drop me an email.  I'd like to know if you find the code
 useful.
 
-OpenAL SDK
----------------------------------------------------------------------------
+## OpenAL SDK
 neo/openal/docs/*
 neo/openal/include/*
 neo/openal/lib/*
@@ -212,8 +200,7 @@ neo/openal/osx/*
  * Or go to http://www.gnu.org/copyleft/lgpl.html
  */
 
-Base64 implementation
----------------------------------------------------------------------------
+## Base64 implementation
 lines	file(s)
 234		neo/idlib/Base64.cpp
 
@@ -246,9 +233,7 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-
-IO on .zip files using portions of zlib
----------------------------------------------------------------------------
+## IO on .zip files using portions of zlib
 lines	file(s)
 4471	src/framework/Unzip.cpp
 Copyright (C) 1998 Gilles Vollant
@@ -270,8 +255,7 @@ zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-MD4 Message-Digest Algorithm
------------------------------------------------------------------------------
+## MD4 Message-Digest Algorithm
 lines   file(s)
 260		neo/idlib/hashing/MD4.cpp
 Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
@@ -295,8 +279,7 @@ without express or implied warranty of any kind.
 These notices must be retained in any copies of any part of this
 documentation and/or software.
 
-MD5 Message-Digest Algorithm
------------------------------------------------------------------------------
+## MD5 Message-Digest Algorithm
 lines	file(s)
 273		neo/idlib/hashing/MD5.cpp
 This code implements the MD5 message-digest algorithm.
@@ -304,14 +287,12 @@ The algorithm is due to Ron Rivest.  This code was
 written by Colin Plumb in 1993, no copyright is claimed.
 This code is in the public domain; do with it what you wish.
 
-CRC32 Checksum
------------------------------------------------------------------------------
+## CRC32 Checksum
 lines	file(s)
 168		neo/idlib/hashing/CRC32.cpp
 Copyright (C) 1995-1998 Mark Adler
 
-OpenGL headers
----------------------------------------------------------------------------
+## OpenGL headers
 lines	file(s)
 5920	neo/renderer/glext.h
 613		neo/renderer/wglext.h
@@ -345,13 +326,11 @@ lines	file(s)
 ** version 1.2.1 Specification.
 */
 
-NV-CONTROL X Extension
----------------------------------------------------------------------------
+## NV-CONTROL X Extension
 neo/sys/linux/libXNVCtrl/*
 Copyright NVIDIA Corporation
 
-ExtUtil.h
----------------------------------------------------------------------------
+## ExtUtil.h
 neo/sys/linux/extutil.h
 /*
  * $Xorg: extutil.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $
@@ -387,13 +366,11 @@ in this Software without prior written authorization from The Open Group.
  * ARE SUBJECT TO CHANGE!
  */
 
-OSS headers
----------------------------------------------------------------------------
+## OSS headers
 neo/sys/linux/oss/*
 Copyright by 4Front Technologies 1993-2004
 
-Brandelf utility
----------------------------------------------------------------------------
+## Brandelf utility
 lines	file(s)
 225		neo/sys/linux/setup/brandelf.c
 
@@ -427,8 +404,7 @@ lines	file(s)
  * $FreeBSD: src/usr.bin/brandelf/brandelf.c,v 1.16 2000/07/02 03:34:08 imp Exp $
  */
 
-makeself - Make self-extractable archives on Unix
---------------------------------------------------------------------------- 
+## makeself - Make self-extractable archives on Unix
 neo/sys/linux/setup/makeself/*, neo/sys/linux/setup/makeself/README
 Copyright (c) Stéphane Peter
 Licensing: GPL v2
