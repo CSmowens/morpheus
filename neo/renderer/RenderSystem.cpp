@@ -521,37 +521,6 @@ void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char *string, co
 //======================================================================================
 
 /*
-==================
-SetBackEndRenderer
-
-Check for changes in the back end renderSystem, possibly invalidating cached data
-==================
-*/
-void idRenderSystemLocal::SetBackEndRenderer() {
-	if ( !r_renderer.IsModified() ) {
-		return;
-	}
-
-	backEndRenderer = BE_BAD;
-
-	if ( idStr::Icmp( r_renderer.GetString(), "arb2" ) == 0 ) {
-		if ( glConfig.allowARB2Path ) {
-			backEndRenderer = BE_ARB2;
-		}
-	}
-	
-	switch( backEndRenderer ) {
-		default:
-			backEndRenderer = BE_ARB2;
-		case BE_ARB2:
-			common->Printf( "using ARB2 renderSystem\n" );
-			break;
-	}
-
-	r_renderer.ClearModified();
-}
-
-/*
 ====================
 BeginFrame
 ====================
@@ -562,9 +531,6 @@ void idRenderSystemLocal::BeginFrame( int windowWidth, int windowHeight ) {
 	if ( !glConfig.isInitialized ) {
 		return;
 	}
-
-	// determine which back end we will use
-	SetBackEndRenderer();
 
 	guiModel->Clear();
 
