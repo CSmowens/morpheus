@@ -45,17 +45,20 @@ See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
 ADDITIONAL TERMS:
  `The Doom 3 GPL Source Code is also subject to certain additional terms.
- You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.
- If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.`
+ 
+  You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.
+ 
+  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.`
 
 EXCLUDED CODE:
   `The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.
-  You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.`
+ 
+   You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.`
 
 ### Curl library
 neo/curl/*
 		
-	`COPYRIGHT AND PERMISSION NOTICE
+	COPYRIGHT AND PERMISSION NOTICE
 
 	Copyright (c) 1996 - 2004, Daniel Stenberg, <daniel@haxx.se>.
 
@@ -75,12 +78,12 @@ neo/curl/*
 
 	Except as contained in this notice, the name of a copyright holder shall not
 	be used in advertising or otherwise to promote the sale, use or other dealings
-	in this Software without prior written authorization of the copyright holder.`
+	in this Software without prior written authorization of the copyright holder.
 
 ### JPEG library
 neo/renderer/jpeg-6/*
 
-	`Copyright (C) 1991-1995, Thomas G. Lane
+	Copyright (C) 1991-1995, Thomas G. Lane
 
 	Permission is hereby granted to use, copy, modify, and distribute this
 	software (or portions thereof) for any purpose, without fee, subject to these
@@ -104,12 +107,12 @@ neo/renderer/jpeg-6/*
 	been lost, so the one from release 6b is included instead. There are a few
 	'glue type' modifications to the library to make it easier to use from
 	the engine, but otherwise the dependency can be easily cleaned up to a
-	better release of the library.`
+	better release of the library.
 
 ### OggVorbis 
 neo/sound/OggVorbis/*
 			
-	`Copyright (c) 2002, Xiph.org Foundation
+	Copyright (c) 2002, Xiph.org Foundation
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions
@@ -136,12 +139,12 @@ neo/sound/OggVorbis/*
 	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 	THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`
+	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ### PropTree
 neo/tools/common/PropTree/*
 
-	`Copyright (C) 1998-2001 Scott Ramsay
+	Copyright (C) 1998-2001 Scott Ramsay
 	sramsay@gonavi.com
 	http://www.gonavi.com
 
@@ -155,12 +158,12 @@ neo/tools/common/PropTree/*
 	modified is included with the above copyright notice.
 	 
 	If you use this code, drop me an email.  I'd like to know if you find the code
-	useful.`
+	useful.
 
 ### OpenAL SDK
 neo/openal/*
 
-	`/**
+	/**
 	 * OpenAL cross platform audio library
 	 * Copyright (C) 1999-2000 by authors.
 	 * This library is free software; you can redistribute it and/or
@@ -178,13 +181,13 @@ neo/openal/*
 	 *  Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 	 *  Boston, MA  02111-1307, USA.
 	 * Or go to http://www.gnu.org/copyleft/lgpl.html
-	 */`
+	 */
 
 ### Base64 implementation
 lines	file(s)
 234		neo/idlib/Base64.cpp
 
-	`Copyright (c) 1996 Lars Wirzenius.  All rights reserved.
+	Copyright (c) 1996 Lars Wirzenius.  All rights reserved.
 
 	June 14 2003: TTimo <ttimo@idsoftware.com>
 		modified + endian bug fixes
@@ -211,13 +214,13 @@ lines	file(s)
 	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.`
+	POSSIBILITY OF SUCH DAMAGE.
 
 ### IO on .zip files using portions of zlib
 lines	file(s)
 4471	src/framework/Unzip.cpp
 
-	`Copyright (C) 1998 Gilles Vollant
+	Copyright (C) 1998 Gilles Vollant
 	zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
 
 	  This software is provided 'as-is', without any express or implied
@@ -234,13 +237,13 @@ lines	file(s)
 		 appreciated but is not required.
 	  2. Altered source versions must be plainly marked as such, and must not be
 		 misrepresented as being the original software.
-	  3. This notice may not be removed or altered from any source distribution.`
+	  3. This notice may not be removed or altered from any source distribution.
 
 ### MD4 Message-Digest Algorithm
 lines   file(s)
 260		neo/idlib/hashing/MD4.cpp
 
-	`Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
+	Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
 	rights reserved.
 
 	License to copy and use this software is granted provided that it
@@ -259,29 +262,29 @@ lines   file(s)
 	without express or implied warranty of any kind.
 
 	These notices must be retained in any copies of any part of this
-	documentation and/or software.`
+	documentation and/or software.
 
 ### MD5 Message-Digest Algorithm
 lines	file(s)
 273		neo/idlib/hashing/MD5.cpp
 
-	`This code implements the MD5 message-digest algorithm.
+	This code implements the MD5 message-digest algorithm.
 	The algorithm is due to Ron Rivest.  This code was
 	written by Colin Plumb in 1993, no copyright is claimed.
-	This code is in the public domain; do with it what you wish.`
+	This code is in the public domain; do with it what you wish.
 
 ### CRC32 Checksum
 lines	file(s)
 168		neo/idlib/hashing/CRC32.cpp
 
-	`Copyright (C) 1995-1998 Mark Adler`
+	Copyright (C) 1995-1998 Mark Adler
 
 ### OpenGL headers
 lines	file(s)
 5920	neo/renderer/glext.h
 613		neo/renderer/wglext.h
 
-	`/*
+	/*
 	** License Applicability. Except to the extent portions of this file are
 	** made subject to an alternative license as permitted in the SGI Free
 	** Software License B, Version 1.1 (the "License"), the contents of this
@@ -308,17 +311,17 @@ lines	file(s)
 	** OpenGL(R) version 1.2.1 Sample Implementation published by SGI, but has
 	** not been independently verified as being compliant with the OpenGL(R)
 	** version 1.2.1 Specification.
-	*/`
+	*/
 
 ### NV-CONTROL X Extension
 neo/sys/linux/libXNVCtrl/*
 
-	`Copyright NVIDIA Corporation`
+	Copyright NVIDIA Corporation
 
 ### ExtUtil.h
 neo/sys/linux/extutil.h
 
-	`/*
+	/*
 	 * $Xorg: extutil.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $
 	 *
 	Copyright 1989, 1998  The Open Group
@@ -350,18 +353,18 @@ neo/sys/linux/extutil.h
 	 * This package contains utilities for writing the client API for various
 	 * protocol extensions.  THESE INTERFACES ARE NOT PART OF THE X STANDARD AND
 	 * ARE SUBJECT TO CHANGE!
-	 */`
+	 */
 
 ### OSS headers
 neo/sys/linux/oss/*
 
-	`Copyright by 4Front Technologies 1993-2004`
+	Copyright by 4Front Technologies 1993-2004
 
 ### Brandelf utility
 lines	file(s)
 225		neo/sys/linux/setup/brandelf.c
 
-	`/*-
+	/*-
 	 * Copyright (c) 1996 Søren Schmidt
 	 * All rights reserved.
 	 *
@@ -389,13 +392,13 @@ lines	file(s)
 	 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	 *
 	 * $FreeBSD: src/usr.bin/brandelf/brandelf.c,v 1.16 2000/07/02 03:34:08 imp Exp $
-	 */`
+	 */
 
 ### makeself - Make self-extractable archives on Unix
 neo/sys/linux/setup/makeself/*
 
-	`Copyright (c) Stéphane Peter
-	Licensing: GPL v2`
+	Copyright (c) Stéphane Peter
+	Licensing: GPL v2
 
 
 
