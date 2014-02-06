@@ -164,9 +164,6 @@ public:
 	void		GenerateImage( const byte *pic, int width, int height, 
 					   textureFilter_t filter, bool allowDownSize, 
 					   textureRepeat_t repeat, textureDepth_t depth );
-	void		Generate3DImage( const byte *pic, int width, int height, int depth,
-						textureFilter_t filter, bool allowDownSize, 
-						textureRepeat_t repeat, textureDepth_t minDepth );
 	void		GenerateCubeImage( const byte *pic[6], int size, 
 						textureFilter_t filter, bool allowDownSize, 
 						textureDepth_t depth );
@@ -363,7 +360,6 @@ public:
 	static idCVar		image_usePrecompressedTextures;	// use .dds files if present
 	static idCVar		image_writePrecompressedTextures; // write .dds files if necessary
 	static idCVar		image_writeNormalTGA;		// debug tool to write out .tgas of the final normal maps
-	static idCVar		image_writeNormalTGAPalletized;		// debug tool to write out palletized versions of the final normal maps
 	static idCVar		image_writeTGA;				// debug tool to write out .tgas of the non normal maps
 	static idCVar		image_useNormalCompression;	// 1 = use 256 color compression for normal maps if available, 2 = use rxgb compression
 	static idCVar		image_useOffLineCompression; // will write a batch file with commands for the offline compression
@@ -390,7 +386,6 @@ public:
 	idImage *			alphaNotchImage;			// 2x1 texture with just 1110 and 1111 with point sampling
 	idImage *			whiteImage;					// full of 0xff
 	idImage *			blackImage;					// full of 0x00
-	idImage *			normalCubeMapImage;			// cube map to normalize STR into RGB
 	idImage *			noFalloffImage;				// all 255, but zero clamped
 	idImage *			fogImage;					// increasing alpha is denser fog
 	idImage *			fogEnterImage;				// adjust fogImage alpha based on terminator plane
@@ -400,8 +395,6 @@ public:
 	idImage *			accumImage;
 	idImage *			currentRenderImage;			// for SS_POST_PROCESS shaders
 	idImage *			scratchCubeMapImage;
-	idImage *			specularTableImage;			// 1D intensity texture with our specular function
-	idImage *			specular2DTableImage;		// 2D intensity texture with our specular function with variable specularity
 	idImage *			borderClampImage;			// white inside, black outside
 
 	//--------------------------------------------------------
@@ -453,7 +446,6 @@ byte *R_ResampleTexture( const byte *in, int inwidth, int inheight,
 							int outwidth, int outheight );
 byte *R_MipMapWithAlphaSpecularity( const byte *in, int width, int height );
 byte *R_MipMap( const byte *in, int width, int height, bool preserveBorder );
-byte *R_MipMap3D( const byte *in, int width, int height, int depth, bool preserveBorder );
 
 // these operate in-place on the provided pixels
 void R_SetBorderTexels( byte *inBase, int width, int height, const byte border[4] );

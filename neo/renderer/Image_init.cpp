@@ -55,7 +55,6 @@ idCVar idImageManager::image_useNormalCompression( "image_useNormalCompression",
 idCVar idImageManager::image_usePrecompressedTextures( "image_usePrecompressedTextures", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL, "use .dds files if present" );
 idCVar idImageManager::image_writePrecompressedTextures( "image_writePrecompressedTextures", "0", CVAR_RENDERER | CVAR_BOOL, "write .dds files if necessary" );
 idCVar idImageManager::image_writeNormalTGA( "image_writeNormalTGA", "0", CVAR_RENDERER | CVAR_BOOL, "write .tgas of the final normal maps for debugging" );
-idCVar idImageManager::image_writeNormalTGAPalletized( "image_writeNormalTGAPalletized", "0", CVAR_RENDERER | CVAR_BOOL, "write .tgas of the final palletized normal maps for debugging" );
 idCVar idImageManager::image_writeTGA( "image_writeTGA", "0", CVAR_RENDERER | CVAR_BOOL, "write .tgas of the non normal maps for debugging" );
 idCVar idImageManager::image_useOffLineCompression( "image_useOfflineCompression", "0", CVAR_RENDERER | CVAR_BOOL, "write a batch file for offline compression of DDS files" );
 idCVar idImageManager::image_cacheMinK( "image_cacheMinK", "200", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "maximum KB of precompressed files to read at specification time" );
@@ -143,77 +142,6 @@ static void R_RampImage( idImage *image ) {
 	image->GenerateImage( (byte *)data, 256, 1, 
 		TF_NEAREST, false, TR_CLAMP, TD_HIGH_QUALITY );
 }
-
-/*
-================
-R_SpecularTableImage
-
-Creates a ramp that matches our fudged specular calculation
-================
-*/
-static void R_SpecularTableImage( idImage *image ) {
-	int		x;
-	byte	data[256][4];
-
-	for (x=0 ; x<256 ; x++) {
-		float f = x/255.f;
-#if 0
-		f = pow(f, 16);
-#else
-		// this is the behavior of the hacked up fragment programs that
-		// can't really do a power function
-		f = (f-0.75)*4;
-		if ( f < 0 ) {
-			f = 0;
-		}
-		f = f * f;
-#endif
-		int		b = (int)(f * 255);
-
-		data[x][0] = 
-		data[x][1] = 
-		data[x][2] = 
-		data[x][3] = b;
-	}
-
-	image->GenerateImage( (byte *)data, 256, 1, 
-		TF_LINEAR, false, TR_CLAMP, TD_HIGH_QUALITY );
-}
-
-
-/*
-================
-R_Specular2DTableImage
-
-Create a 2D table that calculates ( reflection dot , specularity )
-================
-*/
-static void R_Specular2DTableImage( idImage *image ) {
-	int		x, y;
-	byte	data[256][256][4];
-
-	memset( data, 0, sizeof( data ) );
-		for ( x = 0 ; x < 256 ; x++ ) {
-			float f = x / 255.0f;
-		for ( y = 0; y < 256; y++ ) {
-
-			int b = (int)( pow( f, y ) * 255.0f );
-			if ( b == 0 ) {
-				// as soon as b equals zero all remaining values in this column are going to be zero
-				// we early out to avoid pow() underflows
-				break;
-			}
-
-			data[y][x][0] = 
-			data[y][x][1] = 
-			data[y][x][2] = 
-			data[y][x][3] = b;
-		}
-	}
-
-	image->GenerateImage( (byte *)data, 256, 256, TF_LINEAR, false, TR_CLAMP, TD_HIGH_QUALITY );
-}
-
 
 
 /*
@@ -1842,14 +1770,11 @@ void idImageManager::Init() {
 	borderClampImage = ImageFromFunction( "_borderClamp", R_BorderClampImage );
 	flatNormalMap = ImageFromFunction( "_flat", R_FlatNormalImage );
 	ambientNormalMap = ImageFromFunction( "_ambient", R_AmbientNormalImage );
-	specularTableImage = ImageFromFunction( "_specularTable", R_SpecularTableImage );
-	specular2DTableImage = ImageFromFunction( "_specular2DTable", R_Specular2DTableImage );
 	rampImage = ImageFromFunction( "_ramp", R_RampImage );
 	alphaRampImage = ImageFromFunction( "_alphaRamp", R_RampImage );
 	alphaNotchImage = ImageFromFunction( "_alphaNotch", R_AlphaNotchImage );
 	fogImage = ImageFromFunction( "_fog", R_FogImage );
 	fogEnterImage = ImageFromFunction( "_fogEnter", R_FogEnterImage );
-	normalCubeMapImage = ImageFromFunction( "_normalCubeMap", makeNormalizeVectorCubeMap );
 	noFalloffImage = ImageFromFunction( "_noFalloff", R_CreateNoFalloffImage );
 	ImageFromFunction( "_quadratic", R_QuadraticImage );
 
