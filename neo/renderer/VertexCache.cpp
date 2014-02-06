@@ -72,7 +72,7 @@ static void GL_BindBuffer( GLenum target, GLuint buffer ) {
 		} else {
 			return;
 		}
-   	} else {
+	} else {
 		common->Error( "GL_BindBuffer : invalid buffer target : %i\n", (int)target );
 		return;
 	}
@@ -184,7 +184,7 @@ void idVertexCache::Init() {
 	}
 
 	// initialize the cache memory blocks
-    this->freeStaticHeaders.next = this->freeStaticHeaders.prev = &this->freeStaticHeaders;
+	this->freeStaticHeaders.next = this->freeStaticHeaders.prev = &this->freeStaticHeaders;
 	staticHeaders.next = staticHeaders.prev = &staticHeaders;
 	freeDynamicHeaders.next = freeDynamicHeaders.prev = &freeDynamicHeaders;
 	dynamicHeaders.next = dynamicHeaders.prev = &dynamicHeaders;
@@ -192,18 +192,18 @@ void idVertexCache::Init() {
 
 	// set up the dynamic frame memory
 	frameBytes = FRAME_MEMORY_BYTES;
-    this->staticAllocTotal = 0;
+	this->staticAllocTotal = 0;
 
 	byte	*junk = (byte *)Mem_Alloc( frameBytes );
 	for ( int i = 0 ; i < NUM_VERTEX_FRAMES ; i++ ) {
-        this->allocatingTempBuffer = true;   // force the alloc to use GL_STREAM_DRAW_ARB
-        this->Alloc( junk, this->frameBytes, &this->tempBuffers[i] );
-        this->allocatingTempBuffer = false;
-        this->tempBuffers[i]->tag = TAG_FIXED;
+		this->allocatingTempBuffer = true;   // force the alloc to use GL_STREAM_DRAW_ARB
+		this->Alloc( junk, this->frameBytes, &this->tempBuffers[i] );
+		this->allocatingTempBuffer = false;
+		this->tempBuffers[i]->tag = TAG_FIXED;
 
 		// unlink these from the static list, so they won't ever get purged
-        this->tempBuffers[i]->next->prev = this->tempBuffers[i]->prev;
-        this->tempBuffers[i]->prev->next = this->tempBuffers[i]->next;
+		this->tempBuffers[i]->next->prev = this->tempBuffers[i]->prev;
+		this->tempBuffers[i]->prev->next = this->tempBuffers[i]->next;
 	}
 	Mem_Free( junk );
 
@@ -286,11 +286,11 @@ void idVertexCache::Alloc( void *data, int size, vertCache_t **buffer, bool inde
 	}
 
 	// move it from the freeStaticHeaders list to the staticHeaders list
-   	block->target = target;
-   	block->usage = usage;
+	block->target = target;
+	block->usage = usage;
 	if ( block->vbo ) {
 		// orphan the buffer in case it needs respecifying (it usually will)
- 		GL_BindBuffer( target, block->vbo );
+		GL_BindBuffer( target, block->vbo );
 		qglBufferDataARB( target, (GLsizeiptr) size, NULL, usage );
 		qglBufferDataARB( target, (GLsizeiptr) size, data, usage );
 	} else {
@@ -310,10 +310,10 @@ void idVertexCache::Alloc( void *data, int size, vertCache_t **buffer, bool inde
 	block->tag = TAG_USED;
 
 	// save data for debugging
-    this->staticAllocThisFrame += block->size;
-    this->staticCountThisFrame++;
-    this->staticCountTotal++;
-    this->staticAllocTotal += block->size;
+	this->staticAllocThisFrame += block->size;
+	this->staticCountThisFrame++;
+	this->staticCountTotal++;
+	this->staticAllocTotal += block->size;
 
 	// this will be set to zero when it is purged
 	block->user = buffer;
@@ -406,9 +406,9 @@ vertCache_t	*idVertexCache::AllocFrameTemp( void *data, int size ) {
 	if ( dynamicAllocThisFrame + size > frameBytes ) {
 		// if we don't have enough room in the temp block, allocate a static block,
 		// but immediately free it so it will get freed at the next frame
-        this->tempOverflow = true;
-        this->Alloc( data, size, &block );
-        this->Free( block);
+		this->tempOverflow = true;
+		this->Alloc( data, size, &block );
+		this->Free( block);
 		return block;
 	}
 
@@ -450,26 +450,26 @@ vertCache_t	*idVertexCache::AllocFrameTemp( void *data, int size ) {
 	if( ( block->vbo = tempBuffers[listNum]->vbo ) != 0 ) {
 		GL_BindBuffer ( GL_ARRAY_BUFFER, block->vbo );
 
- 		// try to get an unsynchronized map if at all possible
+		// try to get an unsynchronized map if at all possible
 		if( glConfig.mapBufferRangeAvailable && r_useArbBufferRange.GetBool() ) {
 			void *dst = NULL;
 			GLbitfield access = GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_INVALIDATE_RANGE_BIT;
 
- 			// if the buffer has wrapped then we orphan it
- 			if( block->offset == 0 ) {
-            	access = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT;
-         	} else {
+			// if the buffer has wrapped then we orphan it
+			if( block->offset == 0 ) {
+				access = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT;
+			} else {
 				access = GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_INVALIDATE_RANGE_BIT;
 			}
 
-         	if( ( dst = qglMapBufferRange( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, access ) ) != NULL ) {
-            	SIMDProcessor->Memcpy( (byte *) dst, data, size );
+			if( ( dst = qglMapBufferRange( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, access ) ) != NULL ) {
+				SIMDProcessor->Memcpy( (byte *) dst, data, size );
 				qglUnmapBufferARB( GL_ARRAY_BUFFER );
-            	return block;
-         	} else {
-            	qglBufferSubDataARB( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, data );
-         	}
-      	} else {
+				return block;
+			} else {
+				qglBufferSubDataARB( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, data );
+			}
+		} else {
 			qglBufferSubDataARB( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, data );
 		}      
 	} else {
@@ -501,9 +501,9 @@ void idVertexCache::EndFrame() {
 
 		common->Printf( "vertex dynamic:%i=%ik%s, static alloc:%i=%ik used:%i=%ik total:%i=%ik\n",
 			dynamicCountThisFrame, dynamicAllocThisFrame/1024, frameOverflow,
-            this->staticCountThisFrame, staticAllocThisFrame/1024,
+			this->staticCountThisFrame, staticAllocThisFrame/1024,
 			staticUseCount, staticUseSize/1024,
-            this->staticCountTotal, staticAllocTotal/1024 );
+			this->staticCountTotal, staticAllocTotal/1024 );
 	}
 
 	// unbind vertex buffers
@@ -512,8 +512,8 @@ void idVertexCache::EndFrame() {
 
 	currentFrame = tr.frameCount;
 	listNum = currentFrame % NUM_VERTEX_FRAMES;
-    this->staticAllocThisFrame = 0;
-    this->staticCountThisFrame = 0;
+	this->staticAllocThisFrame = 0;
+	this->staticCountThisFrame = 0;
 	dynamicAllocThisFrame = 0;
 	dynamicCountThisFrame = 0;
 	tempOverflow = false;
