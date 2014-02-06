@@ -463,9 +463,8 @@ vertCache_t	*idVertexCache::AllocFrameTemp( void *data, int size ) {
 			}
 
 			if( ( dst = qglMapBufferRange( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, access ) ) != NULL ) {
-				SIMDProcessor->Memcpy( (byte *) dst, data, size );
+				memcpy( (byte *) dst, data, size );
 				qglUnmapBufferARB( GL_ARRAY_BUFFER );
-				return block;
 			} else {
 				qglBufferSubDataARB( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, data );
 			}
@@ -473,7 +472,7 @@ vertCache_t	*idVertexCache::AllocFrameTemp( void *data, int size ) {
 			qglBufferSubDataARB( GL_ARRAY_BUFFER, block->offset, (GLsizeiptr) size, data );
 		}      
 	} else {
-		SIMDProcessor->Memcpy( (byte *) block->virtMem + block->offset, data, size );
+		memcpy( (byte *) block->virtMem + block->offset, data, size );
 	}
 
 	return block;
