@@ -44,16 +44,17 @@ you can obtain the SDK from Autodesk.
 See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
 ADDITIONAL TERMS:
- `The Doom 3 GPL Source Code is also subject to certain additional terms.
- 
-  You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.
- 
-  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.`
+```
+The Doom 3 GPL Source Code is also subject to certain additional terms.
+You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 Source Code.
+If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.`
+```
 
 EXCLUDED CODE:
-  `The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.
- 
-   You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.`
+```
+The code described below and contained in the Doom 3 GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.
+You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.`
+```
 
 ### Curl library
 neo/curl/*
@@ -184,8 +185,7 @@ neo/openal/*
 	 */
 
 ### Base64 implementation
-lines	file(s)
-234		neo/idlib/Base64.cpp
+neo/idlib/Base64.cpp
 
 	Copyright (c) 1996 Lars Wirzenius.  All rights reserved.
 
@@ -217,8 +217,7 @@ lines	file(s)
 	POSSIBILITY OF SUCH DAMAGE.
 
 ### IO on .zip files using portions of zlib
-lines	file(s)
-4471	src/framework/Unzip.cpp
+src/framework/Unzip.cpp
 
 	Copyright (C) 1998 Gilles Vollant
 	zlib is Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler
@@ -240,8 +239,7 @@ lines	file(s)
 	  3. This notice may not be removed or altered from any source distribution.
 
 ### MD4 Message-Digest Algorithm
-lines   file(s)
-260		neo/idlib/hashing/MD4.cpp
+neo/idlib/hashing/MD4.cpp
 
 	Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
 	rights reserved.
@@ -265,8 +263,7 @@ lines   file(s)
 	documentation and/or software.
 
 ### MD5 Message-Digest Algorithm
-lines	file(s)
-273		neo/idlib/hashing/MD5.cpp
+neo/idlib/hashing/MD5.cpp
 
 	This code implements the MD5 message-digest algorithm.
 	The algorithm is due to Ron Rivest.  This code was
@@ -274,15 +271,13 @@ lines	file(s)
 	This code is in the public domain; do with it what you wish.
 
 ### CRC32 Checksum
-lines	file(s)
-168		neo/idlib/hashing/CRC32.cpp
+neo/idlib/hashing/CRC32.cpp
 
 	Copyright (C) 1995-1998 Mark Adler
 
 ### OpenGL headers
-lines	file(s)
-5920	neo/renderer/glext.h
-613		neo/renderer/wglext.h
+neo/renderer/glext.h
+neo/renderer/wglext.h
 
 	/*
 	** License Applicability. Except to the extent portions of this file are
@@ -361,8 +356,7 @@ neo/sys/linux/oss/*
 	Copyright by 4Front Technologies 1993-2004
 
 ### Brandelf utility
-lines	file(s)
-225		neo/sys/linux/setup/brandelf.c
+neo/sys/linux/setup/brandelf.c
 
 	/*-
 	 * Copyright (c) 1996 Søren Schmidt
@@ -404,11 +398,11 @@ neo/sys/linux/setup/makeself/*
 
 ## Credits
 
-Maintainers
+### Maintainers
 
   * Pat 'raynorpat' Raynor <raynorpat@gmail.com>
 
-Significant contributions from
+### Significant contributions from
 
   * Doom 3 BFG Edition GPL Source <https://github.com/id-Software/DOOM-3-BFG>
   
