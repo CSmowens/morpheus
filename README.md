@@ -405,5 +405,6 @@ neo/sys/linux/setup/makeself/*
 ### Significant contributions from
 
   * Doom 3 BFG Edition GPL Source <https://github.com/id-Software/DOOM-3-BFG>
+  * MH's OpenGL ARB Buffer Range patch <http://pastebin.com/rHrwP0nA>
   
   
