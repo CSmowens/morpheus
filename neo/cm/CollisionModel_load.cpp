@@ -3342,6 +3342,7 @@ void idCollisionModelManagerLocal::LoadMap( const idMapFile *mapFile ) {
 
 	if ( mapFile == NULL ) {
 		common->Error( "idCollisionModelManagerLocal::LoadMap: NULL mapFile" );
+		return;
 	}
 
 	// check whether we can keep the current collision map based on the mapName and mapFileTime

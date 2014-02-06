@@ -169,66 +169,6 @@ void R_SetBorderTexels( byte *inBase, int width, int height, const byte border[4
 	}
 }
 
-/*
-===============
-R_SetBorderTexels3D
-
-===============
-*/
-void R_SetBorderTexels3D( byte *inBase, int width, int height, int depth, const byte border[4] ) {
-	int		i, j;
-	byte	*out;
-	int		row, plane;
-
-	row = width * 4;
-	plane = row * depth;
-
-	for ( j = 1 ; j < depth - 1 ; j++ ) {
-		out = inBase + j * plane;
-		for (i=0 ; i<height ; i++, out+=row) {
-			out[0] = border[0];
-			out[1] = border[1];
-			out[2] = border[2];
-			out[3] = border[3];
-		}
-		out = inBase+(width-1)*4 + j * plane;
-		for (i=0 ; i<height ; i++, out+=row) {
-			out[0] = border[0];
-			out[1] = border[1];
-			out[2] = border[2];
-			out[3] = border[3];
-		}
-		out = inBase + j * plane;
-		for (i=0 ; i<width ; i++, out+=4) {
-			out[0] = border[0];
-			out[1] = border[1];
-			out[2] = border[2];
-			out[3] = border[3];
-		}
-		out = inBase+width*4*(height-1) + j * plane;
-		for (i=0 ; i<width ; i++, out+=4) {
-			out[0] = border[0];
-			out[1] = border[1];
-			out[2] = border[2];
-			out[3] = border[3];
-		}
-	}
-
-	out = inBase;
-	for ( i = 0 ; i < plane ; i += 4, out += 4 ) {
-		out[0] = border[0];
-		out[1] = border[1];
-		out[2] = border[2];
-		out[3] = border[3];
-	}
-	out = inBase+(depth-1)*plane;
-	for ( i = 0 ; i < plane ; i += 4, out += 4 ) {
-		out[0] = border[0];
-		out[1] = border[1];
-		out[2] = border[2];
-		out[3] = border[3];
-	}
-}
 
 /*
 ================
