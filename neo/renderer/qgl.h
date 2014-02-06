@@ -95,6 +95,7 @@ extern PFNGLBINDMULTITEXTUREEXTPROC			qglBindMultiTextureEXT;
 
 // ARB_vertex_buffer_object
 extern PFNGLBINDBUFFERARBPROC				qglBindBufferARB;
+extern PFNGLBINDBUFFERRANGEPROC				qglBindBufferRange;
 extern PFNGLDELETEBUFFERSARBPROC			qglDeleteBuffersARB;
 extern PFNGLGENBUFFERSARBPROC				qglGenBuffersARB;
 extern PFNGLISBUFFERARBPROC					qglIsBufferARB;
@@ -105,6 +106,9 @@ extern PFNGLMAPBUFFERARBPROC				qglMapBufferARB;
 extern PFNGLUNMAPBUFFERARBPROC				qglUnmapBufferARB;
 extern PFNGLGETBUFFERPARAMETERIVARBPROC		qglGetBufferParameterivARB;
 extern PFNGLGETBUFFERPOINTERVARBPROC		qglGetBufferPointervARB;
+
+// GL_ARB_map_buffer_range
+extern PFNGLMAPBUFFERRANGEPROC				qglMapBufferRange;
 
 // ARB_texture_compression
 extern	PFNGLCOMPRESSEDTEXIMAGE2DARBPROC	qglCompressedTexImage2DARB;

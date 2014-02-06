@@ -74,9 +74,9 @@ typedef struct glconfig_s {
 	bool				textureLODBiasAvailable;
 	bool				ARBVertexBufferObjectAvailable;
 	bool				ARBVertexProgramAvailable;
+	bool				mapBufferRangeAvailable;
 	bool				ARBFragmentProgramAvailable;
 	bool				twoSidedStencilAvailable;
-	bool				textureNonPowerOfTwoAvailable;
 	bool				depthBoundsTestAvailable;
 	bool				glslAvailable;
 	bool				uniformBufferAvailable;
