@@ -20,22 +20,23 @@ NOTE: Doom 3 and Doom 3: Resurrection of Evil are available from the Steam store
  * Doom 3 - <http://store.steampowered.com/app/9050/>
  * Doom 3: Resurrection of Evil - <http://store.steampowered.com/app/9070/>
 
-### Compiling on win32:
+### Compiling:
 
-A project file for Microsoft Visual Studio 2010 is provided in neo\doom.sln
+The build system is based on PreMake: http://PreMake.org/
 
-You will need the Microsoft DirectX SDK installed as well.
-If it does not reside in "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)"
-you will need to update the project files accordingly.
+For Windows users with MSVC 2012 you'd simply generate the solution files using
 
-### Compiling on GNU/Linux x86:
+`premake5 vs2012`
 
-The build system on GNU/Linux is based on SCons: <http://www.scons.org/>
-Issue the scons command in the neo/ folder.
+OSX users would need use
 
-### Compiling on MacOS X:
+`premake5 xcode4`
 
-XCode 3.2 project is under neo/sys/osx/
+*nix users would probably use
+
+`premake5 gmake`
+
+NOTE: Currently the only working backend is the Win32 one. If you'd like to help write a port to SDL2 for OS X and *nix feel free to fork and submit a patch.
 
 ### MayaImport:
 
@@ -281,8 +282,7 @@ neo/idlib/hashing/CRC32.cpp
 	Copyright (C) 1995-1998 Mark Adler
 
 ### OpenGL headers
-neo/renderer/glext.h
-neo/renderer/wglext.h
+neo/renderer/glext.h & neo/renderer/wglext.h
 
 	/*
 	** License Applicability. Except to the extent portions of this file are
