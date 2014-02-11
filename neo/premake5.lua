@@ -1,4 +1,4 @@
--- 
+-- morpheus premake5 build script
 morpheus =
 {
 	-- The engine executables will be output here
@@ -26,24 +26,68 @@ solution "morpheus"
 	location "msvc-premake"
 	startproject "doom"
 	
-	defines
-	{
-		"WIN32",
-		"_CRT_SECURE_NO_DEPRECATE",
-		"_AFXDLL"
-	}
-
-	platforms { "native", "x32", "x64" }
+	platforms { "native", "universal", "x32", "x64", "ppc" }
 	configurations { "Debug", "Release" }
+	flags { "FloatFast" }
+	
+	-- various platform-specific build flags
+    if os.is( "windows" ) then
+        defines { "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "WIN32", "_WIN32", "_AFXDLL" }
+        flags { "No64BitChecks" }
+    else
+        -- *nix
+        buildoptions {
+            "-Wunused-parameter",
+            "-Wredundant-decls",    -- (useful for finding some multiply-included header files)
+            "-Wundef",              -- (useful for finding macro name typos)
+
+            -- enable security features (stack checking etc) that shouldn't have
+            -- a significant effect on performance and can catch bugs
+            "-fstack-protector-all",
+
+            -- always enable strict aliasing (useful in debug builds because of the warnings)
+            "-fstrict-aliasing",
+
+            -- do something (?) so that ccache can handle compilation with PCH enabled
+            "-fpch-preprocess",
+
+            -- enable SSE intrinsics
+            "-msse",
+
+            -- don't omit frame pointers (for now), because performance will be impacted
+            -- negatively by the way this breaks profilers more than it will be impacted
+            -- positively by the optimisation
+            "-fno-omit-frame-pointer"
+        }
+
+        if os.is( "linux" ) then
+            defines { "LINUX" }
+            linkoptions { "-Wl,--no-undefined", "-Wl,--as-needed" }
+        end
+
+        -- To support intrinsics like __sync_bool_compare_and_swap on x86
+        -- we need to set -march to something that supports them
+        if arch == "x86" then
+            buildoptions { "-march=i686" }
+        end
+
+        -- We don't want to require SSE2 everywhere yet, but OS X headers do
+        -- require it (and Intel Macs always have it) so enable it here
+        if os.is( "macosx" ) then
+            defines { "MACOS_X" }
+            buildoptions { "-msse2" }
+        end
+    end	
 	
 	configuration "Debug"
 		optimize "Debug"
 		defines "_DEBUG"
-		flags "Symbols"
+		flags { "Symbols" }
 				
 	configuration "Release"
 		optimize "Full"
 		defines "NDEBUG"
+		flags { "OptimizeSpeed", "NoEditAndContinue" }
 	
 -----------------------------------------------------------------------------
 
@@ -205,7 +249,6 @@ project "doom"
 	
 	excludes
 	{
-		"../neo/sys/win32/gl_logfuncs.cpp",
 		"../neo/openal/stubs.cpp",
 		"../neo/openal/idal.cpp",
 	}		
@@ -218,46 +261,53 @@ project "doom"
 		"../neo/idlib",
 	}	
 	
-	-- win32 sections
-	files
-	{
-		"../neo/sys/win32/*.cpp",
-		"../neo/sys/win32/rc/doom.rc",
-	}
-	includedirs( DXSDK_INCLUDE )
-	libdirs( DXSDK_LIB )
-	excludes
-	{
-		"../neo/sys/win32/gl_logfuncs.cpp",
-	}
-	links
-	{
-		"user32",
-		"advapi32",
-		"winmm",
-		"wsock32",
-		"ws2_32",
-		"iphlpapi",
-		"Dbghelp",
-		"OpenGL32",
-		"psapi",
-		"gdi32",
-		"dxguid",
-		"DxErr",
-		"dsound",
-		"dinput8",
-		"../neo/openal/lib/openal32",
-		"../neo/openal/lib/eaxguid",
-		
-		-- Other projects
-		"curlLib",
-		"idLib",
-	}	
-	linkoptions
-	{
-		"/SAFESEH:NO" -- for MSVC2012
-	}
-	
+	-- Platform Specifics
+	if os.is( "windows" ) then
+		files
+		{
+			"../neo/sys/win32/*.cpp",
+			"../neo/sys/win32/rc/doom.rc",
+		}
+		includedirs( DXSDK_INCLUDE )
+		libdirs( DXSDK_LIB )
+		excludes
+		{
+			"../neo/sys/win32/gl_logfuncs.cpp",
+			"../neo/sys/win32/gl_logfuncs.cpp",
+		}
+		links
+		{
+			"user32",
+			"advapi32",
+			"winmm",
+			"wsock32",
+			"ws2_32",
+			"iphlpapi",
+			"Dbghelp",
+			"OpenGL32",
+			"psapi",
+			"gdi32",
+			"dxguid",
+			"DxErr",
+			"dsound",
+			"dinput8",
+			"../neo/openal/lib/openal32",
+			"../neo/openal/lib/eaxguid",
+			
+			-- Other projects
+			"curlLib",
+			"idLib",
+		}	
+		linkoptions
+		{
+			"/SAFESEH:NO" -- for MSVC2012
+		}
+	elseif os.is( "linux" ) then
+		links { "m", "dl", "pthread" }
+	elseif os.is( "macosx" ) then
+		links { "Foundation.framework", "AppKit.framework" }
+	end
+
 	configuration "Debug"
 		if morpheus.outputPath == nil then
 			targetdir "../build/doom_debug"
