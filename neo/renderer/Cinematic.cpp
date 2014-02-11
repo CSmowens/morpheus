@@ -891,7 +891,7 @@ void idCinematicLocal::blitVQQuad32fs( byte **status, unsigned char *data ) {
 }
 
 #define VQ2TO4(a,b,c,d) { \
-    	*c++ = a[0];	\
+		*c++ = a[0];	\
 	*d++ = a[0];	\
 	*d++ = a[0];	\
 	*c++ = a[1];	\
@@ -1342,14 +1342,14 @@ METHODDEF boolean fill_input_buffer( j_decompress_ptr cinfo )
   nbytes = INPUT_BUF_SIZE;
   if (nbytes > src->memsize) nbytes = src->memsize;
   if (nbytes == 0) {
-    /* Insert a fake EOI marker */
-    src->buffer[0] = (JOCTET) 0xFF;
-    src->buffer[1] = (JOCTET) JPEG_EOI;
-    nbytes = 2;
+	/* Insert a fake EOI marker */
+	src->buffer[0] = (JOCTET) 0xFF;
+	src->buffer[1] = (JOCTET) JPEG_EOI;
+	nbytes = 2;
   } else {
 	  memcpy( src->buffer, src->infile, INPUT_BUF_SIZE );
 	  src->infile = src->infile + nbytes;
- 	  src->memsize = src->memsize - INPUT_BUF_SIZE;
+	  src->memsize = src->memsize - INPUT_BUF_SIZE;
   }
   src->pub.next_input_byte = src->buffer;
   src->pub.bytes_in_buffer = nbytes;
@@ -1397,8 +1397,8 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
    */
   if (num_bytes > 0) {
 	src->infile = src->infile + num_bytes;
-    src->pub.next_input_byte += (size_t) num_bytes;
-    src->pub.bytes_in_buffer -= (size_t) num_bytes;
+	src->pub.next_input_byte += (size_t) num_bytes;
+	src->pub.bytes_in_buffer -= (size_t) num_bytes;
   }
 }
 
@@ -1441,12 +1441,12 @@ jpeg_memory_src (j_decompress_ptr cinfo, byte *infile, int size)
    * manager serially with the same JPEG object.  Caveat programmer.
    */
   if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-    cinfo->src = (struct jpeg_source_mgr *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+	cinfo->src = (struct jpeg_source_mgr *)
+	  (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 				  sizeof(my_source_mgr));
-    src = (my_src_ptr) cinfo->src;
-    src->buffer = (JOCTET *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+	src = (my_src_ptr) cinfo->src;
+	src->buffer = (JOCTET *)
+	  (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 				  INPUT_BUF_SIZE * sizeof(JOCTET));
   }
 
@@ -1506,9 +1506,9 @@ int JPEGBlit( byte *wStatus, byte *data, int datasize )
   /* Step 5: Start decompressor */
 
 	cinfo.dct_method = JDCT_IFAST;
-    cinfo.dct_method = JDCT_FASTEST;
+	cinfo.dct_method = JDCT_FASTEST;
 	cinfo.dither_mode = JDITHER_NONE;
-    cinfo.do_fancy_upsampling = FALSE;
+	cinfo.do_fancy_upsampling = FALSE;
 //	cinfo.out_color_space = JCS_GRAYSCALE;
 	
   (void) jpeg_start_decompress(&cinfo);
@@ -1538,13 +1538,13 @@ int JPEGBlit( byte *wStatus, byte *data, int datasize )
    
   wStatus += (cinfo.output_height-1)*row_stride;
   while (cinfo.output_scanline < cinfo.output_height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
-    (void) jpeg_read_scanlines(&cinfo, &buffer[0], 1);
+	/* jpeg_read_scanlines expects an array of pointers to scanlines.
+	 * Here the array is only one element long, but you could ask for
+	 * more than one scanline at a time if that's more convenient.
+	 */
+	(void) jpeg_read_scanlines(&cinfo, &buffer[0], 1);
 
-    /* Assume put_scanline_someplace wants a pointer and sample count. */
+	/* Assume put_scanline_someplace wants a pointer and sample count. */
 	memcpy( wStatus, &buffer[0][0], row_stride );
 	/*
 	int x;

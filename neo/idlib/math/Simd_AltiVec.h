@@ -114,10 +114,10 @@ public:
 #ifdef ENABLE_SIMPLE_MATH
 	// Basic math, works for both aligned and unaligned data
 	virtual void VPCALL Add( float *dst, const float constant, const float *src, const int count );
-    virtual void VPCALL Add( float *dst, const float *src0, const float *src1, const int count );
+	virtual void VPCALL Add( float *dst, const float *src0, const float *src1, const int count );
 	virtual void VPCALL Sub( float *dst, const float constant, const float *src, const int count );
 	virtual void VPCALL Sub( float *dst, const float *src0, const float *src1, const int count );
- 	virtual void VPCALL Mul( float *dst, const float constant, const float *src, const int count);
+	virtual void VPCALL Mul( float *dst, const float constant, const float *src, const int count);
 	virtual void VPCALL Mul( float *dst, const float *src0, const float *src1, const int count );
 	virtual void VPCALL Div( float *dst, const float constant, const float *divisor, const int count );
 	virtual void VPCALL Div( float *dst, const float *src0, const float *src1, const int count ); 
@@ -167,7 +167,7 @@ public:
 	virtual void VPCALL ClampMax( float *dst,		const float *src,		const float max,		const int count );
 #endif
 
-    // These are already using memcpy and memset functions. Leaving default implementation
+	// These are already using memcpy and memset functions. Leaving default implementation
 //	virtual void VPCALL Memcpy( void *dst,			const void *src,		const int count );
 //	virtual void VPCALL Memset( void *dst,			const int val,			const int count );
 

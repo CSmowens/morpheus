@@ -35,10 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 #include <math.h>
 #include <float.h>
 
-#ifdef PPC_INTRINSICS
-	#include <ppc_intrinsics.h>
-#endif
-
 // Doom3 SIMD Library version 0.5
 // Patrick Flanagan (pflanagan@apple.com)
 // Sanjay Patel (spatel@apple.com)
@@ -52,6 +48,10 @@ If you have questions concerning this license or the applicable additional terms
 //===============================================================
 
 #if defined(MACOS_X) && defined(__ppc__)
+
+#ifdef PPC_INTRINSICS
+	#include <ppc_intrinsics.h>
+#endif
 
 // Data struct sizes
 
@@ -617,26 +617,26 @@ idSIMD_AltiVec::Add
 ============
 */
 void VPCALL idSIMD_AltiVec::Add( float *dst, const float constant, const float *src, const int count ) {
-    vector float v0, v1, v2, v3;
+	vector float v0, v1, v2, v3;
 	vector float v0_low, v0_hi, v1_hi;
-    vector unsigned char permVec;
-    vector float constVec;
-    int i;
-	        
-    // handle unaligned cases at beginning
-    for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+	vector unsigned char permVec;
+	vector float constVec;
+	int i;
+			
+	// handle unaligned cases at beginning
+	for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 	   dst[i] = constant + src[i];
-    }
-	    
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant ); 
+	}
+		
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &constant ); 
 	
 	//calculate permute and do first load
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), (vector unsigned char)(1) );		
 	v1_hi = vec_ld( 0, &src[i] ); 
 
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi; 
 		v0_hi = vec_ld( 15, &src[i] );
@@ -651,11 +651,11 @@ void VPCALL idSIMD_AltiVec::Add( float *dst, const float constant, const float *
 		// store results
 		ALIGNED_STORE2( &dst[i], v2, v3 );
 	}
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = constant + src[i];
-    }
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = constant + src[i];
+	}
 }
 
 /*
@@ -666,9 +666,9 @@ idSIMD_AltiVec::Add
 ============
 */
 void VPCALL idSIMD_AltiVec::Add( float *dst, const float *src0, const float *src1, const int count ) {
-    
-    register vector float v0, v1, v2, v3, v4, v5;
-    //src0
+	
+	register vector float v0, v1, v2, v3, v4, v5;
+	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
@@ -677,20 +677,20 @@ void VPCALL idSIMD_AltiVec::Add( float *dst, const float *src0, const float *src
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
 	
 	int i;
-    
-    //unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
-	    dst[i] = src0[i] + src1[i];
-    }
-    
+	
+	//unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+		dst[i] = src0[i] + src1[i];
+	}
+	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
 	permVec2 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
 	
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -713,11 +713,11 @@ void VPCALL idSIMD_AltiVec::Add( float *dst, const float *src0, const float *src
 		ALIGNED_STORE2( &dst[i], v4, v5 );
 	
 	}
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] + src1[i];
-    }
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] + src1[i];
+	}
 }
 
 /*
@@ -729,27 +729,27 @@ idSIMD_AltiVec::Sub
 */
 void VPCALL idSIMD_AltiVec::Sub( float *dst, const float constant, const float *src, const int count ) {
 
-    register vector float v0, v1, v2, v3;
+	register vector float v0, v1, v2, v3;
 	register vector float v0_low, v0_hi, v1_low, v1_hi;
-    register vector unsigned char permVec;
-    register vector float constVec;
+	register vector unsigned char permVec;
+	register vector float constVec;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    int i;
-    
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+	int i;
+	
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 		dst[i] = constant - src[i];
-    }
-    
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
-    
+	}
+	
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &constant );
+	
 	//calculate permute vector and do first load
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneCharVector );
 	v1_hi = vec_ld( 0, &src[i] );
 	
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &src[i] );
@@ -763,12 +763,12 @@ void VPCALL idSIMD_AltiVec::Sub( float *dst, const float constant, const float *
 		v3 = vec_sub( constVec, v1 );
 	
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = constant - src[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = constant - src[i];
+	}
 }
 
 /*
@@ -779,28 +779,28 @@ idSIMD_AltiVec::Sub
 ============
 */
 void VPCALL idSIMD_AltiVec::Sub( float *dst, const float *src0, const float *src1, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5;
+	register vector float v0, v1, v2, v3, v4, v5;
 	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
-    register vector unsigned char permVec1, permVec2;
+	register vector unsigned char permVec1, permVec2;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
 	int i;
 
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 		dst[i] = src0[i] - src1[i];
-    }
-    
+	}
+	
 	//calculate permute and do first loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
 	permVec2 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
 	
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -821,12 +821,12 @@ void VPCALL idSIMD_AltiVec::Sub( float *dst, const float *src0, const float *src
 		v5 = vec_sub( v2, v3 );
 
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] - src1[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] - src1[i];
+	}
 }
 
 /*
@@ -837,26 +837,26 @@ idSIMD_AltiVec::Mul
 ============
 */
 void VPCALL idSIMD_AltiVec::Mul( float *dst, const float constant, const float *src, const int count) {
-    register vector float v0, v0_low, v0_hi, v1_low, v1_hi, v1, v2, v3;
-    register vector float constVec;
-    register vector unsigned char permVec;
+	register vector float v0, v0_low, v0_hi, v1_low, v1_hi, v1, v2, v3;
+	register vector float constVec;
+	register vector unsigned char permVec;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    register vector float zeroVector = (vector float)(0.0);
-    int i;
+	register vector float zeroVector = (vector float)(0.0);
+	int i;
 	
-    // handle unaligned data at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
-	    dst[i] = constant * src[i];
-    }
+	// handle unaligned data at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+		dst[i] = constant * src[i];
+	}
 	
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneCharVector );
 	v1_hi = vec_ld( 0, &src[i] ); 
 	
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &src[i] );
@@ -870,12 +870,12 @@ void VPCALL idSIMD_AltiVec::Mul( float *dst, const float constant, const float *
 		v3 = vec_madd( constVec, v1, zeroVector );
 
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = constant * src[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = constant * src[i];
+	}
 }
 
 /*
@@ -886,30 +886,30 @@ idSIMD_AltiVec::Mul
 ============
 */
 void VPCALL idSIMD_AltiVec::Mul( float *dst, const float *src0, const float *src1, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5;
+	register vector float v0, v1, v2, v3, v4, v5;
 	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
 	//permute vectors
 	register vector unsigned char permVec1, permVec2;
-    register vector float constVec = (vector float)(0.0);
+	register vector float constVec = (vector float)(0.0);
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    int i;
+	int i;
 	
-    //handle unaligned at start
-    for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] * src1[i];
-    }
+	}
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
 	permVec2 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
-              
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+			  
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -932,12 +932,12 @@ void VPCALL idSIMD_AltiVec::Mul( float *dst, const float *src0, const float *src
 		v5 = vec_madd( v2, v3, constVec );
 
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] * src1[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] * src1[i];
+	}
 }
 
 /*
@@ -948,27 +948,27 @@ idSIMD_AltiVec::Div
 ============
 */
 void VPCALL idSIMD_AltiVec::Div( float *dst, const float constant, const float *divisor, const int count ) {
-    register vector float v0, v1, v2, v3;
-    register vector float v0_low, v0_hi, v1_low, v1_hi;
+	register vector float v0, v1, v2, v3;
+	register vector float v0_low, v0_hi, v1_low, v1_hi;
 	register vector unsigned char permVec;
-    register vector float constVec;
-    vector unsigned char oneCharVector = (vector unsigned char)(1);
+	register vector float constVec;
+	vector unsigned char oneCharVector = (vector unsigned char)(1);
 	int i;
-        
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+		
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = constant / divisor[i];
-    }
-    
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	}
+	
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do first loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &divisor[i] ), oneCharVector );
- 	v1_hi = vec_ld( 0, &divisor[i] ); 
+	v1_hi = vec_ld( 0, &divisor[i] ); 
 
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &divisor[i] );
@@ -982,12 +982,12 @@ void VPCALL idSIMD_AltiVec::Div( float *dst, const float constant, const float *
 		v3 = Divide( constVec, v1 );
 		
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = constant / divisor[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = constant / divisor[i];
+	}
 }
 
 /*
@@ -998,29 +998,29 @@ idSIMD_AltiVec::Div
 ============
 */
 void VPCALL idSIMD_AltiVec::Div( float *dst, const float *src0, const float *src1, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5;
+	register vector float v0, v1, v2, v3, v4, v5;
 	 //src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
 	//permute vectors
 	register vector unsigned char permVec1, permVec2;
-    vector unsigned char oneCharVector = (vector unsigned char)(1);
+	vector unsigned char oneCharVector = (vector unsigned char)(1);
 	int i;
 
-    //handle unaligned at start
-    for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( i = 0; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] / src1[i];
-    }
+	}
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
 	permVec2 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
-    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source		
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -1041,12 +1041,12 @@ void VPCALL idSIMD_AltiVec::Div( float *dst, const float *src0, const float *src
 		v5 = Divide( v2, v3 );
 		
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] / src1[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] / src1[i];
+	}
 }
 
 /*
@@ -1058,29 +1058,29 @@ idSIMD_AltiVec::MulAdd
 */
 void VPCALL idSIMD_AltiVec::MulAdd( float *dst, const float constant, const float *src, const int count ) {
  
-    register vector float v0, v1, v2, v3, v4, v5;
-    register vector float constVec;
+	register vector float v0, v1, v2, v3, v4, v5;
+	register vector float constVec;
 	 //src
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//permute vectors
 	register vector unsigned char permVec1;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    int i;
+	int i;
 
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] += constant * src[i];
-    }
-    
-    //splat constant into a vector
+	}
+	
+	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src[i] );
-	    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+		
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src[i] );
 		v2_low = v0_hi;
@@ -1097,12 +1097,12 @@ void VPCALL idSIMD_AltiVec::MulAdd( float *dst, const float constant, const floa
 		v5 = vec_madd( constVec, v2, v3 );
 		
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] += constant * src[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] += constant * src[i];
+	}
 }
 
 /*
@@ -1113,8 +1113,8 @@ idSIMD_AltiVec::MulAdd
 ============
 */
 void VPCALL idSIMD_AltiVec::MulAdd( float *dst, const float *src0, const float *src1, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5, v6, v7;
-    //src0
+	register vector float v0, v1, v2, v3, v4, v5, v6, v7;
+	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
@@ -1122,21 +1122,21 @@ void VPCALL idSIMD_AltiVec::MulAdd( float *dst, const float *src0, const float *
 	register vector unsigned char permVec1, permVec2;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
 
-    int i;
+	int i;
 	
-    //unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] += src0[i] * src1[i];
-    }
+	}
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
 	permVec2 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
-    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		// load sources
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -1162,12 +1162,12 @@ void VPCALL idSIMD_AltiVec::MulAdd( float *dst, const float *src0, const float *
 		v7 = vec_madd( v2, v3, v5 );
 	
 		ALIGNED_STORE2( &dst[i], v6, v7 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] += src0[i] * src1[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] += src0[i] * src1[i];
+	}
 }
 
 /*
@@ -1178,29 +1178,29 @@ idSIMD_AltiVec::MulSub
 ============
 */
 void VPCALL idSIMD_AltiVec::MulSub( float *dst, const float constant, const float *src, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5;
-    register vector float constVec;
+	register vector float v0, v1, v2, v3, v4, v5;
+	register vector float constVec;
 	 //src
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//permute vectors
 	register vector unsigned char permVec1;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    int i;
+	int i;
 
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] -= constant * src[i];
-    }
-    
-    //splat constant into a vector
+	}
+	
+	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneCharVector );
 	v2_hi = vec_ld( 0, &src[i] );
-	    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+		
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src[i] );
 		v2_low = v0_hi;
@@ -1218,12 +1218,12 @@ void VPCALL idSIMD_AltiVec::MulSub( float *dst, const float constant, const floa
 		v5 = vec_nmsub( v2, constVec, v3 );
 
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] -= constant * src[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] -= constant * src[i];
+	}
 }
 
 /*
@@ -1234,20 +1234,20 @@ idSIMD_AltiVec::MulSub
 ============
 */
 void VPCALL idSIMD_AltiVec::MulSub( float *dst, const float *src0, const float *src1, const int count ) {
-    register vector float v0, v1, v2, v3, v4, v5, v6, v7;
-    //src0
+	register vector float v0, v1, v2, v3, v4, v5, v6, v7;
+	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
 	//permute vectors
 	register vector unsigned char permVec1, permVec2;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
-    int i;
+	int i;
 	
-    //unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] -= src0[i] * src1[i];
-    }
+	}
 	
 	//calculate permute and do loads
 	permVec1 = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneCharVector );
@@ -1255,9 +1255,9 @@ void VPCALL idSIMD_AltiVec::MulSub( float *dst, const float *src0, const float *
 	v2_hi = vec_ld( 0, &src0[i] );
 	v3_hi = vec_ld( 0, &src1[i] );
 
-    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		// load sources
 		v0_low = v2_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -1283,12 +1283,12 @@ void VPCALL idSIMD_AltiVec::MulSub( float *dst, const float *src0, const float *
 		v7 = vec_nmsub( v2, v3, v5 );
 
 		ALIGNED_STORE2( &dst[i], v6, v7 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] -= src0[i] * src1[i];
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] -= src0[i] * src1[i];
+	}
 }
 
 #endif /* ENABLE_SIMPLE_MATH */
@@ -1345,7 +1345,7 @@ void VPCALL idSIMD_AltiVec::Dot( float *dst, const idVec3 &constant, const idVec
 		vector float vecOld = vec_ld( 0, addr );
 
 		// handle unaligned case at beginning
-	    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+		for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 			dst[i] = constant * src[i];
 		}
 
@@ -1562,7 +1562,7 @@ void VPCALL idSIMD_AltiVec::Dot( float *dst, const idVec3 &constant, const idDra
 		vecConstZ = vec_splat( v0, 2 );
 		
 		// handle unaligned case at beginning
-	    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+		for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 			dst[i] = constant * src[i].xyz;
 		}		
 		
@@ -1649,7 +1649,7 @@ void VPCALL idSIMD_AltiVec::Dot( float *dst, const idVec3 &constant, const idDra
 		vecConstZ = vec_splat( v0, 2 );
 		
 		// handle unaligned case at beginning
-	    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+		for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 			dst[i] = constant * src[i].xyz;
 		}		
 					
@@ -1735,7 +1735,7 @@ void VPCALL idSIMD_AltiVec::Dot( float *dst, const idPlane &constant, const idVe
 		vecConst3 = loadSplatUnalignedScalar( &const3 );
 
 		// handle unaligned case at beginning
-	    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+		for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 			dst[i] = constant.Normal() * src[i] + constant[3];
 		}
 
@@ -1797,7 +1797,7 @@ void VPCALL idSIMD_AltiVec::Dot( float *dst, const idPlane &constant, const idVe
 		
 		//cleanup
 		for ( ; i < count; i++ ) {	
-		    dst[i] = constNormal * src[i] + const3;
+			dst[i] = constNormal * src[i] + const3;
 		}
 }
 
@@ -2269,10 +2269,10 @@ idSIMD_AltiVec::Dot
 void VPCALL idSIMD_AltiVec::Dot( float &dot, const float *src1, const float *src2, const int count ) {
 	dot = 0.0f;
 
-    register vector float v0, v1, v2, v3; 
-    register vector float zeroVector;
-    register vector float runningTotal1, runningTotal2;
-    //src0
+	register vector float v0, v1, v2, v3; 
+	register vector float zeroVector;
+	register vector float runningTotal1, runningTotal2;
+	//src0
 	register vector float v0_low, v0_hi, v2_low, v2_hi;
 	//src1
 	register vector float v1_low, v1_hi, v3_low, v3_hi;
@@ -2280,13 +2280,13 @@ void VPCALL idSIMD_AltiVec::Dot( float &dot, const float *src1, const float *src
 	register vector unsigned char permVec1, permVec2;
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
 
-    int i = 0;
-        
-     runningTotal1 = (vector float)(0.0);
+	int i = 0;
+		
+	 runningTotal1 = (vector float)(0.0);
 	 runningTotal2 = (vector float)(0.0);
-     zeroVector = (vector float)(0.0);
-     
-    if ( count >= 8 ) {
+	 zeroVector = (vector float)(0.0);
+	 
+	if ( count >= 8 ) {
 		//calculate permute and do loads
 		permVec1 = vec_add( vec_lvsl( -1, (int*) &src1[i] ), oneCharVector );
 		permVec2 = vec_add( vec_lvsl( -1, (int*) &src2[i] ), oneCharVector );
@@ -2317,15 +2317,15 @@ void VPCALL idSIMD_AltiVec::Dot( float &dot, const float *src1, const float *src
 		}
 		
 		runningTotal1 = vec_add( runningTotal1, runningTotal2 );
-    
+	
 		// sum accross vector
 		v0 = vec_add( runningTotal1, vec_sld( runningTotal1, runningTotal1, 8 ) );
 		v1 = vec_add( v0, vec_sld( v0, v0, 4 ) );
 		runningTotal1 = vec_splat( v1, 0 );
 		vec_ste( runningTotal1, 0, &dot );
 	} 
-    
-    //handle cleanup. when profiling the game, we found that most of the counts to this function were small, so it
+	
+	//handle cleanup. when profiling the game, we found that most of the counts to this function were small, so it
 	// spends a lot of time in this scalar code. It's already really really fast (eg 1 TB tick) for scalar code for 
 	// counts less than 50, so not much point in trying to get vector code in on the action 
 	for ( ; i < count ; i++ ) {
@@ -2348,31 +2348,31 @@ idSIMD_AltiVec::CmpGT
 void VPCALL idSIMD_AltiVec::CmpGT( byte *dst, const float *src0, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] = src0[(X)] > constant;
 
-    register vector float v0, v1, v2, v3;
-    register vector bool int vr1, vr2, vr3, vr4;
+	register vector float v0, v1, v2, v3;
+	register vector bool int vr1, vr2, vr3, vr4;
 	register vector bool short vs1, vs2;
 	register vector float v0_low, v0_hi, v1_low, v1_hi, v2_low, v2_hi, v3_low, v3_hi;
 	register vector unsigned char vc1;
 	register vector bool char vbc1;
-    register vector float constVec;
-    register vector unsigned char oneVector = (vector unsigned char)(1);
+	register vector float constVec;
+	register vector unsigned char oneVector = (vector unsigned char)(1);
 	register vector unsigned char permVec;
-    int i;
+	int i;
 
-    //handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] > constant;
-    }
-    
+	}
+	
 	//splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	v3_hi = vec_ld( 0, &src0[i] );
 	
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		// load values
 		v0_low = v3_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -2407,12 +2407,12 @@ void VPCALL idSIMD_AltiVec::CmpGT( byte *dst, const float *src0, const float con
 		
 		//store results
 		vec_st( vc1, 0, &dst[i] );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] > constant;
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] > constant;
+	}
 }
 
 
@@ -2427,45 +2427,45 @@ void VPCALL idSIMD_AltiVec::CmpGT( byte *dst, const byte bitNum, const float *sr
 //#define OPER(X) dst[(X)] |= ( src0[(X)] > constant ) << bitNum;
 
 	// Temp vector registers
-    register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
+	register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
 	register vector bool short vtbs0, vtbs1;
 	register vector bool char vtbc0;
-    register vector unsigned char vtuc0;
+	register vector unsigned char vtuc0;
 	register vector unsigned char permVec, permVec2;	
 	
 	// dest vectors
 	register vector unsigned char vd;	
 	// bitNum vectors
-    register vector unsigned char bitNumVec;
+	register vector unsigned char bitNumVec;
 	// src0 vectors
-    register vector float vs0, vs1, vs2, vs3;
+	register vector float vs0, vs1, vs2, vs3;
 	register vector float vs0_low, vs0_hi, vs1_low, vs1_hi, vs2_low, vs2_hi, vs3_low, vs3_hi;
 	// constant vector
-    register vector float constVec;
+	register vector float constVec;
 	// all one's 
 	register vector unsigned char oneVector = (vector unsigned char)(1);
 	int i = 0;
 	
 	//handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] |= ( src0[i] > constant ) << bitNum;
-    }
+	}
 	
 	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
-    
+	
 	//bitNum is unaligned. 
-    permVec2 = vec_lvsl( 0, &bitNum );
-    vtuc0 = vec_ld( 0, &bitNum );
-    bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
-    bitNumVec = vec_splat( bitNumVec, 0 );
+	permVec2 = vec_lvsl( 0, &bitNum );
+	vtuc0 = vec_ld( 0, &bitNum );
+	bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
+	bitNumVec = vec_splat( bitNumVec, 0 );
 
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	vs3_hi = vec_ld( 0, &src0[i] );	
 
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		//load sources (floats)		
 		vs0_low = vs3_hi;
 		vs0_hi = vec_ld( 15, &src0[i] );
@@ -2506,12 +2506,12 @@ void VPCALL idSIMD_AltiVec::CmpGT( byte *dst, const byte bitNum, const float *sr
 		vd = vec_or( vd, vtuc0 );
 		
 		vec_st( vd, 0, &dst[i] );
-    }
-    
-    //handle cleanup
+	}
+	
+	//handle cleanup
 	for ( ; i < count ; i++ ) {
 		dst[i] |= ( src0[i] > constant ) << bitNum;
-    }
+	}
 }
 
 /*
@@ -2523,31 +2523,31 @@ idSIMD_AltiVec::CmpGE
 */
 void VPCALL idSIMD_AltiVec::CmpGE( byte *dst, const float *src0, const float constant, const int count ) {
 
-    register vector float v0, v1, v2, v3;
-    register vector bool int vr1, vr2, vr3, vr4;
+	register vector float v0, v1, v2, v3;
+	register vector bool int vr1, vr2, vr3, vr4;
 	register vector bool short vs1, vs2;
 	register vector float v0_low, v0_hi, v1_low, v1_hi, v2_low, v2_hi, v3_low, v3_hi;
 	register vector unsigned char vc1;
 	register vector bool char vbc1;
-    register vector float constVec;
-    register vector unsigned char oneVector = (vector unsigned char)(1);
+	register vector float constVec;
+	register vector unsigned char oneVector = (vector unsigned char)(1);
 	register vector unsigned char permVec;
-    int i = 0;
+	int i = 0;
 
-    //handle unaligned at start
-    for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] >= constant;
-    }
-    
+	}
+	
 	//splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	v3_hi = vec_ld( 0, &src0[i] );
 	
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		// load values
 		v0_low = v3_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -2582,12 +2582,12 @@ void VPCALL idSIMD_AltiVec::CmpGE( byte *dst, const float *src0, const float con
 
 		//store results
 		vec_st( vc1, 0, &dst[i] );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] >= constant;
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] >= constant;
+	}
 }
 
 /*
@@ -2598,45 +2598,45 @@ idSIMD_AltiVec::CmpGE
 ============
 */
 void VPCALL idSIMD_AltiVec::CmpGE( byte *dst, const byte bitNum, const float *src0, const float constant, const int count ) {
-    register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
+	register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
 	register vector bool short vtbs0, vtbs1;
 	register vector bool char vtbc0;
-    register vector unsigned char vtuc0;
+	register vector unsigned char vtuc0;
 	register vector unsigned char permVec, permVec2;	
 	
 	// dest vectors
 	register vector unsigned char vd;	
 	// bitNum vectors
-    register vector unsigned char bitNumVec;
+	register vector unsigned char bitNumVec;
 	// src0 vectors
-    register vector float vs0, vs1, vs2, vs3;
+	register vector float vs0, vs1, vs2, vs3;
 	register vector float vs0_low, vs0_hi, vs1_low, vs1_hi, vs2_low, vs2_hi, vs3_low, vs3_hi;
 	// constant vector
-    register vector float constVec;
+	register vector float constVec;
 	// all one's 
 	register vector unsigned char oneVector = (vector unsigned char)(1);
 	int i = 0;
 	
 	//handle unaligned at start
-    for (  ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	for (  ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] |= ( src0[i] >= constant ) << bitNum;
-    }
+	}
 	
 	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
-    
+	
 	//bitNum is unaligned. 
-    permVec2 = vec_lvsl( 0, &bitNum );
-    vtuc0 = vec_ld( 0, &bitNum );
-    bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
-    bitNumVec = vec_splat( bitNumVec, 0 );
+	permVec2 = vec_lvsl( 0, &bitNum );
+	vtuc0 = vec_ld( 0, &bitNum );
+	bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
+	bitNumVec = vec_splat( bitNumVec, 0 );
 
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	vs3_hi = vec_ld( 0, &src0[i] );	
 
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		//load sources (floats)		
 		vs0_low = vs3_hi;
 		vs0_hi = vec_ld( 15, &src0[i] );
@@ -2677,12 +2677,12 @@ void VPCALL idSIMD_AltiVec::CmpGE( byte *dst, const byte bitNum, const float *sr
 		vd = vec_or( vd, vtuc0 );
 		
 		vec_st( vd, 0, &dst[i] );
-    }
-    
-    //handle cleanup
+	}
+	
+	//handle cleanup
 	for ( ; i < count ; i++ ) {
 		dst[i] |= ( src0[i] >= constant ) << bitNum;
-    }
+	}
 }
 
 
@@ -2695,31 +2695,31 @@ idSIMD_AltiVec::CmpLT
 */
 void VPCALL idSIMD_AltiVec::CmpLT( byte *dst, const float *src0, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] = src0[(X)] < constant;
-    register vector float v0, v1, v2, v3;
-    register vector bool int vr1, vr2, vr3, vr4;
+	register vector float v0, v1, v2, v3;
+	register vector bool int vr1, vr2, vr3, vr4;
 	register vector bool short vs1, vs2;
 	register vector float v0_low, v0_hi, v1_low, v1_hi, v2_low, v2_hi, v3_low, v3_hi;
 	register vector unsigned char vc1;
 	register vector bool char vbc1;
-    register vector float constVec;
-    register vector unsigned char oneVector = (vector unsigned char)(1);
+	register vector float constVec;
+	register vector unsigned char oneVector = (vector unsigned char)(1);
 	register vector unsigned char permVec;
-    int i = 0;
+	int i = 0;
 
-    //handle unaligned at start
-    for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] < constant;
-    }
-    
+	}
+	
 	//splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	v3_hi = vec_ld( 0, &src0[i] );
 	
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		// load values
 		v0_low = v3_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -2754,12 +2754,12 @@ void VPCALL idSIMD_AltiVec::CmpLT( byte *dst, const float *src0, const float con
 		
 		//store results
 		vec_st( vc1, 0, &dst[i] );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] < constant;
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] < constant;
+	}
 }
 
 /*
@@ -2771,45 +2771,45 @@ idSIMD_AltiVec::CmpLT
 */
 void VPCALL idSIMD_AltiVec::CmpLT( byte *dst, const byte bitNum, const float *src0, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] |= ( src0[(X)] < constant ) << bitNum;
-    register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
+	register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
 	register vector bool short vtbs0, vtbs1;
 	register vector bool char vtbc0;
-    register vector unsigned char vtuc0;
+	register vector unsigned char vtuc0;
 	register vector unsigned char permVec, permVec2;	
 	
 	// dest vectors
 	register vector unsigned char vd;	
 	// bitNum vectors
-    register vector unsigned char bitNumVec;
+	register vector unsigned char bitNumVec;
 	// src0 vectors
-    register vector float vs0, vs1, vs2, vs3;
+	register vector float vs0, vs1, vs2, vs3;
 	register vector float vs0_low, vs0_hi, vs1_low, vs1_hi, vs2_low, vs2_hi, vs3_low, vs3_hi;
 	// constant vector
-    register vector float constVec;
+	register vector float constVec;
 	// all one's 
 	register vector unsigned char oneVector = (vector unsigned char)(1);
 	int i = 0;
 	
 	//handle unaligned at start
-    for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	for ( i = 0 ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] |= ( src0[i] < constant ) << bitNum;
-    }
+	}
 	
 	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
-    
+	
 	//bitNum is unaligned. 
-    permVec2 = vec_lvsl( 0, &bitNum );
-    vtuc0 = vec_ld( 0, &bitNum );
-    bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
-    bitNumVec = vec_splat( bitNumVec, 0 );
+	permVec2 = vec_lvsl( 0, &bitNum );
+	vtuc0 = vec_ld( 0, &bitNum );
+	bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
+	bitNumVec = vec_splat( bitNumVec, 0 );
 
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	vs3_hi = vec_ld( 0, &src0[i] );	
 
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		//load sources (floats)		
 		vs0_low = vs3_hi;
 		vs0_hi = vec_ld( 15, &src0[i] );
@@ -2850,12 +2850,12 @@ void VPCALL idSIMD_AltiVec::CmpLT( byte *dst, const byte bitNum, const float *sr
 		vd = vec_or( vd, vtuc0 );
 		
 		vec_st( vd, 0, &dst[i] );
-    }
-    
-    //handle cleanup
+	}
+	
+	//handle cleanup
 	for ( ; i < count ; i++ ) {
 		dst[i] |= ( src0[i] < constant ) << bitNum;
-    }
+	}
 
 }
 //#endif
@@ -2869,31 +2869,31 @@ idSIMD_AltiVec::CmpLE
 */
 void VPCALL idSIMD_AltiVec::CmpLE( byte *dst, const float *src0, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] = src0[(X)] <= constant;
-    register vector float v0, v1, v2, v3;
-    register vector bool int vr1, vr2, vr3, vr4;
+	register vector float v0, v1, v2, v3;
+	register vector bool int vr1, vr2, vr3, vr4;
 	register vector bool short vs1, vs2;
 	register vector float v0_low, v0_hi, v1_low, v1_hi, v2_low, v2_hi, v3_low, v3_hi;
 	register vector unsigned char vc1;
 	register vector bool char vbc1;
-    register vector float constVec;
-    register vector unsigned char oneVector = (vector unsigned char)(1);
+	register vector float constVec;
+	register vector unsigned char oneVector = (vector unsigned char)(1);
 	register vector unsigned char permVec;
-    int i = 0;
+	int i = 0;
 
-    //handle unaligned at start
-    for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	//handle unaligned at start
+	for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] = src0[i] <= constant;
-    }
-    
+	}
+	
 	//splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &constant );
+	constVec = loadSplatUnalignedScalar( &constant );
 	
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	v3_hi = vec_ld( 0, &src0[i] );
 	
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		// load values
 		v0_low = v3_hi;
 		v0_hi = vec_ld( 15, &src0[i] );
@@ -2928,12 +2928,12 @@ void VPCALL idSIMD_AltiVec::CmpLE( byte *dst, const float *src0, const float con
 		
 		//store results
 		vec_st( vc1, 0, &dst[i] );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
-        dst[i] = src0[i] <= constant;
-    }
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
+		dst[i] = src0[i] <= constant;
+	}
 }
 
 /*
@@ -2945,45 +2945,45 @@ idSIMD_AltiVec::CmpLE
 */
 void VPCALL idSIMD_AltiVec::CmpLE( byte *dst, const byte bitNum, const float *src0, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] |= ( src0[(X)] <= constant ) << bitNum;
-    register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
+	register vector bool int vtbi0, vtbi1, vtbi2, vtbi3;
 	register vector bool short vtbs0, vtbs1;
 	register vector bool char vtbc0;
-    register vector unsigned char vtuc0;
+	register vector unsigned char vtuc0;
 	register vector unsigned char permVec, permVec2;	
 	
 	// dest vectors
 	register vector unsigned char vd;	
 	// bitNum vectors
-    register vector unsigned char bitNumVec;
+	register vector unsigned char bitNumVec;
 	// src0 vectors
-    register vector float vs0, vs1, vs2, vs3;
+	register vector float vs0, vs1, vs2, vs3;
 	register vector float vs0_low, vs0_hi, vs1_low, vs1_hi, vs2_low, vs2_hi, vs3_low, vs3_hi;
 	// constant vector
-    register vector float constVec;
+	register vector float constVec;
 	// all one's 
 	register vector unsigned char oneVector = (vector unsigned char)(1);
 	int i = 0;
 	
 	//handle unaligned at start
-    for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
+	for ( ; NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count );i++ ) {
 		dst[i] |= ( src0[i] <= constant ) << bitNum;
-    }
+	}
 	
 	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
-    
+	
 	//bitNum is unaligned. 
-    permVec2 = vec_lvsl( 0, &bitNum );
-    vtuc0 = vec_ld( 0, &bitNum );
-    bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
-    bitNumVec = vec_splat( bitNumVec, 0 );
+	permVec2 = vec_lvsl( 0, &bitNum );
+	vtuc0 = vec_ld( 0, &bitNum );
+	bitNumVec = vec_perm( vtuc0, vtuc0, permVec2 );
+	bitNumVec = vec_splat( bitNumVec, 0 );
 
 	//calculate permute and do loads
 	permVec = vec_add( vec_lvsl( -1, (int*) &src0[i] ), oneVector );
 	vs3_hi = vec_ld( 0, &src0[i] );	
 
-    //vectorize!
-    for ( ; i+15 < count; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < count; i += 16 ) {
 		//load sources (floats)		
 		vs0_low = vs3_hi;
 		vs0_hi = vec_ld( 15, &src0[i] );
@@ -3024,12 +3024,12 @@ void VPCALL idSIMD_AltiVec::CmpLE( byte *dst, const byte bitNum, const float *sr
 		vd = vec_or( vd, vtuc0 );
 		
 		vec_st( vd, 0, &dst[i] );
-    }
-    
-    //handle cleanup
+	}
+	
+	//handle cleanup
 	for ( ; i < count ; i++ ) {
 		dst[i] |= ( src0[i] <= constant ) << bitNum;
-    }
+	}
 }
 #endif /* ENABLE_COMPARES */
 
@@ -3044,20 +3044,20 @@ void VPCALL idSIMD_AltiVec::MinMax( float &min, float &max, const float *src, co
 	min = idMath::INFINITY; max = -idMath::INFINITY;
 //#define OPER(X) if ( src[(X)] < min ) {min = src[(X)];} if ( src[(X)] > max ) {max = src[(X)];}
 
-    register vector float v0, v1, v2, v3;
-    register vector float maxVec, minVec, tempMin, tempMax;
-    register vector unsigned char permVec;
+	register vector float v0, v1, v2, v3;
+	register vector float maxVec, minVec, tempMin, tempMax;
+	register vector unsigned char permVec;
 	register vector float v0_low, v0_hi, v1_low, v1_hi; 
 	vector unsigned char oneCharVector = (vector unsigned char)(1);
 	int i = 0;
  
-    if ( count >= 4 ) {
+	if ( count >= 4 ) {
 	
 		//calculate permute and do first load to
 		//get a starting point for min and max
 		permVec = vec_add( vec_lvsl( -1, (int*) &src[0] ), oneCharVector );
 		v1_hi = vec_ld( 0, &src[0] );
-	    
+		
 		maxVec = loadSplatUnalignedScalar( &max );
 		minVec = loadSplatUnalignedScalar( &min );
 		
@@ -3094,10 +3094,10 @@ void VPCALL idSIMD_AltiVec::MinMax( float &min, float &max, const float *src, co
 		maxVec = vec_splat( tempMax, 0 );
 		vec_ste( minVec, 0, &min );
 		vec_ste( maxVec, 0, &max );
-    } 
+	} 
 	
 	//cleanup
-    for ( ; i < count; i++ ) {
+	for ( ; i < count; i++ ) {
 		if ( src[i] < min ) {
 			min = src[i];
 		} 
@@ -3699,29 +3699,29 @@ idSIMD_AltiVec::Clamp
 */
 void VPCALL idSIMD_AltiVec::Clamp( float *dst, const float *src, const float min, const float max, const int count ) {
 //#define OPER(X) dst[(X)] = src[(X)] < min ? min : src[(X)] > max ? max : src[(X)];
-    register vector float v0, v1, v2, v3, v4, v5;
-    register vector unsigned char permVec;
+	register vector float v0, v1, v2, v3, v4, v5;
+	register vector unsigned char permVec;
 	register vector float v0_low, v0_hi, v1_low, v1_hi;
 	vector unsigned char oneVector = (vector unsigned char)(1);
-    register vector float minVec, maxVec;
-    int i = 0;
+	register vector float minVec, maxVec;
+	int i = 0;
    
-    //handle unaligned at start
-    for ( ;  NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+	//handle unaligned at start
+	for ( ;  NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 		dst[i] = src[i] < min ? min : src[i] > max ? max : src[i];
-    }
-    
-    //splat min/max into a vector
-    minVec = loadSplatUnalignedScalar( &min );
+	}
+	
+	//splat min/max into a vector
+	minVec = loadSplatUnalignedScalar( &min );
 	maxVec = loadSplatUnalignedScalar( &max );
 	
 	//calculate permute and do first load
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneVector );
- 	v1_hi = vec_ld( 0, &src[i] ); 
+	v1_hi = vec_ld( 0, &src[i] ); 
 
-    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &src[i] );
@@ -3738,14 +3738,14 @@ void VPCALL idSIMD_AltiVec::Clamp( float *dst, const float *src, const float min
 		//apply maximum
 		v4 = vec_min( v2, maxVec );
 		v5 = vec_min( v3, maxVec );
-    
+	
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
-    
-    //handle cleanup
-    for ( ; i < count ; i++ ) {
+	}
+	
+	//handle cleanup
+	for ( ; i < count ; i++ ) {
 		dst[i] = src[i] < min ? min : src[i] > max ? max : src[i];
-    }
+	}
 }
 
 /*
@@ -3755,27 +3755,27 @@ idSIMD_AltiVec::ClampMin
 */
 void VPCALL idSIMD_AltiVec::ClampMin( float *dst, const float *src, const float min, const int count ) {
 //#define OPER(X) dst[(X)] = src[(X)] < min ? min : src[(X)];
-    register vector float v0, v1, v2, v3;
-    register vector unsigned char permVec;
+	register vector float v0, v1, v2, v3;
+	register vector unsigned char permVec;
 	register vector float v0_low, v0_hi, v1_low, v1_hi;
-    register vector float constVec;
+	register vector float constVec;
 	vector unsigned char oneVector = (vector unsigned char)(1);
-    int i = 0;
+	int i = 0;
 
-    //handle unaligned at start
+	//handle unaligned at start
 	for ( ;  NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 		dst[i] = src[i] < min ? min : src[i];
-    }
-    
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &min );
+	}
+	
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &min );
 	
 	//calculate permute and do first load
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneVector );
- 	v1_hi = vec_ld( 0, &src[i] ); 
-    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	v1_hi = vec_ld( 0, &src[i] ); 
+	
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &src[i] );
@@ -3789,12 +3789,12 @@ void VPCALL idSIMD_AltiVec::ClampMin( float *dst, const float *src, const float 
 		v3 = vec_max( v1, constVec );
 		
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
-    
-    //handle cleanup
-     for ( ; i < count ; i++ ) {
+	}
+	
+	//handle cleanup
+	 for ( ; i < count ; i++ ) {
 		dst[i] = src[i] < min ? min : src[i];
-    }
+	}
  }
 
 /*
@@ -3804,27 +3804,27 @@ idSIMD_AltiVec::ClampMax
 */
 void VPCALL idSIMD_AltiVec::ClampMax( float *dst, const float *src, const float max, const int count ) {
 //#define OPER(X) dst[(X)] = src[(X)] > max ? max : src[(X)];
-    register vector float v0, v1, v2, v3;
-    register vector unsigned char permVec;
-    register vector float constVec;
+	register vector float v0, v1, v2, v3;
+	register vector unsigned char permVec;
+	register vector float constVec;
 	register vector float v0_low, v0_hi, v1_low, v1_hi;
 	vector unsigned char oneVector = (vector unsigned char)(1);
-    int i = 0;
-    
+	int i = 0;
+	
 	//handle unaligned at start
-    for ( ;  NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
+	for ( ;  NOT_16BYTE_ALIGNED( dst[i] ) && ( i < count ); i++ ) {
 		dst[i] = src[i] < max ? max : src[i];
-    }
-    
-    //splat constant into a vector
-    constVec = loadSplatUnalignedScalar( &max );
+	}
+	
+	//splat constant into a vector
+	constVec = loadSplatUnalignedScalar( &max );
 	
 	//calculate permute and do first load
 	permVec = vec_add( vec_lvsl( -1, (int*) &src[i] ), oneVector );
- 	v1_hi = vec_ld( 0, &src[i] ); 
-	    
-    //vectorize!
-    for ( ; i+7 < count; i += 8 ) {
+	v1_hi = vec_ld( 0, &src[i] ); 
+		
+	//vectorize!
+	for ( ; i+7 < count; i += 8 ) {
 		//load source
 		v0_low = v1_hi;
 		v0_hi = vec_ld( 15, &src[i] );
@@ -3838,11 +3838,11 @@ void VPCALL idSIMD_AltiVec::ClampMax( float *dst, const float *src, const float 
 		
 		ALIGNED_STORE2( &dst[i], v2, v3 );
 	}
-    
-    //handle cleanup
-    for ( ; i < count ; i++ ) {
+	
+	//handle cleanup
+	for ( ; i < count ; i++ ) {
 		dst[i] = src[i] < max ? max : src[i];
-    }
+	}
 }
 
 #endif /* ENABLE_CLAMP */
@@ -3874,11 +3874,11 @@ void VPCALL idSIMD_AltiVec::Negate16( float *dst, const int count ) {
 
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
-      
+	  
 	int i = 0;	
 	vector float v0, v1, v2, v3;
 		
-    //know its 16-byte aligned
+	//know its 16-byte aligned
 	for ( ; i + 7 < count2; i += 8 ) {
 		v0 = vec_ld( 0, &dst[i] );
 		v1 = vec_ld( 16, &dst[i] );
@@ -3927,11 +3927,11 @@ void VPCALL idSIMD_AltiVec::Add16( float *dst, const float *src1, const float *s
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
 	
-    register vector float v0, v1, v2, v3, v4, v5;
-    int i = 0;
+	register vector float v0, v1, v2, v3, v4, v5;
+	int i = 0;
 	
-    //know all data is 16-byte aligned, so vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	//know all data is 16-byte aligned, so vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		//load sources
 		v0 = vec_ld( 0, &src1[i] );
 		v1 = vec_ld( 16, &src1[i] );
@@ -3941,7 +3941,7 @@ void VPCALL idSIMD_AltiVec::Add16( float *dst, const float *src1, const float *s
 		v5 = vec_add( v1, v3 );
 		
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &src1[i] );
@@ -3971,11 +3971,11 @@ void VPCALL idSIMD_AltiVec::Sub16( float *dst, const float *src1, const float *s
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
 
-    register vector float v0, v1, v2, v3, v4, v5;
-    int i = 0;
-    
-    //know data is aligned, so vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	register vector float v0, v1, v2, v3, v4, v5;
+	int i = 0;
+	
+	//know data is aligned, so vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		//load sources
 		v0 = vec_ld( 0, &src1[i] );
 		v1 = vec_ld( 16, &src1[i] );
@@ -3985,7 +3985,7 @@ void VPCALL idSIMD_AltiVec::Sub16( float *dst, const float *src1, const float *s
 		v5 = vec_sub( v1, v3 );
 		
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &src1[i] );
@@ -4006,7 +4006,7 @@ idSIMD_AltiVec::Mul16
 void VPCALL idSIMD_AltiVec::Mul16( float *dst, const float *src1, const float constant, const int count ) {
 //#define OPER(X) dst[(X)] = src1[(X)] * constant
   
-  	// dst is aligned
+	// dst is aligned
 	assert( IS_16BYTE_ALIGNED( dst[0] ) );
 	// src1 is aligned
 	assert( IS_16BYTE_ALIGNED( src1[0] ) );
@@ -4014,23 +4014,23 @@ void VPCALL idSIMD_AltiVec::Mul16( float *dst, const float *src1, const float co
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
 	
-    register vector float v0, v1, v2, v3;
-    register vector float constVec;
-    register vector float zeroVector = (vector float)(0.0);
-    int i = 0;
-    
-    //splat constant into a vector
+	register vector float v0, v1, v2, v3;
+	register vector float constVec;
+	register vector float zeroVector = (vector float)(0.0);
+	int i = 0;
+	
+	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
 	
-    //know data is aligned, so vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	//know data is aligned, so vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		//load source
 		v0 = vec_ld( 0, &src1[i] );
 		v1 = vec_ld( 16, &src1[i] );
 		v2 = vec_madd( constVec, v0, zeroVector );
 		v3 = vec_madd( constVec, v1, zeroVector );
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &src1[i] );
@@ -4049,7 +4049,7 @@ idSIMD_AltiVec::AddAssign16
 */
 void VPCALL idSIMD_AltiVec::AddAssign16( float *dst, const float *src, const int count ) {
 //#define OPER(X) dst[(X)] += src[(X)]
-    
+	
 	// dst is aligned
 	assert( IS_16BYTE_ALIGNED( dst[0] ) );
 	// src is aligned
@@ -4059,10 +4059,10 @@ void VPCALL idSIMD_AltiVec::AddAssign16( float *dst, const float *src, const int
 	int count2 = ( count + 3 ) & ~3;
 	
 	register vector float v0, v1, v2, v3, v4, v5;
-    int i = 0;
+	int i = 0;
   
-    //vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	//vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		v0 = vec_ld( 0, &src[i] );
 		v1 = vec_ld( 16, &src[i] );
 		v2 = vec_ld( 0, &dst[i] );
@@ -4070,7 +4070,7 @@ void VPCALL idSIMD_AltiVec::AddAssign16( float *dst, const float *src, const int
 		v4 = vec_add( v0, v2 );
 		v5 = vec_add( v1, v3 );
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &src[i] );
@@ -4090,8 +4090,8 @@ idSIMD_AltiVec::SubAssign16
 */
 void VPCALL idSIMD_AltiVec::SubAssign16( float *dst, const float *src, const int count ) {
 //#define OPER(X) dst[(X)] -= src[(X)]
-    register vector float v0, v1, v2, v3, v4, v5;
-    int i=0;
+	register vector float v0, v1, v2, v3, v4, v5;
+	int i=0;
 	
 	// dst is aligned
 	assert( IS_16BYTE_ALIGNED( dst[0] ) );
@@ -4099,9 +4099,9 @@ void VPCALL idSIMD_AltiVec::SubAssign16( float *dst, const float *src, const int
 	assert( IS_16BYTE_ALIGNED( src[0] ) );		
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
-    
-    //vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		v0 = vec_ld( 0, &src[i] );
 		v1 = vec_ld( 16, &src[i] );
 		v2 = vec_ld( 0, &dst[i] );
@@ -4109,7 +4109,7 @@ void VPCALL idSIMD_AltiVec::SubAssign16( float *dst, const float *src, const int
 		v4 = vec_sub( v2, v0 );
 		v5 = vec_sub( v3, v1 );
 		ALIGNED_STORE2( &dst[i], v4, v5 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &src[i] );
@@ -4135,22 +4135,22 @@ void VPCALL idSIMD_AltiVec::MulAssign16( float *dst, const float constant, const
 	// round count up to next 4 if needbe
 	int count2 = ( count + 3 ) & ~3;
 	
-    register vector float v0, v1, v2, v3;
-    register vector float constVec;
-    int i = 0;
-    register vector float zeroVector = (vector float)(0.0);
-    
-    //splat constant into a vector
+	register vector float v0, v1, v2, v3;
+	register vector float constVec;
+	int i = 0;
+	register vector float zeroVector = (vector float)(0.0);
+	
+	//splat constant into a vector
 	constVec = loadSplatUnalignedScalar( &constant );
-    
-    //vectorize!
-    for ( ; i+7 < count2; i += 8 ) {
+	
+	//vectorize!
+	for ( ; i+7 < count2; i += 8 ) {
 		v0 = vec_ld( 0, &dst[i] );
 		v1 = vec_ld( 16, &dst[i] );
 		v2 = vec_madd( v0, constVec, zeroVector );
 		v3 = vec_madd( v1, constVec, zeroVector );
 		ALIGNED_STORE2( &dst[i], v2, v3 );
-    }
+	}
 	
 	for ( ; i < count2; i += 4 ) {
 		v0 = vec_ld( 0, &dst[i] );
@@ -6041,7 +6041,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 0 ), vecPlane4, zeroVector );
 		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 1 ), vecPlane5, vec1Sum2 );
-	    vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 2 ), vecPlane6, vec1Sum2 );
+		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 2 ), vecPlane6, vec1Sum2 );
 		vec1Sum2 = vec_add( vec1Sum2, vecPlane7 );
 		
 		vec2Sum1 = vec_madd( vec_splat( vecXYZ2, 0 ), vecPlane0, zeroVector );
@@ -6051,7 +6051,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 0 ), vecPlane4, zeroVector );
 		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 1 ), vecPlane5, vec2Sum2 );
-	    vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 2 ), vecPlane6, vec2Sum2 );
+		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 2 ), vecPlane6, vec2Sum2 );
 		vec2Sum2 = vec_add( vec2Sum2, vecPlane7 );
 				
 		vec3Sum1 = vec_madd( vec_splat( vecXYZ3, 0 ), vecPlane0, zeroVector );
@@ -6061,7 +6061,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 0 ), vecPlane4, zeroVector );
 		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 1 ), vecPlane5, vec3Sum2 );		
-	    vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 2 ), vecPlane6, vec3Sum2 );
+		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 2 ), vecPlane6, vec3Sum2 );
 		vec3Sum2 = vec_add( vec3Sum2, vecPlane7 );	
 							
 		vec4Sum1 = vec_madd( vec_splat( vecXYZ4, 0 ), vecPlane0, zeroVector );
@@ -6071,7 +6071,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 0 ), vecPlane4, zeroVector );
 		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 1 ), vecPlane5, vec4Sum2 );		
-	    vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 2 ), vecPlane6, vec4Sum2 );
+		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 2 ), vecPlane6, vec4Sum2 );
 		vec4Sum2 = vec_add( vec4Sum2, vecPlane7 );
 
 		vecCmp1 = vec_cmplt( vec1Sum1, zeroVector );
@@ -6278,7 +6278,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 0 ), vecPlane4, zeroVector );
 		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 1 ), vecPlane5, vec1Sum2 );
-	    vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 2 ), vecPlane6, vec1Sum2 );
+		vec1Sum2 = vec_madd( vec_splat( vecXYZ1, 2 ), vecPlane6, vec1Sum2 );
 		vec1Sum2 = vec_add( vec1Sum2, vecPlane7 );
 		
 		vec2Sum1 = vec_madd( vec_splat( vecXYZ2, 0 ), vecPlane0, zeroVector );
@@ -6288,7 +6288,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 0 ), vecPlane4, zeroVector );
 		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 1 ), vecPlane5, vec2Sum2 );
-	    vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 2 ), vecPlane6, vec2Sum2 );
+		vec2Sum2 = vec_madd( vec_splat( vecXYZ2, 2 ), vecPlane6, vec2Sum2 );
 		vec2Sum2 = vec_add( vec2Sum2, vecPlane7 );
 				
 		vec3Sum1 = vec_madd( vec_splat( vecXYZ3, 0 ), vecPlane0, zeroVector );
@@ -6298,7 +6298,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 0 ), vecPlane4, zeroVector );
 		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 1 ), vecPlane5, vec3Sum2 );		
-	    vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 2 ), vecPlane6, vec3Sum2 );
+		vec3Sum2 = vec_madd( vec_splat( vecXYZ3, 2 ), vecPlane6, vec3Sum2 );
 		vec3Sum2 = vec_add( vec3Sum2, vecPlane7 );	
 							
 		vec4Sum1 = vec_madd( vec_splat( vecXYZ4, 0 ), vecPlane0, zeroVector );
@@ -6308,7 +6308,7 @@ void VPCALL idSIMD_AltiVec::DecalPointCull( byte *cullBits, const idPlane *plane
 		
 		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 0 ), vecPlane4, zeroVector );
 		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 1 ), vecPlane5, vec4Sum2 );		
-	    vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 2 ), vecPlane6, vec4Sum2 );
+		vec4Sum2 = vec_madd( vec_splat( vecXYZ4, 2 ), vecPlane6, vec4Sum2 );
 		vec4Sum2 = vec_add( vec4Sum2, vecPlane7 );
 
 		vecCmp1 = vec_cmplt( vec1Sum1, zeroVector );
@@ -6533,7 +6533,7 @@ void VPCALL idSIMD_AltiVec::OverlayPointCull( byte *cullBits, idVec2 *texCoords,
 		//and it with 1 so we multiply by 1 not 1111's
 		vecCmp1 = vec_and( vecCmp1, oneIntVector );
 		vecCmp2 = vec_and( vecCmp2, oneIntVector );		
- 		
+		
 		 // store out and write to cullBits 
 		// finally, a use for algebra! 1-x = x + 1 - 2x
 		vecSum1Inv = vec_madd( vecSum1, negTwoVector, vecSum1 );
@@ -6715,7 +6715,7 @@ void VPCALL idSIMD_AltiVec::OverlayPointCull( byte *cullBits, idVec2 *texCoords,
 		//and it with 1 so we multiply by 1 not 1111's
 		vecCmp1 = vec_and( vecCmp1, oneIntVector );
 		vecCmp2 = vec_and( vecCmp2, oneIntVector );		
- 		
+		
 		 // store out and write to cullBits 
 		// finally, a use for algebra! 1-x = x + 1 - 2x
 		vecSum1Inv = vec_madd( vecSum1, negTwoVector, vecSum1 );
@@ -9210,7 +9210,7 @@ idSIMD_AltiVec::UpSampleOGGTo44kHz
 
   Duplicate samples for 44kHz output.
   
-  	Assumptions:
+	Assumptions:
 		Assumes that dest starts at aligned address
 ============
 */
@@ -9237,7 +9237,7 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 	if ( kHz == 11025 ) {
 		if ( numChannels == 1 ) {
 			 // calculate perm vector and do first load
-    		 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			 v10 = vec_ld( 0, &ogg[0][0] );
 			 
 			 int i;
@@ -9282,7 +9282,7 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 		
 			// calculate perm vec for ogg 
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );
@@ -9348,7 +9348,7 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		if ( numChannels == 1 ) {
 			
 			 // calculate perm vector and do first load
-    		 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			 v10 = vec_ld( 0, &ogg[0][0] );
 			
 			int i;
@@ -9381,8 +9381,8 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 
 			// calculate perm vector and do first load
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
-    		vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );			
 			
@@ -9449,8 +9449,8 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 			
 			// calculate perm vector and do first load
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
-    		vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );			
 			int i;
@@ -9495,7 +9495,7 @@ idSIMD_AltiVec::UpSampleOGGTo44kHz
 
   Duplicate samples for 44kHz output.
   
-  	Assumptions:
+	Assumptions:
 		No assumptions
 ============
 */
@@ -9528,9 +9528,9 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 	if ( kHz == 11025 ) {
 		if ( numChannels == 1 ) {
 			 // calculate perm vector and do first load
-    		 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			 v10 = vec_ld( 0, &ogg[0][0] );
-			 			
+						
 			 int i;
 			 for ( i = 0; i+7 < numSamples; i += 8 ) {
 				// as it happens, ogg[0][i] through ogg[0][i+3] are contiguous in memory
@@ -9592,7 +9592,7 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 		
 			// calculate perm vec for ogg 
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );
@@ -9678,7 +9678,7 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		if ( numChannels == 1 ) {
 			
 		 // calculate perm vector and do first load
-    		 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			 vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
 			 v10 = vec_ld( 0, &ogg[0][0] );
 			
 			int i;
@@ -9725,8 +9725,8 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 
 			// calculate perm vector and do first load
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
-    		vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );			
 			
@@ -9815,8 +9815,8 @@ void idSIMD_AltiVec::UpSampleOGGTo44kHz( float *dest, const float * const *ogg, 
 		} else {
 			
 			// calculate perm vector and do first load
-    		vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
-    		vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
+			vecPerm1 = vec_add( vec_lvsl( -1, (int*) &ogg[0][0] ), (vector unsigned char)(1) );
+			vecPerm2 = vec_add( vec_lvsl( -1, (int*) &ogg[1][0] ), (vector unsigned char)(1) );
 			v7 = vec_ld( 0, &ogg[1][0] );
 			v9 = vec_ld( 0, &ogg[0][0] );			
 			int i;
@@ -10831,29 +10831,29 @@ idSIMD_AltiVec::MixedSoundToSamples
 ============
 */
 void VPCALL idSIMD_AltiVec::MixedSoundToSamples( short *samples, const float *mixBuffer, const int numSamples ) {
-     //this is basically a clamp for sound mixing
-    register vector float v0, v1, v2, v3, v4, v5, v6, v7;
+	 //this is basically a clamp for sound mixing
+	register vector float v0, v1, v2, v3, v4, v5, v6, v7;
 	register vector signed int vi0, vi1, vi2, vi3;
 	register vector signed short vs0, vs1;
-    register vector float minVec, maxVec, constVec;
-    int i = 0;
+	register vector float minVec, maxVec, constVec;
+	int i = 0;
 
-    //unaligned at start, since samples is not 16-byte aligned
-    for ( ;  NOT_16BYTE_ALIGNED( samples[i] ) && ( i < numSamples ); i++ ) {
+	//unaligned at start, since samples is not 16-byte aligned
+	for ( ;  NOT_16BYTE_ALIGNED( samples[i] ) && ( i < numSamples ); i++ ) {
 		samples[i] = mixBuffer[i] <= -32768.0f ? -32768 : mixBuffer[i] >= 32767.0f ? 32767 : (short) mixBuffer[i];
-    }
-    
-    constVec = (vector float)(65536.0f);
+	}
+	
+	constVec = (vector float)(65536.0f);
 
-    //splat min/max into a vector
-    minVec = (vector float)(-32768.0f);
-    maxVec = (vector float)(32767.0f);
-    
+	//splat min/max into a vector
+	minVec = (vector float)(-32768.0f);
+	maxVec = (vector float)(32767.0f);
+	
 	vector float vecOld = vec_ld( 0, &mixBuffer[i] );
 	vector unsigned char permVec = vec_add( vec_lvsl( -1, &mixBuffer[i] ), (vector unsigned char)(1) );
 	
-    //vectorize!
-    for ( ; i+15 < numSamples; i += 16 ) {
+	//vectorize!
+	for ( ; i+15 < numSamples; i += 16 ) {
 		//load source
 		v0 = vecOld; 
 		v1 = vec_ld( 15, &mixBuffer[i] );
@@ -10888,12 +10888,12 @@ void VPCALL idSIMD_AltiVec::MixedSoundToSamples( short *samples, const float *mi
 		vs0 = vec_pack( vi0, vi1 );
 		vs1 = vec_pack( vi2, vi3 );
 		ALIGNED_STORE2( &samples[i], vs0, vs1 );
-    }
-    
-    //handle cleanup
-    for ( ; i < numSamples ; i++ ) {
+	}
+	
+	//handle cleanup
+	for ( ; i < numSamples ; i++ ) {
 		samples[i] = mixBuffer[i] <= -32768.0f ? -32768 : mixBuffer[i] >= 32767.0f ? 32767 : (short) mixBuffer[i];
-    }
+	}
 }
 #endif /* ENABLE_SOUND_ROUTINES */
 

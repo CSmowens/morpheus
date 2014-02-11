@@ -1,4 +1,4 @@
-# Morpheus
+# [Morpheus](https://github.com/raynorpat/morpheus)
 Morpheus is an idTech 4 Engine Modification.
 
 
@@ -8,12 +8,13 @@ Morpheus is an idTech 4 Engine Modification.
 
 Morpheus does not contain any Doom 3 game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
+We do not support using the Doom 3 demo data.
 
 You must patch the game to the latest version. ( 1.3.1 )
 
-NOTE: Doom 3 and Doom 3: Resurrection of Evil are available from the Steam store at
-<http://store.steampowered.com/app/9050/>
-<http://store.steampowered.com/app/9070/>
+NOTE: Doom 3 and Doom 3: Resurrection of Evil are available from the Steam store:
+ * Doom 3 - <http://store.steampowered.com/app/9050/>
+ * Doom 3: Resurrection of Evil - <http://store.steampowered.com/app/9070/>
 
 ### Compiling on win32:
 
