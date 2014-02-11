@@ -363,7 +363,12 @@ project "doom_game"
 	excludes
 	{
 		"../neo/game/gamesys/Callbacks.cpp",
-	}		
+	}
+	
+	includedirs
+	{
+		"../neo/idlib",
+	}	
 	
 	links
 	{
