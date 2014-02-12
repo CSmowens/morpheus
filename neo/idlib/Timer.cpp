@@ -151,10 +151,10 @@ void idTimerReport::PrintReport() {
 	assert( timers.Num() == names.Num() );
 	idLib::common->Printf( "Timing Report for %s\n", reportName.c_str() );
 	idLib::common->Printf( "-------------------------------\n" );
-	float total = 0.0f;
+	unsigned int total = 0;
 	for ( int i = 0; i < names.Num(); i++ ) {
-		idLib::common->Printf( "%s consumed %5.2f seconds\n", names[i].c_str(), timers[i]->Milliseconds() * 0.001f );
+		idLib::common->Printf( "%s consumed %5.2f seconds\n", names[i].c_str(), 0.001f * timers[i]->Milliseconds() );
 		total += timers[i]->Milliseconds();
 	}
-	idLib::common->Printf( "Total time for report %s was %5.2f\n\n", reportName.c_str(), total * 0.001f );
+	idLib::common->Printf( "Total time for report %s was %5.2f\n\n", reportName.c_str(), 0.001f * total );
 }

@@ -50,15 +50,7 @@ If you have questions concerning this license or the applicable additional terms
 // if enabled, the console won't toggle upon ~, unless you start the binary with +set com_allowConsole 1
 // Ctrl+Alt+~ will always toggle the console no matter what
 #ifndef ID_CONSOLE_LOCK
-	#if defined(_WIN32) || defined(MACOS_X)
-		#ifdef _DEBUG
-			#define ID_CONSOLE_LOCK 0
-		#else
-			#define ID_CONSOLE_LOCK 1
-		#endif
-	#else
-		#define ID_CONSOLE_LOCK 0
-	#endif
+	#define ID_CONSOLE_LOCK 0
 #endif
 
 // useful for network debugging, turns off 'LAN' checks, all IPs are classified 'internet'
@@ -102,19 +94,6 @@ If you have questions concerning this license or the applicable additional terms
 // don't define ID_ALLOW_TOOLS when we don't want tool code in the executable.
 //#define ID_ALLOW_TOOLS
 
-// don't do backtraces in release builds.
-// atm, we have no useful way to reconstruct the trace, so let's leave it off
-#define ID_BT_STUB
-#ifndef ID_BT_STUB
-	#if defined( __linux__ )
-		#if defined( _DEBUG )
-			#define ID_BT_STUB
-		#endif
-	#else
-		#define ID_BT_STUB
-	#endif
-#endif
-
 #ifndef ID_ENFORCE_KEY
 #	if !defined( ID_DEDICATED ) && !defined( ID_DEMO_BUILD )
 #		define ID_ENFORCE_KEY 1
@@ -124,7 +103,7 @@ If you have questions concerning this license or the applicable additional terms
 #endif
 
 #ifndef ID_OPENAL
-#	if ( defined(_WIN32) || defined(MACOS_X) ) && !defined( ID_DEDICATED )
+#	if !defined( ID_DEDICATED )
 #		define ID_OPENAL 1
 #	else
 #		define ID_OPENAL 0

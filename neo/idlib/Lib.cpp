@@ -58,6 +58,10 @@ void idLib::Init( void ) {
 
 	assert( sizeof( bool ) == 1 );
 
+	// assumptions from the scripting compiler/interpreter
+	assert( sizeof( float ) == sizeof( int ) );
+	assert( sizeof( idVec3 ) == sizeof( float ) * 3 );
+
 	// initialize memory manager
 	Mem_Init();
 
@@ -577,7 +581,7 @@ int		IntForSixtets( byte *in ) {
 
 void AssertFailed( const char *file, int line, const char *expression ) {
 	idLib::sys->DebugPrintf( "\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression );
-#ifdef _WIN32
+#ifdef _MSC_VER
 	__asm int 0x03
 #elif defined( __GNUC__ )
 	__builtin_trap();

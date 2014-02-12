@@ -2025,8 +2025,8 @@ idCollisionModelManagerLocal::R_CreateAxialBSPTree
 ================
 */
 cm_node_t *idCollisionModelManagerLocal::R_CreateAxialBSPTree( cm_model_t *model, cm_node_t *node, const idBounds &bounds ) {
-	int planeType;
-	float planeDist;
+	int planeType = 0;
+	float planeDist = 0.0f;
 	cm_polygonRef_t *pref, *nextpref, *prevpref;
 	cm_brushRef_t *bref, *nextbref, *prevbref;
 	cm_node_t *frontNode, *backNode, *n;
@@ -3195,13 +3195,13 @@ idCollisionModelManagerLocal::PrintModelInfo
 ==================
 */
 void idCollisionModelManagerLocal::PrintModelInfo( const cm_model_t *model ) {
-	common->Printf( "%6i vertices (%i KB)\n", model->numVertices, (model->numVertices * sizeof(cm_vertex_t))>>10 );
-	common->Printf( "%6i edges (%i KB)\n", model->numEdges, (model->numEdges * sizeof(cm_edge_t))>>10 );
+	common->Printf( "%6i vertices (%zu KB)\n", model->numVertices, (model->numVertices * sizeof(cm_vertex_t))>>10 );
+	common->Printf( "%6i edges (%zu KB)\n", model->numEdges, (model->numEdges * sizeof(cm_edge_t))>>10 );
 	common->Printf( "%6i polygons (%i KB)\n", model->numPolygons, model->polygonMemory>>10 );
 	common->Printf( "%6i brushes (%i KB)\n", model->numBrushes, model->brushMemory>>10 );
-	common->Printf( "%6i nodes (%i KB)\n", model->numNodes, (model->numNodes * sizeof(cm_node_t))>>10 );
-	common->Printf( "%6i polygon refs (%i KB)\n", model->numPolygonRefs, (model->numPolygonRefs * sizeof(cm_polygonRef_t))>>10 );
-	common->Printf( "%6i brush refs (%i KB)\n", model->numBrushRefs, (model->numBrushRefs * sizeof(cm_brushRef_t))>>10 );
+	common->Printf( "%6i nodes (%zu KB)\n", model->numNodes, (model->numNodes * sizeof(cm_node_t))>>10 );
+	common->Printf( "%6i polygon refs (%zu KB)\n", model->numPolygonRefs, (model->numPolygonRefs * sizeof(cm_polygonRef_t))>>10 );
+	common->Printf( "%6i brush refs (%zu KB)\n", model->numBrushRefs, (model->numBrushRefs * sizeof(cm_brushRef_t))>>10 );
 	common->Printf( "%6i internal edges\n", model->numInternalEdges );
 	common->Printf( "%6i sharp edges\n", model->numSharpEdges );
 	common->Printf( "%6i contained polygons removed\n", model->numRemovedPolys );
@@ -3329,7 +3329,7 @@ void idCollisionModelManagerLocal::BuildModels( const idMapFile *mapFile ) {
 	common->Printf( "collision data:\n" );
 	common->Printf( "%6i models\n", numModels );
 	PrintModelInfo( &model );
-	common->Printf( "%.0f msec to load collision data.\n", timer.Milliseconds() );
+	common->Printf( "%u msec to load collision data.\n", timer.Milliseconds() );
 }
 
 
@@ -3342,7 +3342,6 @@ void idCollisionModelManagerLocal::LoadMap( const idMapFile *mapFile ) {
 
 	if ( mapFile == NULL ) {
 		common->Error( "idCollisionModelManagerLocal::LoadMap: NULL mapFile" );
-		return;
 	}
 
 	// check whether we can keep the current collision map based on the mapName and mapFileTime
