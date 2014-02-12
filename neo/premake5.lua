@@ -126,11 +126,6 @@ project "idLib"
 		"../neo/idlib/*.h",
 	}
 	
-	excludes
-	{
-		"../neo/idlib/bv/Frustum_gcc.cpp",
-	}	
-	
 	includedirs
 	{
 		"../neo/idlib",
