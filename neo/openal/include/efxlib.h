@@ -4,10 +4,9 @@
 #ifndef __EFXLIBH
 #define __EFXLIBH
 
+#if ID_OPENAL_EAX
 #include "eax4.h"
-
-
-
+#endif
 
 ///////////////////////////////////////////////////////////
 // Class definitions.
@@ -33,13 +32,13 @@ class idEFXFile
 private:
 
 protected:
-    // Protected data members.
+	// Protected data members.
 
 public:
-    // Public data members.
+	// Public data members.
 
 private:
-    
+	
 public:
 	idEFXFile();
 	~idEFXFile();
