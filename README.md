@@ -169,7 +169,7 @@ neo/tools/common/PropTree/*
 	useful.
 
 ### OpenAL SDK
-neo/openal/*
+neo/sys/openal/*
 
 	/**
 	 * OpenAL cross platform audio library
@@ -355,11 +355,6 @@ neo/sys/linux/extutil.h
 	 * protocol extensions.  THESE INTERFACES ARE NOT PART OF THE X STANDARD AND
 	 * ARE SUBJECT TO CHANGE!
 	 */
-
-### OSS headers
-neo/sys/linux/oss/*
-
-	Copyright by 4Front Technologies 1993-2004
 
 
 ## Credits
