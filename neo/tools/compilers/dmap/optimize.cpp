@@ -181,11 +181,6 @@ static	void LinkEdge( optEdge_t *e ) {
 	e->v2->edges = e;
 }
 
-#ifdef __linux__
-
-optVertex_t *FindOptVertex( idDrawVert *v, optimizeGroup_t *opt );
-
-#else
 
 /*
 ================
@@ -227,7 +222,6 @@ static optVertex_t *FindOptVertex( idDrawVert *v, optimizeGroup_t *opt ) {
 	return vert;
 }
 
-#endif
 
 /*
 ================
