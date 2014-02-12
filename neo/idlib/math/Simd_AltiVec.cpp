@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ If you have questions concerning this license or the applicable additional terms
 //
 //===============================================================
 
-#if defined(MACOS_X) && defined(__ppc__)
+#if defined(__GNUC__) && defined(__ALTIVEC__)
 
 #ifdef PPC_INTRINSICS
 	// for square root estimate instruction
@@ -69,8 +69,8 @@ If you have questions concerning this license or the applicable additional terms
 #define IDVEC4_OFFSET 4
 
 // Alignment tests
-#define IS_16BYTE_ALIGNED( x ) ( ( (unsigned long)&x & 0x0F ) == 0 )	
-#define NOT_16BYTE_ALIGNED( x ) ( ( (unsigned long)&x & 0x0F) != 0 )
+#define IS_16BYTE_ALIGNED( x ) ( ( (unsigned int)&x & 0x0F ) == 0 )
+#define NOT_16BYTE_ALIGNED( x ) ( ( (unsigned int)&x & 0x0F) != 0 )
 
 // Aligned storing floats
 #define ALIGNED_STORE2( ADDR, V0, V1 )			\

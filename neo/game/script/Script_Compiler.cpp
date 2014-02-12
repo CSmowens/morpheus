@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,14 +38,14 @@ If you have questions concerning this license or the applicable additional terms
 #define TOP_PRIORITY		7
 
 bool idCompiler::punctuationValid[ 256 ];
-char *idCompiler::punctuation[] = {
+const char *idCompiler::punctuation[] = {
 	"+=", "-=", "*=", "/=", "%=", "&=", "|=", "++", "--",
 	"&&", "||", "<=", ">=", "==", "!=", "::", ";",  ",",
 	"~",  "!",  "*",  "/",  "%",  "(",   ")",  "-", "+",
 	"=",  "[",  "]",  ".",  "<",  ">" ,  "&",  "|", ":",  NULL
 };
 
-opcode_t idCompiler::opcodes[] = {
+const opcode_t idCompiler::opcodes[] = {
 	{ "<RETURN>", "RETURN", -1, false, &def_void, &def_void, &def_void },
 		
 	{ "++", "UINC_F", 1, true, &def_float, &def_void, &def_void },
@@ -207,7 +207,7 @@ idCompiler::idCompiler()
 ================
 */
 idCompiler::idCompiler() {
-	char	**ptr;
+	const char	**ptr;
 	int		id;
 
 	// make sure we have the right # of opcodes in the table
@@ -630,8 +630,8 @@ Emits an opcode to push the variable onto the stack.
 ============
 */
 bool idCompiler::EmitPush( idVarDef *expression, const idTypeDef *funcArg ) {
-	opcode_t *op;
-	opcode_t *out;
+	const opcode_t *op;
+	const opcode_t *out;
 
 	out = NULL;
 	for( op = &opcodes[ OP_PUSH_F ]; op->name && !strcmp( op->name, "<PUSH>" ); op++ ) {
@@ -1166,7 +1166,7 @@ idVarDef *idCompiler::LookupDef( const char *name, const idVarDef *baseobj ) {
 	idVarDef	*field;
 	etype_t		type_b;
 	etype_t		type_c;
-	opcode_t	*op;
+	const opcode_t	*op;
 
 	// check if we're accessing a field
 	if ( baseobj && ( baseobj->Type() == ev_object ) ) {
@@ -1463,8 +1463,8 @@ idCompiler::GetExpression
 ==============
 */
 idVarDef *idCompiler::GetExpression( int priority ) {
-	opcode_t		*op;
-	opcode_t		*oldop;
+	const opcode_t	*op;
+	const opcode_t	*oldop;
 	idVarDef		*e;
 	idVarDef		*e2;
 	const idVarDef	*oldtype;
@@ -1677,7 +1677,7 @@ void idCompiler::ParseReturnStatement( void ) {
 	idVarDef	*e;
 	etype_t 	type_a;
 	etype_t 	type_b;
-	opcode_t	*op;
+	const opcode_t	*op;
 
 	if ( CheckToken( ";" ) ) {
 		if ( scope->TypeDef()->ReturnType()->Type() != ev_void ) {
@@ -2009,7 +2009,6 @@ void idCompiler::ParseObjectDef( const char *objname ) {
 	const char  *fieldname;
 	idTypeDef	newtype( ev_field, NULL, "", 0, NULL );
 	idVarDef	*oldscope;
-	int			num;
 	int			i;
 
 	oldscope = scope;
@@ -2037,7 +2036,6 @@ void idCompiler::ParseObjectDef( const char *objname ) {
 	scope = objtype->def;
 
 	// inherit all the functions
-	num = parentType->NumFunctions();
 	for( i = 0; i < parentType->NumFunctions(); i++ ) {
 		const function_t *func = parentType->GetFunction( i );
 		objtype->AddFunction( func );
@@ -2114,7 +2112,6 @@ idCompiler::ParseFunctionDef
 void idCompiler::ParseFunctionDef( idTypeDef *returnType, const char *name ) {
 	idTypeDef		*type;
 	idVarDef		*def;
-	const idVarDef	*parm;
 	idVarDef		*oldscope;
 	int 			i;
 	int 			numParms;
@@ -2169,7 +2166,7 @@ void idCompiler::ParseFunctionDef( idTypeDef *returnType, const char *name ) {
 		if ( gameLocal.program.GetDef( type->GetParmType( i ), type->GetParmName( i ), def ) ) {
 			Error( "'%s' defined more than once in function parameters", type->GetParmName( i ) );
 		}
-		parm = gameLocal.program.AllocDef( type->GetParmType( i ), type->GetParmName( i ), def, false );
+		gameLocal.program.AllocDef( type->GetParmType( i ), type->GetParmName( i ), def, false );
 	}
 
 	oldscope = scope;

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -259,11 +259,10 @@ idFile::Printf
 */
 int idFile::Printf( const char *fmt, ... ) {
 	char buf[MAX_PRINT_MSG];
-	int length;
 	va_list argptr;
 
 	va_start( argptr, fmt );
-	length = idStr::vsnPrintf( buf, MAX_PRINT_MSG-1, fmt, argptr );
+	idStr::vsnPrintf( buf, MAX_PRINT_MSG-1, fmt, argptr );
 	va_end( argptr );
 
 	// so notepad formats the lines correctly

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,29 +37,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef _WIN32
 
+#if defined(_MFC_VER) && !defined(_D3SDK) && !defined(GAME_DLL)
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// prevent auto literal to string conversion
-
-#ifndef _D3SDK
-#ifndef GAME_DLL
-
-#define WINVER				0x501
-
-#if 0
-// Dedicated server hits unresolved when trying to link this way now. Likely because of the 2010/Win7 transition? - TTimo
-
-#ifdef	ID_DEDICATED
-// dedicated sets windows version here
-#define	_WIN32_WINNT WINVER
-#define	WIN32_LEAN_AND_MEAN
-#else
-// non-dedicated includes MFC and sets windows version here
-#include "../tools/comafx/StdAfx.h"			// this will go away when MFC goes away
-#endif
-
-#else
-
 #include "../tools/comafx/StdAfx.h"
-
 #endif
 
 #include <winsock2.h>
@@ -68,9 +48,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #define DIRECTINPUT_VERSION  0x0800			// was 0x0700 with the old mssdk
 #include <dinput.h>
-
-#endif /* !GAME_DLL */
-#endif /* !_D3SDK */
 
 #pragma warning(disable : 4100)				// unreferenced formal parameter
 #pragma warning(disable : 4244)				// conversion to smaller type, possible loss of data
@@ -161,25 +138,15 @@ const int MAX_EXPRESSION_REGISTERS = 4096;
 #include "../tools/compilers/aas/AASFile.h"
 #include "../tools/compilers/aas/AASFileManager.h"
 
-// game
-#if defined(_D3XP)
-#include "../d3xp/Game.h"
-#else
-#include "../game/Game.h"
-#endif
+// game interface
+#include "../framework/Game.h"
 
 //-----------------------------------------------------
 
 #ifndef _D3SDK
 
 #ifdef GAME_DLL
-
-#if defined(_D3XP)
-#include "../d3xp/Game_local.h"
-#else
 #include "../game/Game_local.h"
-#endif
-
 #else
 
 #include "../framework/DemoChecksum.h"

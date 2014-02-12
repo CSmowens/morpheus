@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,10 +46,7 @@ If you have questions concerning this license or the applicable additional terms
 #define	CPUSTRING						"x86"
 #define CPU_EASYARGS					1
 
-#define ALIGN16( x )					__declspec(align(16)) x
-#define PACKED
-
-#define _alloca16( x )					((void *)((((int)_alloca( (x)+15 )) + 15) & ~15))
+#define _alloca16( x )					((void *)((((uintptr_t)_alloca( (x)+15 )) + 15) & ~15))
 
 #define PATHSEPERATOR_STR				"\\"
 #define PATHSEPERATOR_CHAR				'\\'
@@ -60,9 +57,10 @@ If you have questions concerning this license or the applicable additional terms
 #else
 #define ID_GAME_API
 #endif
+#define ALIGN16( x )					__declspec(align(16)) x
+#define PACKED
 #define ID_INLINE						__forceinline
 #define ID_STATIC_TEMPLATE				static
-
 #define assertmem( x, y )				assert( _CrtIsValidPointer( x, y, true ) )
 #else
 #ifdef GAME_DLL
@@ -70,15 +68,27 @@ If you have questions concerning this license or the applicable additional terms
 #else
 #define ID_GAME_API
 #endif
+#define ALIGN16( x )					x __attribute__ ((aligned (16)))
+#define PACKED							__attribute__((packed))
+#define ID_INLINE						inline
+#define ID_STATIC_TEMPLATE
+#define assertmem( x, y )
+#endif
+
+#define THREAD_RETURN_TYPE				DWORD
+
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+	#define ID_LITTLE_ENDIAN			1
 #endif
 
 #endif
+
 
 // Mac OSX
 #if defined(MACOS_X) || defined(__APPLE__)
 
-#define BUILD_STRING				"MacOSX-universal"
-#define BUILD_OS_ID					1
+#define BUILD_STRING					"MacOSX-universal"
+#define BUILD_OS_ID						1
 #ifdef __ppc__
 	#define	CPUSTRING					"ppc"
 	#define CPU_EASYARGS				0
@@ -106,7 +116,7 @@ If you have questions concerning this license or the applicable additional terms
 #endif
 
 #define _alloca							alloca
-#define _alloca16( x )					((void *)((((int)alloca( (x)+15 )) + 15) & ~15))
+#define _alloca16( x )					((void *)((((uintptr_t)alloca( (x)+15 )) + 15) & ~15))
 
 #define PATHSEPERATOR_STR				"/"
 #define PATHSEPERATOR_CHAR				'/'
@@ -119,19 +129,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #define assertmem( x, y )
 
+#define THREAD_RETURN_TYPE				void *
+
 #endif
 
 
-// Linux
+// Unix
+#ifdef __unix__
+
+#define BUILD_OS_ID					2
+
 #ifdef __linux__
+	#define BUILD_OS "linux"
+#elif defined(__FreeBSD__)
+	#define BUILD_OS "FreeBSD"
+#elif defined(__DragonFly__)
+	#define BUILD_OS "DragonFly"
+#elif defined(__OpenBSD__)
+	#define BUILD_OS "OpenBSD"
+#elif defined(__NetBSD__)
+	#define BUILD_OS "NetBSD"
+#else
+	#error unknown operating system!
+#endif
 
 #ifdef __i386__
-	#define	BUILD_STRING				"linux-x86"
-	#define BUILD_OS_ID					2
 	#define CPUSTRING					"x86"
 	#define CPU_EASYARGS				1
+#elif defined(__x86_64__)
+	#define CPUSTRING					"x86_64"
+	#define CPU_EASYARGS				0
 #elif defined(__ppc__)
-	#define	BUILD_STRING				"linux-ppc"
 	#define CPUSTRING					"ppc"
 	#define CPU_EASYARGS				0
 #else
@@ -144,8 +172,10 @@ If you have questions concerning this license or the applicable additional terms
 #define ID_GAME_API
 #endif
 
+#define	BUILD_STRING					(BUILD_OS "-" CPUSTRING)
+
 #define _alloca							alloca
-#define _alloca16( x )					((void *)((((int)alloca( (x)+15 )) + 15) & ~15))
+#define _alloca16( x )					((void *)((((uintptr_t)alloca( (x)+15 )) + 15) & ~15))
 
 #define ALIGN16( x )					x
 #define PACKED							__attribute__((packed))
@@ -160,6 +190,8 @@ If you have questions concerning this license or the applicable additional terms
 #define ID_STATIC_TEMPLATE
 
 #define assertmem( x, y )
+
+#define THREAD_RETURN_TYPE				void *
 
 #endif
 
@@ -282,8 +314,6 @@ typedef struct sysMemoryStats_s {
 	int availExtendedVirtual;
 } sysMemoryStats_t;
 
-typedef unsigned long address_t;
-
 template<class type> class idList;		// for Sys_ListFiles
 
 
@@ -322,7 +352,7 @@ double			Sys_GetClockTicks( void );
 double			Sys_ClockTicksPerSecond( void );
 
 // returns a selection of the CPUID_* flags
-cpuid_t			Sys_GetProcessorId( void );
+int				Sys_GetProcessorId( void );
 const char *	Sys_GetProcessorString( void );
 
 // returns true if the FPU stack is empty
@@ -369,17 +399,10 @@ bool			Sys_UnlockMemory( void *ptr, int bytes );
 // set amount of physical work memory
 void			Sys_SetPhysicalWorkMemory( int minBytes, int maxBytes );
 
-// allows retrieving the call stack at execution points
-void			Sys_GetCallStack( address_t *callStack, const int callStackSize );
-const char *	Sys_GetCallStackStr( const address_t *callStack, const int callStackSize );
-const char *	Sys_GetCallStackCurStr( int depth );
-const char *	Sys_GetCallStackCurAddressStr( int depth );
-void			Sys_ShutdownSymbols( void );
-
 // DLL loading, the path should be a fully qualified OS path to the DLL file to be loaded
-int				Sys_DLL_Load( const char *dllName );
-void *			Sys_DLL_GetProcAddress( int dllHandle, const char *procName );
-void			Sys_DLL_Unload( int dllHandle );
+uintptr_t		Sys_DLL_Load( const char *dllName );
+void *			Sys_DLL_GetProcAddress( uintptr_t dllHandle, const char *procName );
+void			Sys_DLL_Unload( uintptr_t dllHandle );
 
 // event generation
 void			Sys_GenerateEvents( void );
@@ -528,7 +551,7 @@ void			Sys_ShutdownNetworking( void );
 ==============================================================
 */
 
-typedef unsigned int (*xthread_t)( void * );
+typedef THREAD_RETURN_TYPE (*xthread_t)( void * );
 
 typedef enum {
 	THREAD_NORMAL,
@@ -538,8 +561,8 @@ typedef enum {
 
 typedef struct {
 	const char *	name;
-	int				threadHandle;
-	unsigned long	threadId;
+	intptr_t		threadHandle;
+	size_t			threadId;
 } xthreadInfo;
 
 const int MAX_THREADS				= 10;
@@ -592,7 +615,7 @@ public:
 
 	virtual double			GetClockTicks( void ) = 0;
 	virtual double			ClockTicksPerSecond( void ) = 0;
-	virtual cpuid_t			GetProcessorId( void ) = 0;
+	virtual int				GetProcessorId( void ) = 0;
 	virtual const char *	GetProcessorString( void ) = 0;
 	virtual const char *	FPU_GetState( void ) = 0;
 	virtual bool			FPU_StackIsEmpty( void ) = 0;
@@ -604,14 +627,9 @@ public:
 	virtual bool			LockMemory( void *ptr, int bytes ) = 0;
 	virtual bool			UnlockMemory( void *ptr, int bytes ) = 0;
 
-	virtual void			GetCallStack( address_t *callStack, const int callStackSize ) = 0;
-	virtual const char *	GetCallStackStr( const address_t *callStack, const int callStackSize ) = 0;
-	virtual const char *	GetCallStackCurStr( int depth ) = 0;
-	virtual void			ShutdownSymbols( void ) = 0;
-
-	virtual int				DLL_Load( const char *dllName ) = 0;
-	virtual void *			DLL_GetProcAddress( int dllHandle, const char *procName ) = 0;
-	virtual void			DLL_Unload( int dllHandle ) = 0;
+	virtual uintptr_t		DLL_Load( const char *dllName ) = 0;
+	virtual void *			DLL_GetProcAddress( uintptr_t dllHandle, const char *procName ) = 0;
+	virtual void			DLL_Unload( uintptr_t dllHandle ) = 0;
 	virtual void			DLL_GetFileName( const char *baseName, char *dllName, int maxLength ) = 0;
 
 	virtual sysEvent_t		GenerateMouseButtonEvent( int button, bool down ) = 0;

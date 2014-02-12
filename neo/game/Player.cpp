@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +30,9 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Game_local.h"
+
+const int ASYNC_PLAYER_INV_AMMO_BITS = idMath::BitsForInteger( 999 );	// 9 bits to cover the range [0, 999]
+const int ASYNC_PLAYER_INV_CLIP_BITS = -7;								// -7 bits to cover the range [-1, 60]
 
 /*
 ===============================================================================
@@ -2692,13 +2695,11 @@ idPlayer::UpdateConditions
 */
 void idPlayer::UpdateConditions( void ) {
 	idVec3	velocity;
-	float	fallspeed;
 	float	forwardspeed;
 	float	sidespeed;
 
 	// minus the push velocity to avoid playing the walking animation and sounds when riding a mover
 	velocity = physicsObj.GetLinearVelocity() - physicsObj.GetPushedLinearVelocity();
-	fallspeed = velocity * physicsObj.GetGravityNormal();
 
 	if ( influenceActive ) {
 		AI_FORWARD		= false;
@@ -3281,7 +3282,7 @@ idPlayer::GiveVideo
 */
 void idPlayer::GiveVideo( const char *videoName, idDict *item ) {
 
-	if ( videoName == NULL || *videoName == NULL ) {
+	if ( videoName == NULL || *videoName == 0 ) {
 		return;
 	}
 
@@ -3318,7 +3319,7 @@ idPlayer::GiveEmail
 */
 void idPlayer::GiveEmail( const char *emailName ) {
 
-	if ( emailName == NULL || *emailName == NULL ) {
+	if ( emailName == NULL || *emailName == 0 ) {
 		return;
 	}
 
@@ -3345,7 +3346,7 @@ void idPlayer::GivePDA( const char *pdaName, idDict *item )
 		inventory.pdaSecurity.AddUnique( item->GetString( "inv_name" ) );
 	}
 
-	if ( pdaName == NULL || *pdaName == NULL ) {
+	if ( pdaName == NULL || *pdaName == 0 ) {
 		pdaName = "personal";
 	}
 
@@ -4332,7 +4333,6 @@ void idPlayer::UpdateFocus( void ) {
 	idUserInterface *oldUI;
 	idAI		*oldChar;
 	int			oldTalkCursor;
-	idAFEntity_Vehicle *oldVehicle;
 	int			i, j;
 	idVec3		start, end;
 	bool		allowFocus;
@@ -4359,7 +4359,6 @@ void idPlayer::UpdateFocus( void ) {
 	oldUI			= focusUI;
 	oldChar			= focusCharacter;
 	oldTalkCursor	= talkCursor;
-	oldVehicle		= focusVehicle;
 
 	if ( focusTime <= gameLocal.time ) {
 		ClearFocus();
@@ -5249,7 +5248,7 @@ void idPlayer::UpdatePDAInfo( bool updatePDASel ) {
 
 		const char *security = pda->GetSecurity();
 		if ( j == currentPDA || (currentPDA == 0 && security && *security ) ) {
-			if ( *security == NULL ) {
+			if ( *security == 0 ) {
 				security = common->GetLanguageDict()->GetString( "#str_00066" );
 			}
 			objectiveSystem->SetStateString( "PDASecurityClearance", security );
@@ -6058,7 +6057,7 @@ void idPlayer::UpdateHud( void ) {
 				inventory.nextItemNum = 1;
 			}
 			int i;
-			for ( i = 0; i < 5, i < c; i++ ) {
+			for ( i = 0; i < 5 && i < c; i++ ) {
 				hud->SetStateString( va( "itemtext%i", inventory.nextItemNum ), inventory.pickupItemNames[0].name );
 				hud->SetStateString( va( "itemicon%i", inventory.nextItemNum ), inventory.pickupItemNames[0].icon );
 				hud->HandleNamedEvent( va( "itemPickup%i", inventory.nextItemNum++ ) );
@@ -6400,11 +6399,10 @@ idPlayer::RouteGuiMouse
 */
 void idPlayer::RouteGuiMouse( idUserInterface *gui ) {
 	sysEvent_t ev;
-	const char *command;
 
 	if ( usercmd.mx != oldMouseX || usercmd.my != oldMouseY ) {
 		ev = sys->GenerateMouseMoveEvent( usercmd.mx - oldMouseX, usercmd.my - oldMouseY );
-		command = gui->HandleEvent( &ev, gameLocal.time );
+		gui->HandleEvent( &ev, gameLocal.time );
 		oldMouseX = usercmd.mx;
 		oldMouseY = usercmd.my;
 	}
@@ -6816,7 +6814,6 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 			damage = 1;
 		}
 
-		int oldHealth = health;
 		health -= damage;
 
 		if ( health <= 0 ) {

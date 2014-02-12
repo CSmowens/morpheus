@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 typedef struct {
-	char	*name;
+	const char	*name;
 	int		keynum;
-	char	*strId;	// localized string id
+	const char	*strId;	// localized string id
 } keyname_t;
 
 // keys that can be set without a special name
@@ -43,7 +43,7 @@ const char* OSX_GetLocalizedString( const char* );
 #endif
 
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
-keyname_t keynames[] =
+static const keyname_t keynames[] =
 {
 	{"TAB",				K_TAB,				"#str_07018"},
 	{"ENTER",			K_ENTER,			"#str_07019"},
@@ -201,7 +201,7 @@ idKeyInput::ArgCompletion_KeyName
 ===================
 */
 void idKeyInput::ArgCompletion_KeyName( const idCmdArgs &args, void(*callback)( const char *s ) ) {
-	keyname_t *kn;
+	const keyname_t *kn;
 	int i;
 
 	for( i = 0; i < sizeof( unnamedkeys ) - 1; i++ ) {
@@ -257,7 +257,7 @@ to be configured even if they don't have defined names.
 ===================
 */
 int idKeyInput::StringToKeyNum( const char *str ) {
-	keyname_t	*kn;
+	const keyname_t	*kn;
 	
 	if ( !str || !str[0] ) {
 		return -1;
@@ -310,7 +310,7 @@ given keynum.
 ===================
 */
 const char *idKeyInput::KeyNumToString( int keynum, bool localized ) {
-	keyname_t	*kn;	
+	const keyname_t	*kn;
 	static	char	tinystr[5];
 	int			i, j;
 

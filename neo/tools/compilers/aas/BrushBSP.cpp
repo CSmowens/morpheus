@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1116,7 +1116,7 @@ idBrushBSP::MakeNodePortal
 void idBrushBSP::MakeNodePortal( idBrushBSPNode *node ) {
 	idBrushBSPPortal *newPortal, *p;
 	idWinding *w;
-	int side;
+	int side = 0;
 
 	w = BaseWindingForNode( node );
 
@@ -1179,6 +1179,7 @@ void idBrushBSP::SplitNodePortals( idBrushBSPNode *node ) {
 		}
 		else {
 			common->Error( "idBrushBSP::SplitNodePortals: mislinked portal" );
+			return;
 		}
 		nextPortal = p->next[side];
 
@@ -1293,7 +1294,6 @@ void idBrushBSP::MakeOutsidePortals( void ) {
 	idBounds bounds;
 	idBrushBSPPortal *p, *portals[6];
 	idVec3 normal;
-	idPlane planes[6];
 
 	// pad with some space so there will never be null volume leaves
 	bounds = treeBounds.Expand( 32 );
@@ -1364,8 +1364,8 @@ void idBrushBSP::LeakFile( const idStr &fileName ) {
 	int count, next, s;
 	idVec3 mid;
 	idFile *lineFile;
-	idBrushBSPNode *node, *nextNode;
-	idBrushBSPPortal *p, *nextPortal;
+	idBrushBSPNode *node, *nextNode = NULL;
+	idBrushBSPPortal *p, *nextPortal = NULL;
 	idStr qpath, name;
 
 	if ( !outside->occupied ) {

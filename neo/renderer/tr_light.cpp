@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -915,8 +915,9 @@ R_IssueEntityDefCallback
 bool R_IssueEntityDefCallback( idRenderEntityLocal *def ) {
 	bool update;
 	idBounds	oldBounds;
+	const bool checkBounds = r_checkBounds.GetBool();
 
-	if ( r_checkBounds.GetBool() ) {
+	if ( checkBounds ) {
 		oldBounds = def->referenceBounds;
 	}
 
@@ -930,9 +931,10 @@ bool R_IssueEntityDefCallback( idRenderEntityLocal *def ) {
 
 	if ( !def->parms.hModel ) {
 		common->Error( "R_IssueEntityDefCallback: dynamic entity callback didn't set model" );
+		return false;
 	}
 
-	if ( r_checkBounds.GetBool() ) {
+	if ( checkBounds ) {
 		if (	oldBounds[0][0] > def->referenceBounds[0][0] + CHECK_BOUNDS_EPSILON ||
 				oldBounds[0][1] > def->referenceBounds[0][1] + CHECK_BOUNDS_EPSILON ||
 				oldBounds[0][2] > def->referenceBounds[0][2] + CHECK_BOUNDS_EPSILON ||
@@ -1103,8 +1105,8 @@ void R_AddDrawSurf( const srfTriangles_t *tri, const viewEntity_t *space, const 
 			shaderParms = renderEntity->shaderParms;
 		}
 
-		float oldFloatTime;
-		int oldTime;
+		float oldFloatTime = 0.0f;
+		int oldTime = 0;
 
 		if ( space->entityDef && space->entityDef->parms.timeGroup ) {
 			oldFloatTime = tr.viewDef->floatTime;
@@ -1336,8 +1338,8 @@ void R_AddModelSurfaces( void ) {
 			}
 		}
 
-		float oldFloatTime;
-		int oldTime;
+		float oldFloatTime = 0.0f;
+		int oldTime = 0;
 
 		game->SelectTimeGroup( vEntity->entityDef->parms.timeGroup );
 

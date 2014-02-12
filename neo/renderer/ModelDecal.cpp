@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -354,7 +354,8 @@ void idRenderModelDecal::CreateDecal( const idRenderModel *model, const decalPro
 
 					fw[j] = stri->verts[stri->indexes[index+j]].xyz;
 					dir = fw[j].ToVec3() - localInfo.projectionOrigin;
-					localInfo.boundingPlanes[NUM_DECAL_BOUNDING_PLANES - 1].RayIntersection( fw[j].ToVec3(), dir, scale );
+					if (!localInfo.boundingPlanes[NUM_DECAL_BOUNDING_PLANES - 1].RayIntersection( fw[j].ToVec3(), dir, scale ))
+						scale = 0.0f;
 					dir = fw[j].ToVec3() + scale * dir;
 					fw[j].s = localInfo.textureAxis[0].Distance( dir );
 					fw[j].t = localInfo.textureAxis[1].Distance( dir );

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -515,7 +515,7 @@ int idBitMsg::ReadDeltaByteCounter( int oldValue ) const {
 		return oldValue;
 	}
 	newValue = ReadBits( i );
-	return ( oldValue & ~( ( 1 << i ) - 1 ) | newValue );
+	return ( (oldValue & ~( ( 1 << i ) - 1 ) ) | newValue );
 }
 
 /*
@@ -531,7 +531,7 @@ int idBitMsg::ReadDeltaShortCounter( int oldValue ) const {
 		return oldValue;
 	}
 	newValue = ReadBits( i );
-	return ( oldValue & ~( ( 1 << i ) - 1 ) | newValue );
+	return ( (oldValue & ~( ( 1 << i ) - 1 ) ) | newValue );
 }
 
 /*
@@ -547,7 +547,7 @@ int idBitMsg::ReadDeltaLongCounter( int oldValue ) const {
 		return oldValue;
 	}
 	newValue = ReadBits( i );
-	return ( oldValue & ~( ( 1 << i ) - 1 ) | newValue );
+	return ( ( oldValue & ~( ( 1 << i ) - 1 ) ) | newValue );
 }
 
 /*

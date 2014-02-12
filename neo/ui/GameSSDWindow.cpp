@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -279,8 +279,6 @@ void SSDEntity::Draw(idDeviceContext *dc) {
 	idBounds screenBounds = WorldToScreen(bounds);
 	persize.x = idMath::Fabs(screenBounds[1].x - screenBounds[0].x);
 	persize.y = idMath::Fabs(screenBounds[1].y - screenBounds[0].y);
-
-	idVec3 center = screenBounds.GetCenter();
 
 	x = screenBounds[0].x;
 	y = screenBounds[1].y;
@@ -1008,12 +1006,12 @@ void SSDProjectile::ReadProjectiles(idFile* savefile, idGameSSDWindow* _game) {
 */
 
 const char* powerupMaterials[][2] = {
-	"game/SSD/powerupHealthClosed",			"game/SSD/powerupHealthOpen",
-	"game/SSD/powerupSuperBlasterClosed",	"game/SSD/powerupSuperBlasterOpen",
-	"game/SSD/powerupNukeClosed",			"game/SSD/powerupNukeOpen",
-	"game/SSD/powerupRescueClosed",			"game/SSD/powerupRescueOpen",
-	"game/SSD/powerupBonusPointsClosed",	"game/SSD/powerupBonusPointsOpen",
-	"game/SSD/powerupDamageClosed",			"game/SSD/powerupDamageOpen",
+	{ "game/SSD/powerupHealthClosed",			"game/SSD/powerupHealthOpen" },
+	{ "game/SSD/powerupSuperBlasterClosed",	"game/SSD/powerupSuperBlasterOpen" },
+	{ "game/SSD/powerupNukeClosed",			"game/SSD/powerupNukeOpen" },
+	{ "game/SSD/powerupRescueClosed",			"game/SSD/powerupRescueOpen" },
+	{ "game/SSD/powerupBonusPointsClosed",	"game/SSD/powerupBonusPointsOpen" },
+	{ "game/SSD/powerupDamageClosed",			"game/SSD/powerupDamageOpen" },
 };
 
 #define POWERUP_MATERIAL_COUNT 6

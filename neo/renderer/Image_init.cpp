@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -151,6 +151,7 @@ R_AlphaRampImage
 Creates a 0-255 ramp image
 ================
 */
+#if 0
 static void R_AlphaRampImage( idImage *image ) {
 	int		x;
 	byte	data[256][4];
@@ -165,6 +166,7 @@ static void R_AlphaRampImage( idImage *image ) {
 	image->GenerateImage( (byte *)data, 256, 1, 
 		TF_NEAREST, false, TR_CLAMP, TD_HIGH_QUALITY );
 }
+#endif
 
 
 
@@ -310,6 +312,7 @@ static void R_RGBA8Image( idImage *image ) {
 		TF_DEFAULT, false, TR_REPEAT, TD_HIGH_QUALITY );
 }
 
+#if 0
 static void R_RGB8Image( idImage *image ) {
 	byte	data[DEFAULT_SIZE][DEFAULT_SIZE][4];
 
@@ -322,6 +325,7 @@ static void R_RGB8Image( idImage *image ) {
 	image->GenerateImage( (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, 
 		TF_DEFAULT, false, TR_REPEAT, TD_HIGH_QUALITY );
 }
+#endif
 
 static void R_AlphaNotchImage( idImage *image ) {
 	byte	data[2][4];
@@ -376,6 +380,7 @@ static void R_AmbientNormalImage( idImage *image ) {
 }
 
 
+#if 0
 static void CreateSquareLight( void ) {
 	byte		*buffer;
 	int			x, y;
@@ -448,6 +453,7 @@ static void CreateFlashOff( void ) {
 
 	R_StaticFree( buffer );
 }
+#endif
 
 
 /*
@@ -560,6 +566,9 @@ static void getCubeVector(int i, int cubesize, int x, int y, float *vector) {
     vector[1] = -tc;
     vector[2] = -1.0;
     break;
+  default:
+	common->Error ("getCubeVector: invalid cube map face index");
+	return;
   }
 
   mag = idMath::InvSqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
@@ -574,7 +583,7 @@ static void getCubeVector(int i, int cubesize, int x, int y, float *vector) {
  * access the cube map.
  */
 static void makeNormalizeVectorCubeMap( idImage *image ) {
-	float vector[3];
+	float vector[3] = { };
 	int i, x, y;
 	byte	*pixels[6];
 	int		size;
@@ -839,7 +848,7 @@ void R_QuadraticImage( idImage *image ) {
 
 
 typedef struct {
-	char *name;
+	const char *name;
 	int	minimize, maximize;
 } filterName_t;
 
@@ -857,7 +866,7 @@ void idImageManager::ChangeTextureFilter( void ) {
 	int		i;
 	idImage	*glt;
 	const char	*string;
-static filterName_t textureFilters[] = {
+static const filterName_t textureFilters[] = {
 	{"GL_LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR},
 	{"GL_LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR},
 	{"GL_NEAREST", GL_NEAREST, GL_NEAREST},

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -2936,7 +2936,7 @@ const char *idMat6::ToString( int precision ) const {
 //===============================================================
 
 float	idMatX::temp[MATX_MAX_TEMP+4];
-float *	idMatX::tempPtr = (float *) ( ( (int) idMatX::temp + 15 ) & ~15 );
+float *	idMatX::tempPtr = (float *) ( ( (intptr_t) idMatX::temp + 15 ) & ~15 );
 int		idMatX::tempIndex = 0;
 
 
@@ -3125,9 +3125,9 @@ bool idMatX::IsOrthonormal( const float epsilon ) const {
 
 		ptr2 = mat + i;
 		sum = ptr2[0] * ptr2[0] - 1.0f;
-		for ( i = 1; i < numRows; i++ ) {
+		for ( int j = 1; j < numRows; j++ ) {
 			ptr2 += numColumns;
-			sum += ptr2[i] * ptr2[i];
+			sum += ptr2[i] * ptr2[j];
 		}
 		if ( idMath::Fabs( sum ) > epsilon ) {
 			return false;
@@ -5392,7 +5392,7 @@ idMatX::Cholesky_UpdateRowColumn
 bool idMatX::Cholesky_UpdateRowColumn( const idVecX &v, int r ) {
 	int i, j;
 	double sum;
-	float *original, *y;
+	float *original;
 	idVecX addSub;
 
 	assert( numRows == numColumns );
@@ -5421,7 +5421,6 @@ bool idMatX::Cholesky_UpdateRowColumn( const idVecX &v, int r ) {
 	} else {
 
 		original = (float *) _alloca16( numColumns * sizeof( float ) );
-		y = (float *) _alloca16( numColumns * sizeof( float ) );
 
 		// calculate original row/column of matrix
 		for ( i = 0; i < numRows; i++ ) {
@@ -7089,7 +7088,7 @@ void idMatX::Eigen_SortIncreasing( idVecX &eigenValues ) {
 	int i, j, k;
 	float min;
 
-	for ( i = 0, j; i <= numRows - 2; i++ ) {
+	for ( i = 0; i <= numRows - 2; i++ ) {
 		j = i;
 		min = eigenValues[j];
 		for ( k = i + 1; k < numRows; k++ ) {
@@ -7114,7 +7113,7 @@ void idMatX::Eigen_SortDecreasing( idVecX &eigenValues ) {
 	int i, j, k;
 	float max;
 
-	for ( i = 0, j; i <= numRows - 2; i++ ) {
+	for ( i = 0; i <= numRows - 2; i++ ) {
 		j = i;
 		max = eigenValues[j];
 		for ( k = i + 1; k < numRows; k++ ) {

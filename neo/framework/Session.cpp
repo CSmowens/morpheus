@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ void Session_RescanSI_f( const idCmdArgs &args ) {
 	}
 }
 
+#ifndef	ID_DEDICATED
 /*
 ==================
 Session_Map_f
@@ -180,6 +181,7 @@ static void Session_TestMap_f( const idCmdArgs &args ) {
 	sprintf( string, "devmap %s", map.c_str() );
 	cmdSystem->BufferCommandText( CMD_EXEC_NOW, string );
 }
+#endif
 
 /*
 ==================
@@ -598,6 +600,7 @@ static void Session_DemoShot_f( const idCmdArgs &args ) {
 	}
 }
 
+#ifndef	ID_DEDICATED
 /*
 ================
 Session_RecordDemo_f
@@ -731,6 +734,7 @@ Session_TimeCmdDemo_f
 static void Session_TimeCmdDemo_f( const idCmdArgs &args ) {
 	sessLocal.TimeCmdDemo( args.Argv(1) );
 }
+#endif
 
 /*
 ================
@@ -745,6 +749,7 @@ static void Session_Disconnect_f( const idCmdArgs &args ) {
 	}
 }
 
+#ifndef	ID_DEDICATED
 #ifdef ID_DEMO_BUILD
 /*
 ================
@@ -777,6 +782,7 @@ static void Session_ExitCmdDemo_f( const idCmdArgs &args ) {
 	common->Printf( "Command demo exited at logIndex %i\n", sessLocal.logIndex );
 	sessLocal.cmdDemoFile = NULL;
 }
+#endif
 
 /*
 ================

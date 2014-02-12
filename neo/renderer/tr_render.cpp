@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -382,6 +382,32 @@ void RB_LoadShaderTextureMatrix( const float *shaderRegisters, const textureStag
 	qglMatrixMode( GL_TEXTURE );
 	qglLoadMatrixf( matrix );
 	qglMatrixMode( GL_MODELVIEW );
+
+	float texS[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+	float texT[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+	if ( texture->hasMatrix ) {
+//		float matrix[16];
+//		RB_GetShaderTextureMatrix( shaderRegisters, texture, matrix );
+		texS[0] = matrix[0*4+0];
+		texS[1] = matrix[1*4+0];
+		texS[2] = matrix[2*4+0];
+		texS[3] = matrix[3*4+0];
+	
+		texT[0] = matrix[0*4+1];
+		texT[1] = matrix[1*4+1];
+		texT[2] = matrix[2*4+1];
+		texT[3] = matrix[3*4+1];
+
+		RENDERLOG_PRINTF( "Setting Texture Matrix\n");
+		renderLog.Indent();
+		RENDERLOG_PRINTF( "Texture Matrix S : %4.3f, %4.3f, %4.3f, %4.3f\n", texS[0], texS[1], texS[2], texS[3] );
+		RENDERLOG_PRINTF( "Texture Matrix T : %4.3f, %4.3f, %4.3f, %4.3f\n", texT[0], texT[1], texT[2], texT[3] );
+		renderLog.Outdent();
+	} 
+
+	renderProgManager.SetRenderParm( RENDERPARM_TEXTUREMATRIX_S, texS );
+	renderProgManager.SetRenderParm( RENDERPARM_TEXTUREMATRIX_T, texT );
 }
 
 /*

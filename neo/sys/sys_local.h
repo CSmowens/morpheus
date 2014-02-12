@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 
 	virtual double			GetClockTicks( void );
 	virtual double			ClockTicksPerSecond( void );
-	virtual cpuid_t			GetProcessorId( void );
+	virtual int				GetProcessorId( void );
 	virtual const char *	GetProcessorString( void );
 	virtual const char *	FPU_GetState( void );
 	virtual bool			FPU_StackIsEmpty( void );
@@ -53,17 +53,12 @@ public:
 
 	virtual void			FPU_EnableExceptions( int exceptions );
 
-	virtual void			GetCallStack( address_t *callStack, const int callStackSize );
-	virtual const char *	GetCallStackStr( const address_t *callStack, const int callStackSize );
-	virtual const char *	GetCallStackCurStr( int depth );
-	virtual void			ShutdownSymbols( void );
-
 	virtual bool			LockMemory( void *ptr, int bytes );
 	virtual bool			UnlockMemory( void *ptr, int bytes );
 
-	virtual int				DLL_Load( const char *dllName );
-	virtual void *			DLL_GetProcAddress( int dllHandle, const char *procName );
-	virtual void			DLL_Unload( int dllHandle );
+	virtual uintptr_t		DLL_Load( const char *dllName );
+	virtual void *			DLL_GetProcAddress( uintptr_t dllHandle, const char *procName );
+	virtual void			DLL_Unload( uintptr_t dllHandle );
 	virtual void			DLL_GetFileName( const char *baseName, char *dllName, int maxLength );
 
 	virtual sysEvent_t		GenerateMouseButtonEvent( int button, bool down );

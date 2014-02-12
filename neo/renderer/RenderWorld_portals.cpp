@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -330,7 +330,7 @@ void idRenderWorldLocal::FloodLightThroughArea_r( idRenderLightLocal *light, int
 	portal_t*		p;
 	float			d;
 	portalArea_t *	area;
-	const portalStack_t	*check, *firstPortalStack;
+	const portalStack_t	*check, *firstPortalStack = NULL;
 	portalStack_t	newStack;
 	int				i, j;
 	idVec3			v1, v2;
@@ -444,7 +444,6 @@ prelight, because shadows are cast from back side which may not be in visible ar
 void idRenderWorldLocal::FlowLightThroughPortals( idRenderLightLocal *light ) {
 	portalStack_t	ps;
 	int				i;
-	const idVec3 origin = light->globalLightOrigin;
 
 	// if the light origin areaNum is not in a valid area,
 	// the light won't have any area refs

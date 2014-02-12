@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,14 +38,6 @@ If you have questions concerning this license or the applicable additional terms
 //#define ID_REDIRECT_NEWDELETE
 //#define ID_DEBUG_MEMORY
 //#define ID_DEBUG_UNINITIALIZED_MEMORY
-
-#ifndef ID_RETAIL
-	#ifdef _DEBUG
-		#define ID_RETAIL 0
-	#else
-		#define ID_RETAIL 1
-	#endif
-#endif
 
 // if enabled, the console won't toggle upon ~, unless you start the binary with +set com_allowConsole 1
 // Ctrl+Alt+~ will always toggle the console no matter what

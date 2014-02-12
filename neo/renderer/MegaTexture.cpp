@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -381,7 +381,6 @@ void idTextureLevel::UpdateTile( int localX, int localY, int globalX, int global
 			break;
 		}
 
-		int	byteSize = size * 4;
 		// mip-map in place
 		for ( int y = 0 ; y < size ; y++ ) {
 			byte	*in, *in2, *out;
@@ -539,7 +538,7 @@ void	idMegaTexture::GenerateMegaMipMaps( megaTextureHeader_t *header, idFile *ou
 
 						if ( tx > width || ty > height ) {
 							// off edge, zero fill
-							memset( newBlock, 0, sizeof( newBlock ) );
+							memset( newBlock, 0, sizeof( tileSize ) );
 						} else {
 							tileNum = tileOffset + ty * width + tx;
 							inFile->Seek( tileNum * tileSize, FS_SEEK_SET );
@@ -651,7 +650,7 @@ Incrementally load a giant tga file and process into the mega texture block form
 ====================
 */
 void idMegaTexture::MakeMegaTexture_f( const idCmdArgs &args ) {
-	int		columns, rows, fileSize, numBytes;
+	int		columns, fileSize, numBytes;
 	byte	*pixbuf;
 	int		row, column;
 	TargaHeader	targa_header;
@@ -714,7 +713,6 @@ void idMegaTexture::MakeMegaTexture_f( const idCmdArgs &args ) {
 	}
 
 	columns = targa_header.width;
-	rows = targa_header.height;
 
 	// skip TARGA image comment
 	if ( targa_header.id_length != 0 ) {

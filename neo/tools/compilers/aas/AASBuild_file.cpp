@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -303,6 +303,9 @@ bool idAASBuild::GetAreaForLeafNode( idBrushBSPNode *node, int *areaNum ) {
 	area.numFaces = 0;
 	area.reach = NULL;
 	area.rev_reach = NULL;
+	area.bounds.Zero();
+	area.center.Zero();
+	area.travelFlags = 0;
 
 	for ( p = node->GetPortals(); p; p = p->Next(s) ) {
 		s = (p->GetNode(1) == node);

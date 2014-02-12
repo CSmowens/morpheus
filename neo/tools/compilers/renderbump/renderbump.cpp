@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -102,7 +102,6 @@ typedef struct {
 	triHash_t	*hash;	
 } renderBump_t;
 
-static float traceFraction;
 static int rayNumber;		// for avoiding retests of bins and faces
 
 static int oldWidth, oldHeight;
@@ -637,7 +636,7 @@ static void RasterizeTriangle( const srfTriangles_t *lowMesh, const idVec3 *lowM
 	byte	*localDest, *globalDest, *colorDest;
 	float	edge[3][3];
 	idVec3	sampledNormal;
-	byte	sampledColor[4];
+	byte	sampledColor[4] = { };
 	idVec3	point, normal, traceNormal, tangents[2];
 	float	baseArea, totalArea;
 	int		r, g, b;
@@ -1169,7 +1168,7 @@ void RenderBump_f( const idCmdArgs &args ) {
 	int		i, j;
 	const char	*cmdLine;
 	int		numRenderBumps;
-	renderBump_t	*renderBumps, *rb;
+	renderBump_t	*renderBumps, *rb = NULL;
 	renderBump_t	opt;
 	int		startTime, endTime;
 
@@ -1350,13 +1349,11 @@ void RenderBumpFlat_f( const idCmdArgs &args ) {
 	int		i;
 	idBounds	bounds;
 	srfTriangles_t	*mesh;
-	float	boundsScale;
 
 	// update the screen as we print
 	common->SetRefreshOnPrint( true );
 
 	width = height = 256;
-	boundsScale = 0;
 
 	// check options
 	for ( i = 1 ; i < args.Argc() - 1; i++ ) {
@@ -1384,6 +1381,7 @@ void RenderBumpFlat_f( const idCmdArgs &args ) {
 
 	if ( i != ( args.Argc() - 1 ) ) {
 		common->Error( "usage: renderBumpFlat [-size width height] asefile" );
+		return;
 	}
 
 	common->Printf( "Final image size: %i, %i\n", width, height );
@@ -1550,6 +1548,8 @@ void RenderBumpFlat_f( const idCmdArgs &args ) {
 			GLimp_SwapBuffers();
 			qglReadPixels( 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer ); 
 
+			c = width * height;
+
 			if ( colorPass ) {
 				// add to the sum buffer
 				for ( i = 0 ; i < c ; i++ ) {
@@ -1560,7 +1560,6 @@ void RenderBumpFlat_f( const idCmdArgs &args ) {
 				}
 			} else {
 				// normalize
-				c = width * height;
 				for ( i = 0 ; i < c ; i++ ) {
 					idVec3	v;
 

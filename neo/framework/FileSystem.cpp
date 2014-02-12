@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -401,7 +401,7 @@ public:
 	static void				TouchFileList_f( const idCmdArgs &args );
 
 private:
-	friend dword 			BackgroundDownloadThread( void *parms );
+	friend THREAD_RETURN_TYPE	BackgroundDownloadThread( void *parms );
 
 	searchpath_t *			searchPaths;
 	int						readCount;			// total bytes read
@@ -447,7 +447,7 @@ private:
 
 private:
 	void					ReplaceSeparators( idStr &path, char sep = PATHSEPERATOR_CHAR );
-	long					HashFileName( const char *fname ) const;
+	int						HashFileName( const char *fname ) const;
 	int						ListOSFiles( const char *directory, const char *extension, idStrList &list );
 	FILE *					OpenOSFile( const char *name, const char *mode, idStr *caseSensitiveName = NULL );
 	FILE *					OpenOSFileCorrectName( idStr &path, const char *mode );
@@ -525,9 +525,9 @@ idFileSystemLocal::HashFileName
 return a hash value for the filename
 ================
 */
-long idFileSystemLocal::HashFileName( const char *fname ) const {
+int idFileSystemLocal::HashFileName( const char *fname ) const {
 	int		i;
-	long	hash;
+	int		hash;
 	char	letter;
 
 	hash = 0;
@@ -540,7 +540,7 @@ long idFileSystemLocal::HashFileName( const char *fname ) const {
 		if ( letter == '\\' ) {
 			letter = '/';		// damn path names
 		}
-		hash += (long)(letter) * (i+119);
+		hash += (int)(letter) * (i+119);
 		i++;
 	}
 	hash &= (FILE_HASH_SIZE-1);
@@ -850,7 +850,7 @@ search paths.
 */
 const char *idFileSystemLocal::OSPathToRelativePath( const char *OSPath ) {
 	static char relativePath[MAX_STRING_CHARS];
-	char *s, *base;
+	const char *s, *base;
 
 	// skip a drive letter?
 
@@ -871,7 +871,7 @@ const char *idFileSystemLocal::OSPathToRelativePath( const char *OSPath ) {
 	}
 #else
 	// look for the first complete directory name
-	base = (char *)strstr( OSPath, BASE_GAMEDIR );
+	base = strstr( OSPath, BASE_GAMEDIR );
 	while ( base ) {
 		char c1 = '\0', c2;
 		if ( base > OSPath ) {
@@ -895,7 +895,7 @@ const char *idFileSystemLocal::OSPathToRelativePath( const char *OSPath ) {
 			fsgame = fs_game_base.GetString();
 		}
 		if ( base == NULL && fsgame && strlen( fsgame ) ) {
-			base = (char *)strstr( OSPath, fsgame );
+			base = strstr( OSPath, fsgame );
 			while ( base ) {
 				char c1 = '\0', c2;
 				if ( base > OSPath ) {
@@ -974,7 +974,7 @@ bool idFileSystemLocal::FileIsInPAK( const char *relativePath ) {
 	searchpath_t	*search;
 	pack_t			*pak;
 	fileInPack_t	*pakFile;
-	long			hash;
+	int				hash;
 
 	if ( !searchPaths ) {
 		common->FatalError( "Filesystem call made without initialization\n" );
@@ -1296,7 +1296,7 @@ pack_t *idFileSystemLocal::LoadZipFile( const char *zipfile ) {
 	char			filename_inzip[MAX_ZIPPED_FILE_NAME];
 	unz_file_info	file_info;
 	int				i;
-	long			hash;
+	int				hash;
 	int				fs_numHeaderLongs;
 	int *			fs_headerLongs;
 	FILE			*f;
@@ -1874,7 +1874,7 @@ int	idFileSystemLocal::ListOSFiles( const char *directory, const char *extension
 
 	// push a new entry
 	dir_cache[dir_cache_index].Init( directory, extension, list );
-	dir_cache_index = (++dir_cache_index) % MAX_CACHED_DIRS;
+	dir_cache_index = (dir_cache_index + 1) % MAX_CACHED_DIRS;
 	if ( dir_cache_count < MAX_CACHED_DIRS ) {
 		dir_cache_count++;
 	}
@@ -2851,15 +2851,6 @@ void idFileSystemLocal::Init( void ) {
 	common->StartupVariable( "fs_restrict", false );
 	common->StartupVariable( "fs_searchAddons", false );
 
-#if !ID_ALLOW_D3XP
-	if ( fs_game.GetString()[0] && !idStr::Icmp( fs_game.GetString(), "d3xp" ) ) {
-		 fs_game.SetString( NULL );
-	}
-	if ( fs_game_base.GetString()[0] && !idStr::Icmp( fs_game_base.GetString(), "d3xp" ) ) {
-		  fs_game_base.SetString( NULL );
-	}
-#endif	
-	
 	if ( fs_basepath.GetString()[0] == '\0' ) {
 		fs_basepath.SetString( Sys_DefaultBasePath() );
 	}
@@ -3144,7 +3135,7 @@ idFile *idFileSystemLocal::OpenFileReadFlags( const char *relativePath, int sear
 	pack_t *		pak;
 	fileInPack_t *	pakFile;
 	directory_t *	dir;
-	long			hash;
+	int				hash;
 	FILE *			fp;
 	
 	if ( !searchPaths ) {
@@ -3623,7 +3614,7 @@ BackgroundDownload
 Reads part of a file from a background thread.
 ===================
 */
-dword BackgroundDownloadThread( void *parms ) {
+THREAD_RETURN_TYPE BackgroundDownloadThread( void *parms ) {
 	while( 1 ) {
 		Sys_EnterCriticalSection();
 		backgroundDownload_t	*bgl = fileSystemLocal.backgroundDownloads;
@@ -3736,7 +3727,7 @@ dword BackgroundDownloadThread( void *parms ) {
 #endif
 		}
 	}
-	return 0;
+	return (THREAD_RETURN_TYPE) 0;
 }
 
 /*
@@ -3746,7 +3737,7 @@ idFileSystemLocal::StartBackgroundReadThread
 */
 void idFileSystemLocal::StartBackgroundDownloadThread() {
 	if ( !backgroundThread.threadHandle ) {
-		Sys_CreateThread( (xthread_t)BackgroundDownloadThread, NULL, THREAD_NORMAL, backgroundThread, "backgroundDownload", g_threads, &g_thread_count );
+		Sys_CreateThread( BackgroundDownloadThread, NULL, THREAD_NORMAL, backgroundThread, "backgroundDownload", g_threads, &g_thread_count );
 		if ( !backgroundThread.threadHandle ) {
 			common->Warning( "idFileSystemLocal::StartBackgroundDownloadThread: failed" );
 		}
@@ -4007,7 +3998,7 @@ bool idFileSystemLocal::HasD3XP( void ) {
 			}
 		}
 	}
-#elif ID_ALLOW_D3XP
+#else
 	// check for d3xp's d3xp/pak000.pk4 in any search path
 	// checking wether the pak is loaded by checksum wouldn't be enough:
 	// we may have a different fs_game right now but still need to reply that it's installed
@@ -4027,7 +4018,6 @@ bool idFileSystemLocal::HasD3XP( void ) {
 	}
 #endif
 
-#if ID_ALLOW_D3XP
 	// if we didn't find a pk4 file then the user might have unpacked so look for default.cfg file
 	// that's the old way mostly used during developement. don't think it hurts to leave it there
 	ListOSFiles( fs_basepath.GetString(), "/", dirs );
@@ -4043,7 +4033,7 @@ bool idFileSystemLocal::HasD3XP( void ) {
 			}
 		}
 	}
-#endif
+
 	d3xp = -1;
 	return false;
 }

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ double idSysLocal::ClockTicksPerSecond( void ) {
 	return Sys_ClockTicksPerSecond();
 }
 
-cpuid_t idSysLocal::GetProcessorId( void ) {
+int idSysLocal::GetProcessorId( void ) {
 	return Sys_GetProcessorId();
 }
 
@@ -92,38 +92,22 @@ bool idSysLocal::UnlockMemory( void *ptr, int bytes ) {
 	return Sys_UnlockMemory( ptr, bytes );
 }
 
-void idSysLocal::GetCallStack( address_t *callStack, const int callStackSize ) {
-	Sys_GetCallStack( callStack, callStackSize );
-}
-
-const char * idSysLocal::GetCallStackStr( const address_t *callStack, const int callStackSize ) {
-	return Sys_GetCallStackStr( callStack, callStackSize );
-}
-
-const char * idSysLocal::GetCallStackCurStr( int depth ) {
-	return Sys_GetCallStackCurStr( depth );
-}
-
-void idSysLocal::ShutdownSymbols( void ) {
-	Sys_ShutdownSymbols();
-}
-
-int idSysLocal::DLL_Load( const char *dllName ) {
+uintptr_t idSysLocal::DLL_Load( const char *dllName ) {
 	return Sys_DLL_Load( dllName );
 }
 
-void *idSysLocal::DLL_GetProcAddress( int dllHandle, const char *procName ) {
+void *idSysLocal::DLL_GetProcAddress( uintptr_t dllHandle, const char *procName ) {
 	return Sys_DLL_GetProcAddress( dllHandle, procName );
 }
 
-void idSysLocal::DLL_Unload( int dllHandle ) {
+void idSysLocal::DLL_Unload( uintptr_t dllHandle ) {
 	Sys_DLL_Unload( dllHandle );
 }
 
 void idSysLocal::DLL_GetFileName( const char *baseName, char *dllName, int maxLength ) {
 #ifdef _WIN32
 	idStr::snPrintf( dllName, maxLength, "%s" CPUSTRING ".dll", baseName );
-#elif defined( __linux__ )
+#elif defined( __unix__ )
 	idStr::snPrintf( dllName, maxLength, "%s" CPUSTRING ".so", baseName );
 #elif defined( MACOS_X )
 	idStr::snPrintf( dllName, maxLength, "%s" ".dylib", baseName );

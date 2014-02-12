@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #define PUNCTABLE
 
 //longer punctuations first
-punctuation_t default_punctuations[] = {
+static const punctuation_t default_punctuations[] = {
 	//binary operators
 	{">>=",P_RSHIFT_ASSIGN},
 	{"<<=",P_LSHIFT_ASSIGN},
@@ -859,7 +859,7 @@ idLexer::ReadPunctuation
 */
 int idLexer::ReadPunctuation( idToken *token ) {
 	int l, n, i;
-	char *p;
+	const char *p;
 	const punctuation_t *punc;
 
 #ifdef PUNCTABLE
@@ -907,10 +907,6 @@ int idLexer::ReadToken( idToken *token ) {
 
 	if ( !loaded ) {
 		idLib::common->Error( "idLexer::ReadToken: no file loaded" );
-		return 0;
-	}
-
-	if ( script_p == NULL ) {
 		return 0;
 	}
 

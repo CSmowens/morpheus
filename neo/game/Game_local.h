@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,6 +28,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifndef __GAME_LOCAL_H__
 #define	__GAME_LOCAL_H__
+
+// default scripts
+#define SCRIPT_DEFAULTDEFS			"script/doom_defs.script"
+#define SCRIPT_DEFAULT				"script/doom_main.script"
+#define SCRIPT_DEFAULTFUNC			"doom_main"
 
 /*
 ===============================================================================
@@ -110,10 +115,11 @@ void gameError( const char *fmt, ... );
 
 //============================================================================
 
-const int MAX_GAME_MESSAGE_SIZE		= 8192;
-const int MAX_ENTITY_STATE_SIZE		= 512;
-const int ENTITY_PVS_SIZE			= ((MAX_GENTITIES+31)>>5);
-const int NUM_RENDER_PORTAL_BITS	= idMath::BitsForInteger( PS_BLOCK_ALL );
+#define MAX_GAME_MESSAGE_SIZE	8192
+#define MAX_ENTITY_STATE_SIZE	512
+#define ENTITY_PVS_SIZE			((MAX_GENTITIES+31)>>5)
+
+extern const int NUM_RENDER_PORTAL_BITS;
 
 typedef struct entityState_s {
 	int						entityNumber;
@@ -562,15 +568,15 @@ private:
 	void					DumpOggSounds( void );
 	void					GetShakeSounds( const idDict *dict );
 
-	void					SelectTimeGroup( int timeGroup );
-	int						GetTimeGroupTime( int timeGroup );
-	void					GetBestGameType( const char* map, const char* gametype, char buf[ MAX_STRING_CHARS ] );
+	virtual void			SelectTimeGroup( int timeGroup );
+	virtual int				GetTimeGroupTime( int timeGroup );
+	virtual void			GetBestGameType( const char* map, const char* gametype, char buf[ MAX_STRING_CHARS ] );
 
 	void					Tokenize( idStrList &out, const char *in );
 
 	void					UpdateLagometer( int aheadOfServer, int dupeUsercmds );
 
-	void					GetMapLoadingGUI( char gui[ MAX_STRING_CHARS ] );
+	virtual void			GetMapLoadingGUI( char gui[ MAX_STRING_CHARS ] );
 };
 
 //============================================================================
@@ -627,7 +633,7 @@ ID_INLINE bool idEntityPtr<type>::IsValid( void ) const {
 template< class type >
 ID_INLINE type *idEntityPtr<type>::GetEntity( void ) const {
 	int entityNum = spawnId & ( ( 1 << GENTITYNUM_BITS ) - 1 );
-	if ( ( gameLocal.spawnIds[ entityNum ] == ( spawnId >> GENTITYNUM_BITS ) ) ) {
+	if ( gameLocal.spawnIds[ entityNum ] == ( spawnId >> GENTITYNUM_BITS ) ) {
 		return static_cast<type *>( gameLocal.entities[ entityNum ] );
 	}
 	return NULL;
@@ -682,11 +688,10 @@ typedef enum {
 #define	MASK_SHOT_RENDERMODEL		(CONTENTS_SOLID|CONTENTS_RENDERMODEL)
 #define	MASK_SHOT_BOUNDINGBOX		(CONTENTS_SOLID|CONTENTS_BODY)
 
-const float DEFAULT_GRAVITY			= 1066.0f;
 #define DEFAULT_GRAVITY_STRING		"1066"
-const idVec3 DEFAULT_GRAVITY_VEC3( 0, 0, -DEFAULT_GRAVITY );
-
-const int	CINEMATIC_SKIP_DELAY	= SEC2MS( 2.0f );
+extern const float	DEFAULT_GRAVITY;
+extern const idVec3	DEFAULT_GRAVITY_VEC3;
+extern const int	CINEMATIC_SKIP_DELAY;
 
 //============================================================================
 

@@ -70,7 +70,7 @@ char	*Sys_GetCurrentUser( void );
 
 void	Win_SetErrorText( const char *text );
 
-cpuid_t	Sys_GetCPUId( void );
+int		Sys_GetCPUId( void );
 
 int		MapKey (int key);
 
@@ -98,7 +98,7 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 void Conbuf_AppendText( const char *msg );
 
-typedef struct {
+struct Win32Vars_t {
 	HWND			hWnd;
 	HINSTANCE		hInstance;
 
@@ -109,7 +109,7 @@ typedef struct {
 
 	OSVERSIONINFOEX	osversion;
 
-	cpuid_t			cpuid;
+	int				cpuid;
 
 	// when we get a windows message, we store the time off so keyboard processing
 	// can know the exact time of an event (not really needed now that we use async direct input)
@@ -169,7 +169,7 @@ typedef struct {
 	int				wglErrors;
 	// SMP acceleration vars
 
-} Win32Vars_t;
+};
 
 extern Win32Vars_t	win32;
 

@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ R_ShowTriMemory_f
 ===============
 */
 void R_ShowTriSurfMemory_f( const idCmdArgs &args ) {
-	common->Printf( "%6d kB in %d triangle surfaces\n",
+	common->Printf( "%6zd kB in %d triangle surfaces\n",
 		( srfTrianglesAllocator.GetAllocCount() * sizeof( srfTriangles_t ) ) >> 10,
 			srfTrianglesAllocator.GetAllocCount() );
 
@@ -267,7 +267,7 @@ void R_ShowTriSurfMemory_f( const idCmdArgs &args ) {
 		triDupVertAllocator.GetBaseBlockMemory() >> 10, triDupVertAllocator.GetFreeBlockMemory() >> 10,
 			triDupVertAllocator.GetNumFreeBlocks(), triDupVertAllocator.GetNumEmptyBaseBlocks() );
 
-	common->Printf( "%6d kB total triangle memory\n",
+	common->Printf( "%6zu kB total triangle memory\n",
 		( srfTrianglesAllocator.GetAllocCount() * sizeof( srfTriangles_t ) +
 			triVertexAllocator.GetBaseBlockMemory() +
 			triIndexAllocator.GetBaseBlockMemory() +
@@ -432,7 +432,7 @@ void R_CheckStaticTriSurfMemory( const srfTriangles_t *tri ) {
 	if ( tri->verts != NULL ) {
 		// R_CreateLightTris points tri->verts at the verts of the ambient surface
 		if ( tri->ambientSurface == NULL || tri->verts != tri->ambientSurface->verts ) {
-			const char *error = triVertexAllocator.CheckMemory( tri->verts );
+			const char *error id_attribute((unused)) = triVertexAllocator.CheckMemory( tri->verts );
 			assert( error == NULL );
 		}
 	}
@@ -441,14 +441,14 @@ void R_CheckStaticTriSurfMemory( const srfTriangles_t *tri ) {
 		if ( tri->indexes != NULL ) {
 			// if a surface is completely inside a light volume R_CreateLightTris points tri->indexes at the indexes of the ambient surface
 			if ( tri->ambientSurface == NULL || tri->indexes != tri->ambientSurface->indexes ) {
-				const char *error = triIndexAllocator.CheckMemory( tri->indexes );
+				const char *error id_attribute((unused)) = triIndexAllocator.CheckMemory( tri->indexes );
 				assert( error == NULL );
 			}
 		}
 	}
 
 	if ( tri->shadowVertexes != NULL ) {
-		const char *error = triShadowVertexAllocator.CheckMemory( tri->shadowVertexes );
+		const char *error id_attribute((unused)) = triShadowVertexAllocator.CheckMemory( tri->shadowVertexes );
 		assert( error == NULL );
 	}
 }

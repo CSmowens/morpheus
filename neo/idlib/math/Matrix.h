@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -295,7 +295,7 @@ ID_INLINE idMat2 idMat2::Inverse( void ) const {
 	idMat2 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -304,7 +304,7 @@ ID_INLINE idMat2 idMat2::InverseFast( void ) const {
 	idMat2 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }
@@ -700,7 +700,7 @@ ID_INLINE idMat3 idMat3::Inverse( void ) const {
 	idMat3 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -709,7 +709,7 @@ ID_INLINE idMat3 idMat3::InverseFast( void ) const {
 	idMat3 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }
@@ -1108,7 +1108,7 @@ ID_INLINE idMat4 idMat4::Inverse( void ) const {
 	idMat4 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -1117,7 +1117,7 @@ ID_INLINE idMat4 idMat4::InverseFast( void ) const {
 	idMat4 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }
@@ -1413,7 +1413,7 @@ ID_INLINE idMat5 idMat5::Inverse( void ) const {
 	idMat5 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -1422,7 +1422,7 @@ ID_INLINE idMat5 idMat5::InverseFast( void ) const {
 	idMat5 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }
@@ -1740,7 +1740,7 @@ ID_INLINE idMat6 idMat6::Inverse( void ) const {
 	idMat6 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -1749,7 +1749,7 @@ ID_INLINE idMat6 idMat6::InverseFast( void ) const {
 	idMat6 invMat;
 
 	invMat = *this;
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }
@@ -2280,7 +2280,7 @@ ID_INLINE void idMatX::SetData( int rows, int columns, float *data ) {
 	if ( mat != NULL && alloced != -1 ) {
 		Mem_Free16( mat );
 	}
-	assert( ( ( (int) data ) & 15 ) == 0 ); // data must be 16 byte aligned
+	assert( ( ( (uintptr_t) data ) & 15 ) == 0 ); // data must be 16 byte aligned
 	mat = data;
 	alloced = -1;
 	numRows = rows;
@@ -2584,7 +2584,7 @@ ID_INLINE idMatX idMatX::Inverse( void ) const {
 
 	invMat.SetTempSize( numRows, numColumns );
 	memcpy( invMat.mat, mat, numRows * numColumns * sizeof( float ) );
-	int r = invMat.InverseSelf();
+	int r id_attribute((unused)) = invMat.InverseSelf();
 	assert( r );
 	return invMat;
 }
@@ -2620,7 +2620,7 @@ ID_INLINE idMatX idMatX::InverseFast( void ) const {
 
 	invMat.SetTempSize( numRows, numColumns );
 	memcpy( invMat.mat, mat, numRows * numColumns * sizeof( float ) );
-	int r = invMat.InverseFastSelf();
+	int r id_attribute((unused)) = invMat.InverseFastSelf();
 	assert( r );
 	return invMat;
 }

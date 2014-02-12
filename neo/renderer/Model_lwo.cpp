@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -338,7 +338,7 @@ Read an ENVL chunk from an LWO2 file.
 lwEnvelope *lwGetEnvelope( idFile *fp, int cksize )
 {
    lwEnvelope *env;
-   lwKey *key;
+   lwKey *key = NULL;
    lwPlugin *plug;
    unsigned int id;
    unsigned short sz;
@@ -1248,7 +1248,7 @@ int sgetI1( unsigned char **bp )
    i = **bp;
    if ( i > 127 ) i -= 256;
    flen += 1;
-   *bp++;
+   *bp += 1;
    return i;
 }
 
@@ -1286,7 +1286,7 @@ unsigned char sgetU1( unsigned char **bp )
    if ( flen == FLEN_ERROR ) return 0;
    c = **bp;
    flen += 1;
-   *bp++;
+   *bp += 1;
    return c;
 }
 
@@ -1703,7 +1703,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
    clip->saturation.val = 1.0f;
    clip->gamma.val = 1.0f;
 
-   if ( p = strstr( s, "(sequence)" )) {
+   if ( (p = strstr( s, "(sequence)" ))) {
       p[ -1 ] = 0;
       clip->type = ID_ISEQ;
       clip->source.seq.prefix = s;
@@ -1714,7 +1714,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
       clip->source.still.name = s;
    }
 
-   *nclips++;
+   *nclips += 1;
    clip->index = *nclips;
 
    lwListAdd( (void**)clist, clip );
@@ -1821,8 +1821,8 @@ Read an lwSurface from an LWOB file.
 lwSurface *lwGetSurface5( idFile *fp, int cksize, lwObject *obj )
 {
    lwSurface *surf;
-   lwTexture *tex;
-   lwPlugin *shdr;
+   lwTexture *tex = NULL;
+   lwPlugin *shdr = NULL;
    char *s;
    float v[ 3 ];
    unsigned int id, flags;
@@ -1987,7 +1987,7 @@ lwSurface *lwGetSurface5( idFile *fp, int cksize, lwObject *obj )
          case ID_TFLG:
             flags = getU2( fp );
 
-            if ( flags & 1 ) i = 0;
+			i = 0;
             if ( flags & 2 ) i = 1;
             if ( flags & 4 ) i = 2;
             tex->axis = i;
@@ -2079,6 +2079,7 @@ lwSurface *lwGetSurface5( idFile *fp, int cksize, lwObject *obj )
             break;
 
          case ID_SDAT:
+			if ( !shdr ) goto Fail;
             shdr->data = getbytes( fp, sz );
             break;
 
@@ -2130,7 +2131,8 @@ int lwGetPolygons5( idFile *fp, int cksize, lwPolygonList *plist, int ptoffset )
    lwPolygon *pp;
    lwPolVert *pv;
    unsigned char *buf, *bp;
-   int i, j, nv, nverts, npols;
+   int i, nv, nverts, npols;
+   ptrdiff_t j;
 
 
    if ( cksize == 0 ) return 1;
@@ -2677,7 +2679,8 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
    lwSurface **surf, int *nsurfs )
 {
    lwSurface **s, *st;
-   int i, index;
+   int i;
+   ptrdiff_t index;
 
    if ( tlist->count == 0 ) return 1;
 
@@ -2696,7 +2699,7 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
    }
 
    for ( i = 0; i < polygon->count; i++ ) {
-      index = ( int ) polygon->pol[ i ].surf;
+	  index = ( ptrdiff_t ) polygon->pol[ i ].surf;
       if ( index < 0 || index > tlist->count ) return 0;
       if ( !s[ index ] ) {
          s[ index ] = lwDefaultSurface();
@@ -2857,7 +2860,8 @@ Read polygon tags from a PTAG chunk in an LWO2 file.
 int lwGetPolygonTags( idFile *fp, int cksize, lwTagList *tlist, lwPolygonList *plist )
 {
 	unsigned int type;
-	int rlen = 0, i, j;
+	int rlen = 0, i;
+	ptrdiff_t j;
 
 	set_flen( 0 );
 	type = getU4( fp );

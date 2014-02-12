@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -93,13 +93,13 @@ static void R_HeightmapToNormalMap( byte *data, int width, int height, float sca
 	for ( i = 0 ; i < height ; i++ ) {
 		for ( j = 0 ; j < width ; j++ ) {
 			int		d1, d2, d3, d4;
-			int		a1, a2, a3, a4;
+			int		a1, a3, a4;
 
 			// FIXME: look at five points?
 
 			// look at three points to estimate the gradient
 			a1 = d1 = depth[ ( i * width + j ) ];
-			a2 = d2 = depth[ ( i * width + ( ( j + 1 ) & ( width - 1 ) ) ) ];
+			d2 = depth[ ( i * width + ( ( j + 1 ) & ( width - 1 ) ) ) ];
 			a3 = d3 = depth[ ( ( ( i + 1 ) & ( height - 1 ) ) * width + j ) ];
 			a4 = d4 = depth[ ( ( ( i + 1 ) & ( height - 1 ) ) * width + ( ( j + 1 ) & ( width - 1 ) ) ) ];
 
