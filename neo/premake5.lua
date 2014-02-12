@@ -32,7 +32,7 @@ solution "morpheus"
 	
 	-- various platform-specific build flags
     if os.is( "windows" ) then
-        defines { "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "WIN32", "_WIN32", "_AFXDLL" }
+        defines { "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE", "WIN32", "_WIN32", "_AFXDLL", "ID_LITTLE_ENDIAN" }
         flags { "No64BitChecks" }
     else
         -- *nix
@@ -70,6 +70,13 @@ solution "morpheus"
         if arch == "x86" then
             buildoptions { "-march=i686" }
         end
+		
+		-- Make sure we select the correct cpu endianness
+		if arch == "ppc" then
+			defines { "ID_BIG_ENDIAN" }
+		else
+			defines { "ID_LITTLE_ENDIAN" }
+		end
 
         -- We don't want to require SSE2 everywhere yet, but OS X headers do
         -- require it (and Intel Macs always have it) so enable it here
