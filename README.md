@@ -5,7 +5,7 @@ Some of the major features currently implemented are:
  * Much improved premake based build system
  * x86_64 binary support
  * GLSL renderer backend
- * OpenAL sound system improvements (you can use OpenAL Soft for example)
+ * OpenAL sound system improvements (you can use OpenAL Soft for example and uses EFX for environmental audio)
 
 ## GENERAL NOTES
 
@@ -173,7 +173,7 @@ neo/sys/openal/*
 
 	/**
 	 * OpenAL cross platform audio library
-	 * Copyright (C) 1999-2000 by authors.
+	 * Copyright (C) 2008 by authors.
 	 * This library is free software; you can redistribute it and/or
 	 *  modify it under the terms of the GNU Library General Public
 	 *  License as published by the Free Software Foundation; either

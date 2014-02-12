@@ -88,9 +88,6 @@ class idSoundWorldLocal;
 #ifdef WIN32
 #pragma pack(1)
 #endif
-#ifdef __MWERKS__
-#pragma pack (push, 1)
-#endif
 struct waveformatex_s {
 	word    wFormatTag;        /* format type */
 	word    nChannels;         /* number of channels (i.e. mono, stereo...) */
@@ -165,9 +162,6 @@ typedef mminfo_s mminfo_t;
 
 #ifdef WIN32
 #pragma pack()
-#endif
-#ifdef __MWERKS__
-#pragma pack (pop)
 #endif
 
 /*
@@ -598,7 +592,9 @@ public:
 	idVec3					listenerQU;			// position in "quake units"
 	int						listenerArea;
 	idStr					listenerAreaName;
-	int						listenerEnvironmentID;
+	ALuint					listenerEffect;
+	ALuint					listenerSlot;
+	ALuint					listenerFilter;
 
 	int						gameMsec;
 	int						game44kHz;
@@ -682,7 +678,7 @@ public:
 
 	virtual void			PrintMemInfo( MemInfo_t *mi );
 
-	virtual int				IsEAXAvailable( void );
+	virtual int				IsEFXAvailable( void );
 
 	//-------------------------
 
@@ -728,21 +724,32 @@ public:
 	ALCcontext				*openalContext;
 	ALsizei					openalSourceCount;
 	openalSource_t			openalSources[256];
-#if ID_OPENAL_EAX
-	EAXSet					alEAXSet;
-	EAXGet					alEAXGet;
-	EAXSetBufferMode		alEAXSetBufferMode;
-	EAXGetBufferMode		alEAXGetBufferMode;
-#endif
+
+	LPALGENEFFECTS			alGenEffects;
+	LPALDELETEEFFECTS		alDeleteEffects;
+	LPALISEFFECT			alIsEffect;
+	LPALEFFECTI				alEffecti;
+	LPALEFFECTF				alEffectf;
+	LPALEFFECTFV			alEffectfv;
+	LPALGENFILTERS			alGenFilters;
+	LPALDELETEFILTERS		alDeleteFilters;
+	LPALISFILTER			alIsFilter;
+	LPALFILTERI				alFilteri;
+	LPALFILTERF				alFilterf;
+	LPALGENAUXILIARYEFFECTSLOTS		alGenAuxiliaryEffectSlots;
+	LPALDELETEAUXILIARYEFFECTSLOTS	alDeleteAuxiliaryEffectSlots;
+	LPALISAUXILIARYEFFECTSLOT		alIsAuxiliaryEffectSlot;
+	LPALAUXILIARYEFFECTSLOTI		alAuxiliaryEffectSloti;
+
 	idEFXFile				EFXDatabase;
 	bool					efxloaded;
 							// latches
-	static bool				useEAXReverb;
+	static bool				useEFXReverb;
 							// mark available during initialization, or through an explicit test
-	static int				EAXAvailable;
-
+	static int				EFXAvailable;
 
 	static idCVar			s_noSound;
+	static idCVar			s_device;
 	static idCVar			s_quadraticFalloff;
 	static idCVar			s_drawSounds;
 	static idCVar			s_minVolume6;
@@ -767,10 +774,7 @@ public:
 	static idCVar			s_force22kHz;
 	static idCVar			s_clipVolumes;
 	static idCVar			s_realTimeDecoding;
-	static idCVar			s_libOpenAL;
-	static idCVar			s_useOpenAL;
 	static idCVar			s_useEAXReverb;
-	static idCVar			s_muteEAXReverb;
 	static idCVar			s_decompressionLimit;
 
 	static idCVar			s_slowAttenuate;

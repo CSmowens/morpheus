@@ -270,6 +270,7 @@ void idSoundCache::PrintMemInfo( MemInfo_t *mi ) {
 
 	f->Printf( "\nTotal sound bytes allocated: %s\n", idStr::FormatNumber( total ).c_str() );
 	fileSystem->CloseFile( f );
+	delete[] sortIndex;
 }
 
 
@@ -496,39 +497,13 @@ void idSoundSample::Load( void ) {
 			if ( alGetError() != AL_NO_ERROR ) {
 				common->Error( "idSoundCache: error loading data into OpenAL hardware buffer" );
 			} else {
-				// Compute amplitude block size
-				int blockSize = 512 * objectInfo.nSamplesPerSec / 44100 ;
-
-				// Allocate amplitude data array
-				amplitudeData = (byte *)soundCacheAllocator.Alloc( ( objectSize / blockSize + 1 ) * 2 * sizeof( short) );
-
-				// Creating array of min/max amplitude pairs per blockSize samples
-				int i;
-				for ( i = 0; i < objectSize; i+=blockSize ) {
-					short min = 32767;
-					short max = -32768;
-
-					int j;
-					for ( j = 0; j < Min( objectSize - i, blockSize ); j++ ) {
-						min = ((short *)nonCacheData)[ i + j ] < min ? ((short *)nonCacheData)[ i + j ] : min;
-						max = ((short *)nonCacheData)[ i + j ] > max ? ((short *)nonCacheData)[ i + j ] : max;
-					}
-
-					((short *)amplitudeData)[ ( i / blockSize ) * 2     ] = min;
-					((short *)amplitudeData)[ ( i / blockSize ) * 2 + 1 ] = max;
-				}
-
 				hardwareBuffer = true;
 			}
 		}
 		
 		// OGG decompressed at load time (when smaller than s_decompressionLimit seconds, 6 seconds by default)
 		if ( objectInfo.wFormatTag == WAVE_FORMAT_TAG_OGG ) {
-#if !ID_OPENAL_EAX
 			if ( ( objectSize < ( ( int ) objectInfo.nSamplesPerSec * idSoundSystemLocal::s_decompressionLimit.GetInteger() ) ) ) {
-#else
-			if ( ( alIsExtensionPresent( ID_ALCHAR "EAX-RAM" ) == AL_TRUE ) && ( objectSize < ( ( int ) objectInfo.nSamplesPerSec * idSoundSystemLocal::s_decompressionLimit.GetInteger() ) ) ) {
-#endif
 				alGetError();
 				alGenBuffers( 1, &openalBuffer );
 				if ( alGetError() != AL_NO_ERROR )
@@ -575,28 +550,6 @@ void idSoundSample::Load( void ) {
 					if ( alGetError() != AL_NO_ERROR )
 						common->Error( "idSoundCache: error loading data into OpenAL hardware buffer" );
 					else {
-						// Compute amplitude block size
-						int blockSize = 512 * objectInfo.nSamplesPerSec / 44100 ;
-
-						// Allocate amplitude data array
-						amplitudeData = (byte *)soundCacheAllocator.Alloc( ( objectSize / blockSize + 1 ) * 2 * sizeof( short ) );
-
-						// Creating array of min/max amplitude pairs per blockSize samples
-						int i;
-						for ( i = 0; i < objectSize; i+=blockSize ) {
-							short min = 32767;
-							short max = -32768;
-							
-							int j;
-							for ( j = 0; j < Min( objectSize - i, blockSize ); j++ ) {
-								min = ((short *)destData)[ i + j ] < min ? ((short *)destData)[ i + j ] : min;
-								max = ((short *)destData)[ i + j ] > max ? ((short *)destData)[ i + j ] : max;
-							}
-
-							((short *)amplitudeData)[ ( i / blockSize ) * 2     ] = min;
-							((short *)amplitudeData)[ ( i / blockSize ) * 2 + 1 ] = max;
-						}
-						
 						hardwareBuffer = true;
 					}
 
@@ -604,12 +557,6 @@ void idSoundSample::Load( void ) {
 					idSampleDecoder::Free( decoder );
 				}
 			}
-		}
-
-		// Free memory if sample was loaded into hardware
-		if ( hardwareBuffer ) {
-			soundCacheAllocator.Free( nonCacheData );
-			nonCacheData = NULL;
 		}
 	}
 

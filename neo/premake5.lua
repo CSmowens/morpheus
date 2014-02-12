@@ -277,7 +277,6 @@ project "doom"
 			"DxErr",
 			"dinput8",
 			"../neo/sys/openal/lib/openal32",
-			"../neo/sys/openal/lib/eaxguid",
 			"../neo/sys/sdl2/lib/sdl2",
 			
 			-- Other projects
