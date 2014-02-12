@@ -54,10 +54,23 @@ If you have questions concerning this license or the applicable additional terms
 #define PATHSEPERATOR_STR				"\\"
 #define PATHSEPERATOR_CHAR				'\\'
 
+#ifdef _MSC_VER
+#ifdef GAME_DLL
+#define ID_GAME_API						__declspec(dllexport)
+#else
+#define ID_GAME_API
+#endif
 #define ID_INLINE						__forceinline
 #define ID_STATIC_TEMPLATE				static
 
 #define assertmem( x, y )				assert( _CrtIsValidPointer( x, y, true ) )
+#else
+#ifdef GAME_DLL
+#define ID_GAME_API						__attribute__((visibility ("default")))
+#else
+#define ID_GAME_API
+#endif
+#endif
 
 #endif
 
@@ -72,6 +85,15 @@ If you have questions concerning this license or the applicable additional terms
 #elif defined(__i386__)
 	#define	CPUSTRING					"x86"
 	#define CPU_EASYARGS				1
+#elif defined(__x86_64__)
+	#define CPUSTRING					"x86_64"
+	#define CPU_EASYARGS				0
+#endif
+
+#ifdef GAME_DLL
+#define ID_GAME_API						__attribute__((visibility ("default")))
+#else
+#define ID_GAME_API
 #endif
 
 #define ALIGN16( x )					x __attribute__ ((aligned (16)))
@@ -112,6 +134,14 @@ If you have questions concerning this license or the applicable additional terms
 	#define	BUILD_STRING				"linux-ppc"
 	#define CPUSTRING					"ppc"
 	#define CPU_EASYARGS				0
+#else
+	#error unknown cpu architecture!
+#endif
+
+#ifdef GAME_DLL
+#define ID_GAME_API						__attribute__((visibility ("default")))
+#else
+#define ID_GAME_API
 #endif
 
 #define _alloca							alloca
@@ -131,6 +161,27 @@ If you have questions concerning this license or the applicable additional terms
 
 #define assertmem( x, y )
 
+#endif
+
+
+#if !defined(ID_LITTLE_ENDIAN) && !defined(ID_BIG_ENDIAN)
+	#if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__)
+		#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+			#define ID_LITTLE_ENDIAN
+		#endif
+	#elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__)
+		#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+			#define ID_BIG_ENDIAN
+		#endif
+	#endif
+#endif
+
+#if !defined(ID_LITTLE_ENDIAN) && !defined(ID_BIG_ENDIAN)
+	#if defined(__i386__) || defined(__x86_64__)
+		#define ID_LITTLE_ENDIAN		1
+	#elif defined(__ppc__)
+		#define ID_BIG_ENDIAN			1
+	#endif
 #endif
 
 #ifdef __GNUC__
