@@ -50,6 +50,7 @@ If you have questions concerning this license or the applicable additional terms
 #if defined(MACOS_X) && defined(__ppc__)
 
 #ifdef PPC_INTRINSICS
+	// for square root estimate instruction
 	#include <ppc_intrinsics.h>
 #endif
 
