@@ -126,6 +126,7 @@ project "idLib"
 		"../neo/idlib/*.h",
 	}
 	
+	
 	includedirs
 	{
 		"../neo/idlib",
@@ -272,11 +273,6 @@ project "doom"
 		}
 		includedirs( DXSDK_INCLUDE )
 		libdirs( DXSDK_LIB )
-		excludes
-		{
-			"../neo/sys/win32/gl_logfuncs.cpp",
-			"../neo/sys/win32/gl_logfuncs.cpp",
-		}
 		links
 		{
 			"user32",
