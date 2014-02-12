@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,10 +29,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "snd_local.h"
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #include "OggVorbis/vorbis/codec.h"
 #include "OggVorbis/vorbis/vorbisfile.h"
 
+#include "snd_local.h"
 
 /*
 ===================================================================================
@@ -230,7 +231,7 @@ int idWaveFile::ReadOGG( byte* pBuffer, int dwSizeToRead, int *pdwSizeRead ) {
 	OggVorbis_File *ov = (OggVorbis_File *) ogg;
 
 	do {
-		int ret = ov_read( ov, bufferPtr, total >= 4096 ? 4096 : total, Swap_IsBigEndian(), 2, 1, &ov->stream );
+		int ret = ov_read( ov, bufferPtr, total >= 4096 ? 4096 : total, Swap_IsBigEndian(), 2, 1, NULL );
 		if ( ret == 0 ) {
 			break;
 		}
@@ -549,7 +550,7 @@ int idSampleDecoderLocal::DecodeOGG( idSoundSample *sample, int sampleOffset44k,
 	readSamples = 0;
 	do {
 		float **samples;
-		int ret = ov_read_float( &ogg, &samples, totalSamples / sample->objectInfo.nChannels, &ogg.stream );
+		int ret = ov_read_float( &ogg, &samples, totalSamples / sample->objectInfo.nChannels, NULL );
 		if ( ret == 0 ) {
 			failed = true;
 			break;

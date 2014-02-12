@@ -4,7 +4,7 @@
 Doom 3 GPL Source Code
 Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code ("Doom 3 Source Code").  
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ void idSoundChannel::Clear( void ) {
 	memset( &parms, 0, sizeof(parms) );
 
 	triggered = false;
-	openalSource = NULL;
+	openalSource = 0;
 	openalStreamingOffset = 0;
 	openalStreamingBuffer[0] = openalStreamingBuffer[1] = openalStreamingBuffer[2] = 0;
 	lastopenalStreamingBuffer[0] = lastopenalStreamingBuffer[1] = lastopenalStreamingBuffer[2] = 0;
@@ -222,28 +222,25 @@ idSoundChannel::ALStop
 ===================
 */
 void idSoundChannel::ALStop( void ) {
-	if ( idSoundSystemLocal::useOpenAL ) {
+	if ( alIsSource( openalSource ) ) {
+		alSourceStop( openalSource );
+		alSourcei( openalSource, AL_BUFFER, 0 );
+		soundSystemLocal.FreeOpenALSource( openalSource );
+	}
 
-		if ( alIsSource( openalSource ) ) {
-			alSourceStop( openalSource );
-			alSourcei( openalSource, AL_BUFFER, 0 );
-			soundSystemLocal.FreeOpenALSource( openalSource );
+	if ( openalStreamingBuffer[0] && openalStreamingBuffer[1] && openalStreamingBuffer[2] ) {
+		alGetError();
+		alDeleteBuffers( 3, &openalStreamingBuffer[0] );
+		if ( alGetError() == AL_NO_ERROR ) {
+			openalStreamingBuffer[0] = openalStreamingBuffer[1] = openalStreamingBuffer[2] = 0;
 		}
+	}
 
-		if ( openalStreamingBuffer[0] && openalStreamingBuffer[1] && openalStreamingBuffer[2] ) {
-			alGetError();
-			alDeleteBuffers( 3, &openalStreamingBuffer[0] );
-			if ( alGetError() == AL_NO_ERROR ) {
-				openalStreamingBuffer[0] = openalStreamingBuffer[1] = openalStreamingBuffer[2] = 0;
-			}
-		}
-
-		if ( lastopenalStreamingBuffer[0] && lastopenalStreamingBuffer[1] && lastopenalStreamingBuffer[2] ) {
-			alGetError();
-			alDeleteBuffers( 3, &lastopenalStreamingBuffer[0] );
-			if ( alGetError() == AL_NO_ERROR ) {
-				lastopenalStreamingBuffer[0] = lastopenalStreamingBuffer[1] = lastopenalStreamingBuffer[2] = 0;
-			}
+	if ( lastopenalStreamingBuffer[0] && lastopenalStreamingBuffer[1] && lastopenalStreamingBuffer[2] ) {
+		alGetError();
+		alDeleteBuffers( 3, &lastopenalStreamingBuffer[0] );
+		if ( alGetError() == AL_NO_ERROR ) {
+			lastopenalStreamingBuffer[0] = lastopenalStreamingBuffer[1] = lastopenalStreamingBuffer[2] = 0;
 		}
 	}
 }
@@ -452,7 +449,7 @@ void idSoundEmitterLocal::CheckForCompletion( int current44kHzTime ) {
 			if ( !( chan->parms.soundShaderFlags & SSF_LOOPING ) ) {
 				ALint state = AL_PLAYING;
 
-				if ( idSoundSystemLocal::useOpenAL && alIsSource( chan->openalSource ) ) {
+				if ( alIsSource( chan->openalSource ) ) {
 					alGetSourcei( chan->openalSource, AL_SOURCE_STATE, &state );
 				}
 				idSlowChannel slow = GetSlowChannel( chan );
@@ -512,7 +509,6 @@ Called once each sound frame by the main thread from idSoundWorldLocal::PlaceOri
 */
 void idSoundEmitterLocal::Spatialize( idVec3 listenerPos, int listenerArea, idRenderWorld *rw ) {
 	int			i;
-	bool		hasActive = false;
 
 	//
 	// work out the maximum distance of all the playing channels
@@ -1148,7 +1144,7 @@ idSlowChannel::GenerateSlowChannel
 void idSlowChannel::GenerateSlowChannel( FracTime& playPos, int sampleCount44k, float* finalBuffer ) {
 	idSoundWorldLocal *sw = static_cast<idSoundWorldLocal*>( soundSystemLocal.GetPlayingSoundWorld() );
 	float in[MIXBUFFER_SAMPLES+3], out[MIXBUFFER_SAMPLES+3], *src, *spline, slowmoSpeed;
-	int i, neededSamples, orgTime, zeroedPos, count = 0;
+	int i, neededSamples, zeroedPos, count = 0;
 
 	src = in + 2;
 	spline = out + 2;
@@ -1161,7 +1157,6 @@ void idSlowChannel::GenerateSlowChannel( FracTime& playPos, int sampleCount44k, 
 	}
 
 	neededSamples = sampleCount44k * slowmoSpeed + 4;
-	orgTime = playPos.time;
 
 	// get the channel's samples
 	chan->GatherChannelSamples( playPos.time * 2, neededSamples, src );

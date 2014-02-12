@@ -249,13 +249,7 @@ project "doom"
 		"../neo/ui/*.h",
 		"../neo/idlib/precompiled.cpp",
 	}
-	
-	excludes
-	{
-		"../neo/openal/stubs.cpp",
-		"../neo/openal/idal.cpp",
-	}		
-	
+		
 	includedirs
 	{
 		"../neo/renderer/jpeg-6",
@@ -287,7 +281,6 @@ project "doom"
 			"gdi32",
 			"dxguid",
 			"DxErr",
-			"dsound",
 			"dinput8",
 			"../neo/openal/lib/openal32",
 			"../neo/openal/lib/eaxguid",

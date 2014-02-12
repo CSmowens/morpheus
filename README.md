@@ -4,7 +4,7 @@ Morpheus is an idTech 4 Engine Modification.
 Some of the major features currently implemented are:
  * Much improved premake based build system
  * GLSL renderer backend
-
+ * OpenAL sound system improvements (you can use OpenAL Soft for example)
 
 ## GENERAL NOTES
 
