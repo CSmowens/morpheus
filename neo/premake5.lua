@@ -247,6 +247,7 @@ project "doom"
 	{
 		"../neo/renderer/jpeg-6",
 		"../neo/sys/openal/include",
+		"../neo/sys/sdl2/include",
 		"../neo/curl/include",
 		"../neo/idlib",
 	}	
@@ -277,6 +278,7 @@ project "doom"
 			"dinput8",
 			"../neo/sys/openal/lib/openal32",
 			"../neo/sys/openal/lib/eaxguid",
+			"../neo/sys/sdl2/lib/sdl2",
 			
 			-- Other projects
 			"curlLib",
